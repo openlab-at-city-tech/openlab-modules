@@ -16,8 +16,6 @@ jobs:
           submodules: recursive
 
       - uses: php-actions/composer@v6
-        with:
-          version: latest
 
       - name: PHPStan Static Analysis
         uses: php-actions/phpstan@v3

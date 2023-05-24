@@ -1,4 +1,4 @@
-name: HSPH PHPCS
+name: PHP Coding Standards
 
 on:
   push:
