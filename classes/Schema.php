@@ -16,10 +16,12 @@ class Schema {
 	 *
 	 * @var string
 	 */
-	protected $module_post_type = 'openlab_module';
+	protected static $module_post_type = 'openlab_module';
 
 	/**
 	 * Private constructor.
+	 *
+	 * @return void
 	 */
 	private function __construct() {}
 
@@ -40,6 +42,8 @@ class Schema {
 
 	/**
 	 * Initializes the application.
+	 *
+	 * @return void
 	 */
 	public function init() {
 		add_action( 'init', [ $this, 'register_post_types' ] );
@@ -51,15 +55,17 @@ class Schema {
 	 * @return string
 	 */
 	public static function get_module_post_type() {
-		return $this->module_post_type;
+		return self::$module_post_type;
 	}
 
 	/**
 	 * Registers post types.
+	 *
+	 * @return void
 	 */
 	public function register_post_types() {
 		register_post_type(
-			'openlab_module',
+			self::get_module_post_type(),
 			[
 				'labels'            => [
 					'name'                  => __( 'Modules', 'openlab-modules' ),
@@ -98,7 +104,7 @@ class Schema {
 					'slug' => 'modules',
 				],
 				'query_var'         => true,
-				'menu_position'     => null,
+				'menu_position'     => 10,
 				'menu_icon'         => 'dashicons-excerpt-view',
 				'show_in_rest'      => true,
 				'rest_base'         => 'openlab_module',

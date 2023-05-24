@@ -1,0 +1,24 @@
+name: PHPStan for OpenLab Modules
+
+on:
+  push:
+    paths:
+      - '**.php'
+      - '**.yml'
+
+jobs:
+  phpstan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          submodules: recursive
+
+      - uses: php-actions/composer@v6
+
+      - name: PHPStan Static Analysis
+        uses: php-actions/phpstan@v3
+        with:
+          php_version: 8.0
+          configuration: phpstan.neon

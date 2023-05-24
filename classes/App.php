@@ -13,6 +13,8 @@ namespace OpenLab\Modules;
 class App {
 	/**
 	 * Initializes the application.
+	 *
+	 * @return void
 	 */
 	public static function init() {
 		$schema = Schema::get_instance();
