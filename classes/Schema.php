@@ -61,7 +61,7 @@ class Schema {
 		register_post_type(
 			'openlab_module',
 			[
-				'labels'                => [
+				'labels'            => [
 					'name'                  => __( 'Modules', 'openlab-modules' ),
 					'singular_name'         => __( 'Modules', 'openlab-modules' ),
 					'all_items'             => __( 'All Modules', 'openlab-modules' ),
@@ -88,20 +88,20 @@ class Schema {
 					'parent_item_colon'     => __( 'Parent Modules:', 'openlab-modules' ),
 					'menu_name'             => __( 'Modules', 'openlab-modules' ),
 				],
-				'public'                => true,
-				'hierarchical'          => false,
-				'show_ui'               => true,
-				'show_in_nav_menus'     => true,
-				'supports'              => [ 'title', 'editor' ],
-				'has_archive'           => true,
-				'rewrite'               => [
+				'public'            => true,
+				'hierarchical'      => false,
+				'show_ui'           => true,
+				'show_in_nav_menus' => true,
+				'supports'          => [ 'title', 'editor' ],
+				'has_archive'       => true,
+				'rewrite'           => [
 					'slug' => 'modules',
 				],
-				'query_var'             => true,
-				'menu_position'         => null,
-				'menu_icon'             => 'dashicons-excerpt-view',
-				'show_in_rest'          => true,
-				'rest_base'             => 'openlab_module',
+				'query_var'         => true,
+				'menu_position'     => null,
+				'menu_icon'         => 'dashicons-excerpt-view',
+				'show_in_rest'      => true,
+				'rest_base'         => 'openlab_module',
 			]
 		);
 	}

@@ -12,6 +12,8 @@
 	<!-- We use PSR-4 for class loading via Composer. -->
         <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
         <exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+
+        <exclude name="Generic.Arrays.DisallowShortArraySyntax" />
     </rule>
 
     <rule ref="WordPress.WP.I18n">
