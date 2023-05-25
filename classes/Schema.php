@@ -209,5 +209,17 @@ class Schema {
 				'description'    => __( 'Description', 'openlab-modules' ),
 			]
 		);
+
+		register_meta(
+			'post',
+			'module_acknowledgements',
+			[
+				'object_subtype' => self::get_module_post_type(),
+				'type'           => 'string',
+				'single'         => true,
+				'show_in_rest'   => true,
+				'description'    => __( 'Acknowledgements', 'openlab-modules' ),
+			]
+		);
 	}
 }

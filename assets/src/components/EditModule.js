@@ -18,14 +18,14 @@ export default function EditModule( {
 } ) {
 
 	const {
+		moduleAcknowledgements,
 		moduleDescription,
 		postType,
 		postTitle
 	} = useSelect( ( select ) => {
-		const metas = select( 'core/editor' ).getEditedPostAttribute( 'meta' )
-
 		return {
-			moduleDescription: metas ? select( 'core/editor' ).getEditedPostAttribute( 'meta' ).module_description : '',
+			moduleAcknowledgements: select( 'core/editor' ).getEditedPostAttribute( 'meta' ).module_acknowledgements,
+			moduleDescription: select( 'core/editor' ).getEditedPostAttribute( 'meta' ).module_description,
 			postType: select( 'core/editor' ).getCurrentPostType(),
 			postTitle: select( 'core/editor' ).getEditedPostAttribute( 'title' )
 		}
@@ -62,6 +62,16 @@ export default function EditModule( {
 					label={ __( 'Description', 'openlab-modules' ) }
 					onChange={ ( newDescription ) => editPostMeta( { module_description: newDescription } ) }
 					value={ moduleDescription }
+				/>
+			</PanelRow>
+
+			<Divider />
+
+			<PanelRow>
+				<TextareaControl
+					label={ __( 'Acknowledgements', 'openlab-modules' ) }
+					onChange={ ( newAcknowledgements ) => editPostMeta( { module_acknowledgements: newAcknowledgements } ) }
+					value={ moduleAcknowledgements }
 				/>
 			</PanelRow>
 		</PluginDocumentSettingPanel>
