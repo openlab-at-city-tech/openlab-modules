@@ -4,8 +4,46 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bde7664041f060f880ed2b8ce0ff1417",
-    "packages": [],
+    "content-hash": "b4a72f4efe0a52b7714b03c0e9140e9a",
+    "packages": [
+        {
+            "name": "hard-g/cpt-tax",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hard-g/cpt-tax.git",
+                "reference": "31dc72b11d2c852ad97a816d5a681b3ebf1b33fd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hard-g/cpt-tax/zipball/31dc72b11d2c852ad97a816d5a681b3ebf1b33fd",
+                "reference": "31dc72b11d2c852ad97a816d5a681b3ebf1b33fd",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "HardG\\CptTax\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Boone B Gorges",
+                    "email": "boonebgorges@gmail.com"
+                }
+            ],
+            "description": "WordPress library that creates a taxonomy term corresponding to each item in a given Custom Post Type. Useful for mimicking post-to-post relationships.",
+            "support": {
+                "issues": "https://github.com/hard-g/cpt-tax/issues",
+                "source": "https://github.com/hard-g/cpt-tax/tree/1.0.0"
+            },
+            "time": "2023-05-25T01:22:16+00:00"
+        }
+    ],
     "packages-dev": [
         {
             "name": "dealerdirect/phpcodesniffer-composer-installer",

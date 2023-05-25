@@ -25,5 +25,8 @@
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "phpstan/extension-installer": true
         }
+    },
+    "require": {
+        "hard-g/cpt-tax": "^1.0"
     }
 }

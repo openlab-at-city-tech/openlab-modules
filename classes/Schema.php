@@ -19,6 +19,13 @@ class Schema {
 	protected static $module_post_type = 'openlab_module';
 
 	/**
+	 * Module taxonomy name.
+	 *
+	 * @var string
+	 */
+	protected static $module_taxonomy = 'openlab_module_tax';
+
+	/**
 	 * Private constructor.
 	 *
 	 * @return void
@@ -47,6 +54,8 @@ class Schema {
 	 */
 	public function init() {
 		add_action( 'init', [ $this, 'register_post_types' ] );
+		add_action( 'init', [ $this, 'register_taxonomies' ], 12 );
+		add_action( 'init', [ $this, 'set_up_cpttax' ], 14 );
 	}
 
 	/**
@@ -56,6 +65,15 @@ class Schema {
 	 */
 	public static function get_module_post_type() {
 		return self::$module_post_type;
+	}
+
+	/**
+	 * Gets the name of the module taxonomy.
+	 *
+	 * @return string
+	 */
+	public static function get_module_taxonomy() {
+		return self::$module_taxonomy;
 	}
 
 	/**
@@ -110,5 +128,56 @@ class Schema {
 				'rest_base'         => 'openlab_module',
 			]
 		);
+	}
+
+	public function register_taxonomies() {
+		register_taxonomy(
+			self::get_module_taxonomy(),
+			[ 'post', 'page' ],
+			[
+				'hierarchical'          => false,
+				'public'                => false,
+				'show_in_nav_menus'     => true,
+				'show_ui'               => true,
+				'show_admin_column'     => false,
+				'query_var'             => true,
+				'rewrite'               => false,
+				'capabilities'          => [
+					'manage_terms' => 'edit_posts',
+					'edit_terms'   => 'edit_posts',
+					'delete_terms' => 'edit_posts',
+					'assign_terms' => 'edit_posts',
+				],
+				'labels'                => [
+					'name'                       => __( 'Openlab module taxes', 'YOUR-TEXTDOMAIN' ),
+					'singular_name'              => _x( 'Openlab module tax', 'taxonomy general name', 'YOUR-TEXTDOMAIN' ),
+					'search_items'               => __( 'Search Openlab module taxes', 'YOUR-TEXTDOMAIN' ),
+					'popular_items'              => __( 'Popular Openlab module taxes', 'YOUR-TEXTDOMAIN' ),
+					'all_items'                  => __( 'All Openlab module taxes', 'YOUR-TEXTDOMAIN' ),
+					'parent_item'                => __( 'Parent Openlab module tax', 'YOUR-TEXTDOMAIN' ),
+					'parent_item_colon'          => __( 'Parent Openlab module tax:', 'YOUR-TEXTDOMAIN' ),
+					'edit_item'                  => __( 'Edit Openlab module tax', 'YOUR-TEXTDOMAIN' ),
+					'update_item'                => __( 'Update Openlab module tax', 'YOUR-TEXTDOMAIN' ),
+					'view_item'                  => __( 'View Openlab module tax', 'YOUR-TEXTDOMAIN' ),
+					'add_new_item'               => __( 'Add New Openlab module tax', 'YOUR-TEXTDOMAIN' ),
+					'new_item_name'              => __( 'New Openlab module tax', 'YOUR-TEXTDOMAIN' ),
+					'separate_items_with_commas' => __( 'Separate openlab module taxes with commas', 'YOUR-TEXTDOMAIN' ),
+					'add_or_remove_items'        => __( 'Add or remove openlab module taxes', 'YOUR-TEXTDOMAIN' ),
+					'choose_from_most_used'      => __( 'Choose from the most used openlab module taxes', 'YOUR-TEXTDOMAIN' ),
+					'not_found'                  => __( 'No openlab module taxes found.', 'YOUR-TEXTDOMAIN' ),
+					'no_terms'                   => __( 'No openlab module taxes', 'YOUR-TEXTDOMAIN' ),
+					'menu_name'                  => __( 'Openlab module taxes', 'YOUR-TEXTDOMAIN' ),
+					'items_list_navigation'      => __( 'Openlab module taxes list navigation', 'YOUR-TEXTDOMAIN' ),
+					'items_list'                 => __( 'Openlab module taxes list', 'YOUR-TEXTDOMAIN' ),
+					'most_used'                  => _x( 'Most Used', 'openlab_module_tax', 'YOUR-TEXTDOMAIN' ),
+					'back_to_items'              => __( '&larr; Back to Openlab module taxes', 'YOUR-TEXTDOMAIN' ),
+				],
+				'show_in_rest'          => false,
+			]
+		);
+	}
+
+	public function set_up_cpttax() {
+		\HardG\CptTax\Registry::register( 'module', self::get_module_post_type(), 'openlab_module_tax' );
 	}
 }
