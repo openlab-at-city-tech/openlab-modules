@@ -56,6 +56,7 @@ class Schema {
 		add_action( 'init', [ $this, 'register_post_types' ] );
 		add_action( 'init', [ $this, 'register_taxonomies' ], 12 );
 		add_action( 'init', [ $this, 'set_up_cpttax' ], 14 );
+		add_action( 'init', [ $this, 'register_metas' ], 16 );
 	}
 
 	/**
@@ -116,7 +117,7 @@ class Schema {
 				'hierarchical'      => false,
 				'show_ui'           => true,
 				'show_in_nav_menus' => true,
-				'supports'          => [ 'title', 'editor' ],
+				'supports'          => [ 'title', 'editor', 'custom-fields' ],
 				'has_archive'       => true,
 				'rewrite'           => [
 					'slug' => 'modules',
@@ -189,5 +190,24 @@ class Schema {
 	 */
 	public function set_up_cpttax() {
 		\HardG\CptTax\Registry::register( 'module', self::get_module_post_type(), 'openlab_module_tax' );
+	}
+
+	/**
+	 * Registers metas for post types.
+	 *
+	 * @return void
+	 */
+	public function register_metas() {
+		register_meta(
+			'post',
+			'module_description',
+			[
+				'object_subtype' => self::get_module_post_type(),
+				'type'           => 'string',
+				'single'         => true,
+				'show_in_rest'   => true,
+				'description'    => __( 'Description', 'openlab-modules' ),
+			]
+		);
 	}
 }
