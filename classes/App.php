@@ -19,5 +19,8 @@ class App {
 	public static function init() {
 		$schema = Schema::get_instance();
 		$schema->init();
+
+		$editor = Editor::get_instance();
+		$editor->init();
 	}
 }

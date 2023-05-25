@@ -23,4 +23,6 @@ const ROOT_FILE = __FILE__;
 
 require ROOT_DIR . '/vendor/autoload.php';
 
+define( 'OPENLAB_MODULES_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+
 App::init();

@@ -5,5 +5,7 @@
 		"@wordpress/scripts": "^26.5.0"
 	},
   "scripts": {
+    "build": "wp-scripts build assets/src/index.js",
+    "start": "wp-scripts start assets/src/index.js"
   }
 }
