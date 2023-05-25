@@ -47,7 +47,7 @@ class Editor {
 	 * Used when enqueuing assets, to help with cache busting during development.
 	 *
 	 * @access protected
-	 * @return array
+	 * @return array{"dependencies": string[], "version": string}
 	 */
 	protected function get_blocks_asset_file() {
 		$blocks_dir        = ROOT_DIR . '/build/';
@@ -69,6 +69,8 @@ class Editor {
 	 * Enqueue block assets on the Dashboard.
 	 *
 	 * @since 1.0.0
+	 *
+	 * @return void
 	 */
 	public function enqueue_block_assets() {
 		$blocks_asset_file = $this->get_blocks_asset_file();
