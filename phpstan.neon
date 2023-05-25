@@ -4,6 +4,9 @@ parameters:
   paths:
     - .
 
+  bootstrapFiles:
+    - constants.php
+
   excludePaths:
     - ./vendor/
     - ./node_modules/
