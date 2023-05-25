@@ -17,7 +17,6 @@ jobs:
     - uses: php-actions/composer@v6
       with:
         dev: yes
-        version: 2.3
 
     - name: Install PHPCS & WPCS
       run: composer require wp-coding-standards/wpcs
