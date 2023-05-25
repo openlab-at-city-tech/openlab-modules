@@ -130,6 +130,11 @@ class Schema {
 		);
 	}
 
+	/**
+	 * Registers taxonomies.
+	 *
+	 * @return void
+	 */
 	public function register_taxonomies() {
 		register_taxonomy(
 			self::get_module_taxonomy(),
@@ -177,6 +182,11 @@ class Schema {
 		);
 	}
 
+	/**
+	 * Sets up CPT-Taxonomy links.
+	 *
+	 * @return void
+	 */
 	public function set_up_cpttax() {
 		\HardG\CptTax\Registry::register( 'module', self::get_module_post_type(), 'openlab_module_tax' );
 	}
