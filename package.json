@@ -1,0 +1,9 @@
+{
+	"name": "openlab-modules",
+	"version": "1.0.0-alpha",
+	"devDependencies": {
+		"@wordpress/scripts": "^26.5.0"
+	},
+  "scripts": {
+  }
+}
