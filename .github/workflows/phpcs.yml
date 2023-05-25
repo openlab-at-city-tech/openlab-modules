@@ -21,7 +21,7 @@ jobs:
         sudo chown $USER $HOME/.composer
 
     - name: Configure Composer
-      run: composer config -g github-oauth.github.com ${{ secrets.GITHUB_TOKEN }}
+      run: composer install
 
     - name: Run PHPCS
       run: vendor/bin/phpcs ./
