@@ -76,11 +76,18 @@ class Editor {
 		$blocks_asset_file = $this->get_blocks_asset_file();
 
 		wp_enqueue_script(
-			'striped-registry-dashboard',
+			'openlab-modules-dashboard',
 			OPENLAB_MODULES_PLUGIN_URL . '/build/index.js',
 			$blocks_asset_file['dependencies'],
 			$blocks_asset_file['version'],
 			true
+		);
+
+		wp_enqueue_style(
+			'openlab-modules-dashboard',
+			OPENLAB_MODULES_PLUGIN_URL . '/build/index.css',
+			[],
+			$blocks_asset_file['version']
 		);
 	}
 }

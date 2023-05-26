@@ -1,4 +1,9 @@
 /**
+ * Set up store
+ */
+import './store'
+
+/**
  * Components.
  */
 import { registerPlugin } from '@wordpress/plugins';
@@ -10,5 +15,15 @@ registerPlugin(
 	{
 		icon: 'users',
 		render: EditModule
+	}
+)
+
+// Add Module Pages controls.
+import ModulePages from './components/ModulePages'
+registerPlugin(
+	'openlab-module-module-pages-component',
+	{
+		icon: 'users',
+		render: ModulePages
 	}
 )

@@ -59,22 +59,17 @@ class Module {
 	 * @return int[]
 	 */
 	public function get_page_ids() {
-		return get_posts(
-			[
-				'post_type'      => 'any',
-				'posts_per_page' => -1,
-				'fields'         => 'ids',
-				'orderby'        => [ 'menu_order' => 'ASC' ],
+		// Stored as JSON for better manipulation in Block Editor.
+		$module_page_ids_raw = get_post_meta( $this->id, 'module_page_ids', true );
+		if ( ! is_string( $module_page_ids_raw ) ) {
+			$module_page_ids_raw = '[]';
+		}
 
-				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
-				'tax_query'      => [
-					'module' => [
-						'taxonomy' => Schema::get_module_taxonomy(),
-						'terms'    => $this->get_term_id(),
-						'field'    => 'term_id',
-					],
-				],
-			]
-		);
+		$page_ids = json_decode( $module_page_ids_raw );
+		if ( ! is_array( $page_ids ) ) {
+			$page_ids = [];
+		}
+
+		return array_map( 'intval', $page_ids );
 	}
 }

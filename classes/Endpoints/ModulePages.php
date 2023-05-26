@@ -67,24 +67,22 @@ class ModulePages extends WP_REST_Controller {
 			$module   = Module::get_instance( (int) $module_id );
 			$page_ids = $module ? $module->get_page_ids() : [];
 
-			$pages = array_map(
-				function( $page_id ) {
-					$page = get_post( $page_id );
+			$pages = [];
+			foreach ( $page_ids as $page_id ) {
+				$page = get_post( $page_id );
 
-					if ( ! $page ) {
-						return null;
-					}
+				if ( ! $page ) {
+					continue;
+				}
 
-					return [
-						'id'      => $page_id,
-						'title'   => $page->post_title,
-						'order'   => $page->menu_order,
-						'editUrl' => get_edit_post_link( $page_id ),
-						'url'     => get_permalink( $page_id ),
-					];
-				},
-				$page_ids
-			);
+				$pages[ $page_id ] = [
+					'id'      => $page_id,
+					'title'   => $page->post_title,
+					'order'   => $page->menu_order,
+					'editUrl' => get_edit_post_link( $page_id ),
+					'url'     => get_permalink( $page_id ),
+				];
+			}
 		}
 
 		return rest_ensure_response( array_filter( $pages ) );

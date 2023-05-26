@@ -4,8 +4,12 @@
 	"devDependencies": {
 		"@wordpress/scripts": "^26.5.0"
 	},
-  "scripts": {
-    "build": "wp-scripts build assets/src/index.js",
-    "start": "wp-scripts start assets/src/index.js"
-  }
+	"scripts": {
+		"build": "wp-scripts build assets/src/index.js",
+		"start": "wp-scripts start assets/src/index.js"
+	},
+	"dependencies": {
+		"@dnd-kit/sortable": "^7.0.2",
+		"classnames": "^2.3.2"
+	}
 }
