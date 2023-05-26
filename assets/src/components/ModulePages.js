@@ -18,11 +18,16 @@ import { select } from '@wordpress/data'
 export default function EditModule( {
 	isSelected
 } ) {
+	const postType = useSelect( ( select ) => select( 'core/editor' ).getCurrentPostType() )
+
+	if ( ! postType || 'openlab_module' !== postType ) {
+		return null
+	}
+
 	const {
 		modulePageIds,
 		modulePages,
-		postId,
-		postType
+		postId
 	} = useSelect( ( select ) => {
 		const postId = select( 'core/editor' ).getCurrentPostId()
 
@@ -35,14 +40,9 @@ export default function EditModule( {
 		return {
 			modulePageIds,
 			modulePages: modulePages ?? [],
-			postId,
-			postType: select( 'core/editor' ).getCurrentPostType()
+			postId
 		}
 	}, [] )
-
-	if ( 'openlab_module' !== postType ) {
-		return null;
-	}
 
 	const { editPost } = useDispatch( 'core/editor' )
 
