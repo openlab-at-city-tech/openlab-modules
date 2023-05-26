@@ -76,11 +76,14 @@ class Module {
 	/**
 	 * Gets IDs of modules to which a page is linked.
 	 *
-	 * @param int $page_id
+	 * @param int $page_id ID of the page.
 	 * @return int[]
 	 */
 	public static function get_module_ids_of_page( $page_id ) {
 		$terms = wp_get_object_terms( $page_id, Schema::get_module_taxonomy() );
+		if ( is_wp_error( $terms ) ) {
+			return [];
+		}
 		return wp_list_pluck( $terms, 'term_id' );
 	}
 }
