@@ -178,7 +178,7 @@ class Schema {
 					'most_used'                  => _x( 'Most Used', 'openlab_module_tax', 'openlab-modules' ),
 					'back_to_items'              => __( '&larr; Back to Openlab module taxes', 'openlab-modules' ),
 				],
-				'show_in_rest'      => false,
+				'show_in_rest'      => true,
 			]
 		);
 	}

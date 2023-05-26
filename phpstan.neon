@@ -1,6 +1,9 @@
 parameters:
   level: 9
 
+  # Doesn't work properly when extending WP core classes.
+  checkGenericClassInNonGenericObjectType: false
+
   paths:
     - .
 

@@ -22,5 +22,8 @@ class App {
 
 		$editor = Editor::get_instance();
 		$editor->init();
+
+		$api = API::get_instance();
+		$api->init();
 	}
 }
