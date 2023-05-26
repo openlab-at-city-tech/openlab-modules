@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "hard-g/cpt-tax",
-            "version": "1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hard-g/cpt-tax.git",
-                "reference": "31dc72b11d2c852ad97a816d5a681b3ebf1b33fd"
+                "reference": "cd87b64316ea5d563770d488845967760d098fca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hard-g/cpt-tax/zipball/31dc72b11d2c852ad97a816d5a681b3ebf1b33fd",
-                "reference": "31dc72b11d2c852ad97a816d5a681b3ebf1b33fd",
+                "url": "https://api.github.com/repos/hard-g/cpt-tax/zipball/cd87b64316ea5d563770d488845967760d098fca",
+                "reference": "cd87b64316ea5d563770d488845967760d098fca",
                 "shasum": ""
             },
             "type": "library",
@@ -39,9 +39,9 @@
             "description": "WordPress library that creates a taxonomy term corresponding to each item in a given Custom Post Type. Useful for mimicking post-to-post relationships.",
             "support": {
                 "issues": "https://github.com/hard-g/cpt-tax/issues",
-                "source": "https://github.com/hard-g/cpt-tax/tree/1.0.0"
+                "source": "https://github.com/hard-g/cpt-tax/tree/v1.0.1"
             },
-            "time": "2023-05-25T01:22:16+00:00"
+            "time": "2023-05-26T15:24:07+00:00"
         }
     ],
     "packages-dev": [
@@ -125,16 +125,16 @@
         },
         {
             "name": "php-stubs/wordpress-stubs",
-            "version": "v6.2.0",
+            "version": "v6.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-stubs/wordpress-stubs.git",
-                "reference": "b73fe99eadf9fb56363619dac0343b6d19907dce"
+                "reference": "0009429e639b748eef1c955200ea0d4e5ad5627d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/wordpress-stubs/zipball/b73fe99eadf9fb56363619dac0343b6d19907dce",
-                "reference": "b73fe99eadf9fb56363619dac0343b6d19907dce",
+                "url": "https://api.github.com/repos/php-stubs/wordpress-stubs/zipball/0009429e639b748eef1c955200ea0d4e5ad5627d",
+                "reference": "0009429e639b748eef1c955200ea0d4e5ad5627d",
                 "shasum": ""
             },
             "require-dev": {
@@ -142,7 +142,8 @@
                 "php": "~7.3 || ~8.0",
                 "php-stubs/generator": "^0.8.3",
                 "phpdocumentor/reflection-docblock": "^5.3",
-                "phpstan/phpstan": "^1.9"
+                "phpstan/phpstan": "^1.10.12",
+                "phpunit/phpunit": "^9.5"
             },
             "suggest": {
                 "paragonie/sodium_compat": "Pure PHP implementation of libsodium",
@@ -163,9 +164,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-stubs/wordpress-stubs/issues",
-                "source": "https://github.com/php-stubs/wordpress-stubs/tree/v6.2.0"
+                "source": "https://github.com/php-stubs/wordpress-stubs/tree/v6.2.1"
             },
-            "time": "2023-03-31T09:48:52+00:00"
+            "time": "2023-05-18T04:35:23+00:00"
         },
         {
             "name": "phpstan/extension-installer",
