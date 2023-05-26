@@ -149,10 +149,10 @@ class Schema {
 				'query_var'         => true,
 				'rewrite'           => false,
 				'capabilities'      => [
-					'manage_terms' => 'edit_posts',
-					'edit_terms'   => 'edit_posts',
-					'delete_terms' => 'edit_posts',
-					'assign_terms' => 'edit_posts',
+					'manage_terms' => 'do_not_allow',
+					'edit_terms'   => 'do_not_allow',
+					'delete_terms' => 'do_not_allow',
+					'assign_terms' => 'do_not_allow',
 				],
 				'labels'            => [
 					'name'                       => __( 'Openlab module taxes', 'openlab-modules' ),
