@@ -64,6 +64,7 @@ class Module {
 				'post_type'      => 'any',
 				'posts_per_page' => -1,
 				'fields'         => 'ids',
+				'orderby'        => [ 'menu_order' => 'ASC' ],
 
 				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 				'tax_query'      => [

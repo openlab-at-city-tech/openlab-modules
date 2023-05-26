@@ -1,6 +1,6 @@
 <?php
 /**
- * Definition for module-page-ids endpoint.
+ * Definition for module-pages endpoint.
  *
  * @package openlab-modules
  */
@@ -15,11 +15,11 @@ use \WP_Error;
 use \OpenLab\Modules\Module;
 
 /**
- * Definition for module-page-ids endpoint.
+ * Definition for module-pages endpoint.
  */
-class ModulePageIds extends WP_REST_Controller {
+class ModulePages extends WP_REST_Controller {
 	/**
-	 * Registers the routes for the module-page-ids endpoint.
+	 * Registers the routes for the module-pages endpoint.
 	 *
 	 * @return void
 	 */
@@ -29,7 +29,7 @@ class ModulePageIds extends WP_REST_Controller {
 
 		register_rest_route(
 			$namespace,
-			'/module-page-ids/(?P<module_id>\d+)',
+			'/module-pages/(?P<module_id>\d+)',
 			[
 				[
 					'methods'             => WP_REST_Server::READABLE,
@@ -41,7 +41,7 @@ class ModulePageIds extends WP_REST_Controller {
 	}
 
 	/**
-	 * Permissions callback for reading from the module-page-ids endpoint.
+	 * Permissions callback for reading from the module-pages endpoint.
 	 *
 	 * @param object $request Request object.
 	 * @return bool
@@ -52,7 +52,7 @@ class ModulePageIds extends WP_REST_Controller {
 	}
 
 	/**
-	 * Handles fetching from the module-page-ids endpoint.
+	 * Handles fetching from the module-pages endpoint.
 	 *
 	 * @param object $request Request object.
 	 * @return \WP_REST_Response|\WP_Error
@@ -61,13 +61,32 @@ class ModulePageIds extends WP_REST_Controller {
 		// phpcs:ignore Generic.Commenting.DocComment.MissingShort
 		/** @var \WP_REST_Request $request */
 		$module_id = $request->get_param( 'module_id' );
-		$page_ids  = [];
+		$pages     = [];
 
 		if ( $module_id && is_numeric( $module_id ) ) {
 			$module   = Module::get_instance( (int) $module_id );
 			$page_ids = $module ? $module->get_page_ids() : [];
+
+			$pages = array_map(
+				function( $page_id ) {
+					$page = get_post( $page_id );
+
+					if ( ! $page ) {
+						return null;
+					}
+
+					return [
+						'id'      => $page_id,
+						'title'   => $page->post_title,
+						'order'   => $page->menu_order,
+						'editUrl' => get_edit_post_link( $page_id ),
+						'url'     => get_permalink( $page_id ),
+					];
+				},
+				$page_ids
+			);
 		}
 
-		return rest_ensure_response( $page_ids );
+		return rest_ensure_response( array_filter( $pages ) );
 	}
 }
