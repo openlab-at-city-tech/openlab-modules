@@ -16,24 +16,23 @@ import { select } from '@wordpress/data'
 export default function EditModule( {
 	isSelected
 } ) {
+	const postType = useSelect( ( select ) => select( 'core/editor' ).getCurrentPostType() )
+
+	if ( ! postType || 'openlab_module' !== postType ) {
+		return null
+	}
 
 	const {
 		moduleAcknowledgements,
 		moduleDescription,
-		postType,
 		postTitle
 	} = useSelect( ( select ) => {
 		return {
 			moduleAcknowledgements: select( 'core/editor' ).getEditedPostAttribute( 'meta' ).module_acknowledgements,
 			moduleDescription: select( 'core/editor' ).getEditedPostAttribute( 'meta' ).module_description,
-			postType: select( 'core/editor' ).getCurrentPostType(),
 			postTitle: select( 'core/editor' ).getEditedPostAttribute( 'title' )
 		}
 	}, [] )
-
-	if ( 'openlab_module' !== postType ) {
-		return null;
-	}
 
 	const { editPost } = useDispatch( 'core/editor' )
 
