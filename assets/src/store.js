@@ -2,7 +2,8 @@ import apiFetch from '@wordpress/api-fetch'
 import { registerStore } from '@wordpress/data'
 
 const DEFAULT_STATE = {
-	modulePagesByModuleId: {}
+	modulePagesByModuleId: {},
+	pageModulesByPageId: {}
 }
 
 const STORE_NAME = 'openlab-modules'
@@ -12,6 +13,14 @@ const actions = {
 		return {
 			type: 'FETCH_FROM_API',
 			path
+		}
+	},
+
+	setPageModules( pageId, pageModules ) {
+		return {
+			type: 'SET_PAGE_MODULES',
+			pageId,
+			pageModules
 		}
 	},
 
@@ -35,6 +44,15 @@ const reducer = ( state = DEFAULT_STATE, action ) => {
 				}
 			}
 
+		case 'SET_PAGE_MODULES' :
+			return {
+				...state,
+				pageModulesByPageId: {
+					...state.pageModulesByPageId,
+					[ action.pageId ]: action.pageModules
+				}
+			}
+
 		default :
 			return state
 	}
@@ -53,13 +71,25 @@ const selectors = {
 
 		return modulePages
 	},
+	getPageModules( state, pageId ) {
+		const { pageModulesByPageId } = state
+		const pageModules = pageModulesByPageId[ pageId ]
+
+		return pageModules
+	},
 }
 
 const resolvers = {
 	*getModulePages( moduleId ) {
+		console.trace()
 		const path = '/openlab-modules/v1/module-pages/' + moduleId
 		const modulePages = yield actions.fetchFromAPI( path )
 		return actions.setModulePages( moduleId, modulePages )
+	},
+	*getPageModules( pageId ) {
+		const path = '/openlab-modules/v1/page-modules/' + pageId
+		const pageModules = yield actions.fetchFromAPI( path )
+		return actions.setPageModules( pageId, pageModules )
 	}
 }
 

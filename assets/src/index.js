@@ -27,3 +27,13 @@ registerPlugin(
 		render: ModulePages
 	}
 )
+
+// Add Module controls to pages.
+import PageModules from './components/PageModules'
+registerPlugin(
+	'openlab-module-pages-modules-component',
+	{
+		icon: 'users',
+		render: PageModules
+	}
+)

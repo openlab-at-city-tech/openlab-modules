@@ -54,7 +54,7 @@ class API {
 	 * @return void
 	 */
 	public function register_endpoints() {
-		$class_names = [ 'ModulePages' ];
+		$class_names = [ 'ModulePages', 'PageModules' ];
 
 		foreach ( $class_names as $class_name ) {
 			$class_name_with_namespace      = __NAMESPACE__ . '\\Endpoints\\' . $class_name;
