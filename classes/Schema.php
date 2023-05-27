@@ -233,5 +233,18 @@ class Schema {
 				'description'    => __( 'Module Page IDs', 'openlab-modules' ),
 			]
 		);
+
+		register_meta(
+			'post',
+			'link_to_module',
+			[
+				// @todo This should be dynamic in PHP and also in JS.
+				'object_subtype' => 'page',
+				'type'           => 'integer',
+				'single'         => true,
+				'show_in_rest'   => true,
+				'description'    => __( 'Link to Module', 'openlab-modules' ),
+			]
+		);
 	}
 }

@@ -39,6 +39,8 @@ class Editor {
 	 */
 	public function init() {
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_assets' ] );
+
+		add_action( 'save_post', [ $this, 'link_to_module_on_post_creation' ] );
 	}
 
 	/**
@@ -89,5 +91,27 @@ class Editor {
 			[],
 			$blocks_asset_file['version']
 		);
+	}
+
+	/**
+	 * Links a post to a module on post creation, if necessary.
+	 *
+	 * @param int $post_id ID of the post.
+	 * @return void
+	 */
+	public function link_to_module_on_post_creation( $post_id ) {
+		$link_to_module = get_post_meta( $post_id, 'link_to_module', true );
+		if ( ! $link_to_module || ! is_numeric( $link_to_module ) ) {
+			return;
+		}
+
+		$module = Module::get_instance( (int) $link_to_module );
+		if ( ! $module ) {
+			return;
+		}
+
+		if ( $module->link_page_to_module( $post_id ) ) {
+			delete_post_meta( $post_id, 'link_to_module' );
+		}
 	}
 }
