@@ -25,5 +25,8 @@ class App {
 
 		$api = API::get_instance();
 		$api->init();
+
+		$frontend = Frontend::get_instance();
+		$frontend->init();
 	}
 }

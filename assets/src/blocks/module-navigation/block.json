@@ -7,7 +7,13 @@
     "icon": "menu",
     "description": "Shows the table of contents for a Module.",
     "supports": {
-        "anchor": true
+      "anchor": true
+    },
+    "attributes": {
+      "moduleId": {
+        "type": "integer",
+        "default": 0
+      }
     },
     "textdomain": "openlab-modules",
     "editorScript": "file:./index.js",

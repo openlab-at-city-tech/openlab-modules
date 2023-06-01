@@ -5,8 +5,8 @@
 		"@wordpress/scripts": "^26.5.0"
 	},
 	"scripts": {
-		"build": "wp-scripts build assets/src/index.js",
-		"start": "wp-scripts start assets/src/index.js"
+		"build": "wp-scripts build assets/src/frontend.js assets/src/index.js",
+		"start": "wp-scripts start assets/src/frontend.js assets/src/index.js"
 	},
 	"dependencies": {
 		"@dnd-kit/sortable": "^7.0.2",

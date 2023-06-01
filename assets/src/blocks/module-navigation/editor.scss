@@ -1,0 +1,13 @@
+@use './block';
+
+.wp-block-openlab-modules-module-navigation {
+	ul.openlab-modules-module-navigation-list {
+		list-style-type: none !important;
+		pointer-events: none;
+	}
+}
+
+.openlab-modules-gloss {
+	opacity: .7;
+	font-style: italic;
+}

@@ -32,9 +32,8 @@ class Module {
 	 * @return false|\OpenLab\Modules\Module False if no instance is found.
 	 */
 	public static function get_instance( $module_id ) {
-		$post = get_post( $module_id );
-
-		if ( ! $post || Schema::get_module_post_type() !== $post->post_type ) {
+		$post = self::get_post_by_id( $module_id );
+		if ( ! $post ) {
 			return false;
 		}
 
@@ -104,5 +103,60 @@ class Module {
 			return [];
 		}
 		return wp_list_pluck( $terms, 'term_id' );
+	}
+
+	/**
+	 * Gets the post associated with a module id.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return \WP_Post|null
+	 */
+	protected static function get_post_by_id( $post_id ) {
+		$post = get_post( $post_id );
+
+		if ( ! $post || Schema::get_module_post_type() !== $post->post_type ) {
+			return null;
+		}
+
+		return $post;
+	}
+
+	/**
+	 * Gets the post associated with the current module.
+	 *
+	 * @return \WP_Post|null
+	 */
+	protected function get_post() {
+		return self::get_post_by_id( $this->id );
+	}
+
+	/**
+	 * Gets the title of the module.
+	 *
+	 * @return string
+	 */
+	public function get_title() {
+		$post = $this->get_post();
+
+		if ( ! $post ) {
+			return '';
+		}
+
+		return $post->post_title;
+	}
+
+	/**
+	 * Gets the URL of the module.
+	 *
+	 * @return string
+	 */
+	public function get_url() {
+		$post = $this->get_post();
+
+		if ( ! $post ) {
+			return '';
+		}
+
+		return get_permalink( $post );
 	}
 }

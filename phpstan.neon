@@ -14,3 +14,8 @@ parameters:
     - ./vendor/
     - ./node_modules/
     - ./tests/
+
+  ignoreErrors:
+    - # $args is always passed
+      message: '#Variable \$args might not be defined.#'
+      path: templates/blocks/*

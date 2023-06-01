@@ -67,6 +67,11 @@ const controls = {
 const selectors = {
 	getModulePages( state, moduleId ) {
 		const { modulePagesByModuleId } = state
+
+		if ( 0 === moduleId ) {
+			return []
+		}
+
 		const modulePages = modulePagesByModuleId[ moduleId ]
 
 		return modulePages
@@ -81,7 +86,6 @@ const selectors = {
 
 const resolvers = {
 	*getModulePages( moduleId ) {
-		console.trace()
 		const path = '/openlab-modules/v1/module-pages/' + moduleId
 		const modulePages = yield actions.fetchFromAPI( path )
 		return actions.setModulePages( moduleId, modulePages )

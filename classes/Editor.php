@@ -21,7 +21,7 @@ class Editor {
 	/**
 	 * Gets the singleton instance.
 	 *
-	 * @return \OpenLab\Modules\Schema
+	 * @return \OpenLab\Modules\Editor
 	 */
 	public static function get_instance() {
 		static $instance;
@@ -53,7 +53,7 @@ class Editor {
 	 * @access protected
 	 * @return array{"dependencies": string[], "version": string}
 	 */
-	protected function get_blocks_asset_file() {
+	public static function get_blocks_asset_file() {
 		$blocks_dir        = ROOT_DIR . '/build/';
 		$blocks_asset_file = include $blocks_dir . 'index.asset.php';
 
@@ -78,12 +78,16 @@ class Editor {
 	 * @return void
 	 */
 	public function register_dynamic_blocks() {
-		$blocks_asset_file = $this->get_blocks_asset_file();
-
 		register_block_type(
 			'openlab-modules/module-navigation',
 			[
 				'api_version'     => '2',
+				'attributes'      => [
+					'moduleId' => [
+						'type'    => 'integer',
+						'default' => 0,
+					],
+				],
 				'render_callback' => function( $attributes, $content ) {
 					return $this->render_block( 'module-navigation', $attributes, $content );
 				},
@@ -133,7 +137,7 @@ class Editor {
 	 * @return void
 	 */
 	public function enqueue_block_assets() {
-		$blocks_asset_file = $this->get_blocks_asset_file();
+		$blocks_asset_file = self::get_blocks_asset_file();
 
 		wp_enqueue_script(
 			'openlab-modules-dashboard',
