@@ -88,7 +88,7 @@ class Schema {
 			[
 				'labels'            => [
 					'name'                  => __( 'Modules', 'openlab-modules' ),
-					'singular_name'         => __( 'Modules', 'openlab-modules' ),
+					'singular_name'         => __( 'Module', 'openlab-modules' ),
 					'all_items'             => __( 'All Modules', 'openlab-modules' ),
 					'archives'              => __( 'Modules Archives', 'openlab-modules' ),
 					'attributes'            => __( 'Modules Attributes', 'openlab-modules' ),
