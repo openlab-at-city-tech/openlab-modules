@@ -1,0 +1,16 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 2,
+    "name": "openlab-modules/module-navigation",
+    "title": "Module Navigation",
+    "category": "openlab-modules",
+    "icon": "menu",
+    "description": "Shows the table of contents for a Module.",
+    "supports": {
+        "anchor": true
+    },
+    "textdomain": "openlab-modules",
+    "editorScript": "file:./index.js",
+    "editorStyle": "file:./index.css",
+    "style": "file:./style-index.css"
+}

@@ -4,6 +4,11 @@
 import './store'
 
 /**
+ * Blocks.
+ */
+import './blocks/module-navigation'
+
+/**
  * Components.
  */
 import { registerPlugin } from '@wordpress/plugins';

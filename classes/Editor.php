@@ -38,6 +38,8 @@ class Editor {
 	 * @return void
 	 */
 	public function init() {
+		add_action( 'init', [ $this, 'register_dynamic_blocks' ] );
+
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_assets' ] );
 
 		add_action( 'save_post', [ $this, 'link_to_module_on_post_creation' ] );
@@ -65,6 +67,62 @@ class Editor {
 		);
 
 		return $blocks_asset_file;
+	}
+
+	/**
+	 * Registers dynamic blocks.
+	 *
+	 * These are the blocks that are rendered on the server in PHP, and so
+	 * much be registered with WP in PHP.
+	 *
+	 * @return void
+	 */
+	public function register_dynamic_blocks() {
+		$blocks_asset_file = $this->get_blocks_asset_file();
+
+		register_block_type(
+			'openlab-modules/module-navigation',
+			[
+				'api_version'     => '2',
+				'render_callback' => function( $attributes, $content ) {
+					return $this->render_block( 'module-navigation', $attributes, $content );
+				},
+			]
+		);
+	}
+
+	/**
+	 * Block rendering method.
+	 *
+	 * Loads from templates/blocks.
+	 *
+	 * @param string  $block_type Block type.
+	 * @param mixed[] $attributes Attribute array.
+	 * @param string  $content    Block content.
+	 * @return string
+	 */
+	public function render_block( $block_type, $attributes, $content ) {
+		$template_args = array_merge(
+			$attributes,
+			array(
+				'content' => $content,
+			)
+		);
+
+		$template_name = $block_type . '.php';
+
+		// Allow theme overrides.
+		$located = locate_template( $template_name );
+		if ( ! $located ) {
+			$located = ROOT_DIR . '/templates/blocks/' . $template_name;
+		}
+
+		ob_start();
+		load_template( $located, false, $template_args );
+		$contents = ob_get_contents();
+		ob_end_clean();
+
+		return (string) $contents;
 	}
 
 	/**
