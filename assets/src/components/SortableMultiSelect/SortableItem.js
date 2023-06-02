@@ -45,7 +45,10 @@ const SortableItem = (props) => {
 			>{label}</div>
 
 			<div>
-				<a href={editUrl}>{ __( 'Edit', 'openlab-modules' ) }</a> |
+				<a href={editUrl}>{ __( 'Edit', 'openlab-modules' ) }</a>
+				&nbsp;|&nbsp;
+				<a href={url}>{ __( 'View', 'openlab-modules' ) }</a>
+				&nbsp;|&nbsp;
 				<a
 					href={editUrl}
 					onClick={(e) => {
