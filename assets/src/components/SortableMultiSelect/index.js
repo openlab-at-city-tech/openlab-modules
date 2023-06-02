@@ -87,7 +87,7 @@ const SortableMultiSelect = (props) => {
 
 	const handleRemoveClick = (itemHandle) => {
 		const itemId = Number( itemHandle.substr( 9 ) )
-		const itemIndex = findSelectedOptionIndexByValue( itemId )
+		const itemIndex = findSelectedOptionIndexById( itemId )
 
 		const newSelectedOptions = [...options.slice(0, itemIndex), ...options.slice(itemIndex + 1 )]
 		onChange( newSelectedOptions )
