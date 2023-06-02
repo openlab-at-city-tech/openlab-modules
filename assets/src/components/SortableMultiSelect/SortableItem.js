@@ -37,13 +37,6 @@ const SortableItem = (props) => {
 			{...attributes}
 			className={itemClassnames}
 		>
-			<button
-				className='sortable-multi-select-item-remove'
-				onClick={() => handleRemoveClick(id)}
-			>
-				<span className="screen-reader-text">{ __( 'Remove item', 'openlab-modules' ) }</span>
-			</button>
-
 			<div
 				className='sortable-multi-select-item-handle'
 				onMouseEnter={() => setHovered(true)}
@@ -52,7 +45,14 @@ const SortableItem = (props) => {
 			>{label}</div>
 
 			<div>
-				<a href={editUrl}>{ __( 'Edit', 'openlab-modules' ) }</a>
+				<a href={editUrl}>{ __( 'Edit', 'openlab-modules' ) }</a> |
+				<a
+					href={editUrl}
+					onClick={(e) => {
+						e.preventDefault()
+						handleRemoveClick( id )
+					}}
+				>{ __( 'Remove', 'openlab-modules' ) }</a>
 			</div>
     </Item>
   );
