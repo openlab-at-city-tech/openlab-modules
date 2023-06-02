@@ -26,6 +26,20 @@ const SortableMultiSelect = (props) => {
 
 	const [ activeId, setActiveId ] = useState( null )
 
+	const findSelectedOptionIndexById = (id) => {
+		for ( var k in options ) {
+			if ( id === options[k].id ) {
+				return k
+			} else {
+				continue
+			}
+		}
+
+		return -1
+	}
+
+	const activeItem = activeId ? options[ findSelectedOptionIndexById( Number( activeId.substr( 9 ) ) ) ] : null
+
 	const sensors = useSensors(
 		useSensor(PointerSensor),
 		useSensor(KeyboardSensor, {
@@ -42,11 +56,11 @@ const SortableMultiSelect = (props) => {
 		const { active, over } = event
 
 		if ( active.id !== over.id ) {
-			const oldValue = Number( active.id.substr( 9 ) )
-			const newValue = Number( over.id.substr( 9 ) )
+			const oldId = Number( active.id.substr( 9 ) )
+			const newId = Number( over.id.substr( 9 ) )
 
-			const oldIndex = findSelectedOptionIndexByValue( oldValue )
-			const newIndex = findSelectedOptionIndexByValue( newValue )
+			const oldIndex = findSelectedOptionIndexById( oldId )
+			const newIndex = findSelectedOptionIndexById( newId )
 
 			const sorted = arrayMove( options, oldIndex, newIndex )
 
@@ -65,18 +79,6 @@ const SortableMultiSelect = (props) => {
 		);
 		return clone;
 	};
-
-	const findSelectedOptionIndexByValue = (value) => {
-		for ( var k in options ) {
-			if ( value === options[k].value ) {
-				return k
-			} else {
-				continue
-			}
-		}
-
-		return -1
-	}
 
 	const onSelect = (newSelectedOption) => {
 		const newSelectedOptions = [...options, newSelectedOption ]
@@ -99,6 +101,7 @@ const SortableMultiSelect = (props) => {
 				<DndContext
 					collisionDetection={closestCenter}
 					onDragEnd={handleDragEnd}
+					onDragStart={handleDragStart}
 					sensors={sensors}
 				>
 					<SortableContext
@@ -121,7 +124,16 @@ const SortableMultiSelect = (props) => {
 					</SortableContext>
 
 					<DragOverlay>
-						{activeId ? <Item id={activeId} /> : null}
+						{activeItem ? (
+							<SortableItem
+								id={activeId}
+								key={activeId}
+								value={activeItem.id}
+								label={activeItem.title}
+								url={activeItem.url}
+								editUrl={activeItem.editUrl}
+							/>
+						) : null}
 					</DragOverlay>
 				</DndContext>
 			</div>
