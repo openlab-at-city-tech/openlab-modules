@@ -99,7 +99,6 @@ export default function edit( {
 			<div { ...blockProps() }>
 				<div className="openlab-modules-module-navigation">
 					<p className="openlab-modules-module-navigation-heading">
-						// translators: Module link or title.
 						{ sprintf( __( 'Contents for Module: %s' ), selectedModuleTitle ) }
 					</p>
 
