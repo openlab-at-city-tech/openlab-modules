@@ -33,3 +33,23 @@
 	font-weight: 700;
 	width: 100%;
 }
+
+.gutenberg-post-picker {
+	width: 100%;
+
+	label {
+		overflow: hidden;
+		clip: rect (1px, 1px, 1px, 1px);
+		clip-path: inset (50%);
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		border: 0;
+		word-wrap: normal;
+	}
+
+	input {
+		width: 100%;
+	}
+}

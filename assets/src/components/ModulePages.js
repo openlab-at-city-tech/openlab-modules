@@ -8,13 +8,14 @@ import {
 } from '@wordpress/components'
 
 import { __ } from '@wordpress/i18n'
-import { useDispatch, useSelect } from '@wordpress/data'
+import { dispatch, select, useDispatch, useSelect } from '@wordpress/data'
 import { PluginDocumentSettingPanel } from '@wordpress/edit-post'
+
+import { PostPicker } from 'gutenberg-post-picker'
 
 import SortableMultiSelect from './SortableMultiSelect'
 
 import { useState } from '@wordpress/element'
-import { select } from '@wordpress/data'
 
 import './module-pages.scss'
 
@@ -23,7 +24,6 @@ export default function EditModule( {
 } ) {
 	const [ addMode, setAddMode ] = useState( '' )
 	const [ createTitle, setCreateTitle ] = useState( '' )
-	const [ existingSearch, setExistingSearch ] = useState( '' )
 
 	const postType = useSelect( ( select ) => select( 'core/editor' ).getCurrentPostType() )
 
@@ -74,6 +74,23 @@ export default function EditModule( {
 		}
 
 		editPostMeta( { module_page_ids: JSON.stringify( sortedIds ) } )
+	}
+
+	const onAddExistingPage = ( newPage ) => {
+		const newModulePageIds = [ ...modulePageIds, newPage.id ]
+
+		editPostMeta( { module_page_ids: JSON.stringify( newModulePageIds ) } )
+
+		const newModulePage = {
+			editUrl: newPage.editUrl,
+			id: newPage.id,
+			title: newPage.title.rendered,
+			url: newPage.link
+		}
+
+		const newModulePages = Object.assign( {}, modulePages, { [ newPage.id ]: newModulePage } )
+
+		dispatch( 'openlab-modules' ).setModulePages( postId, newModulePages )
 	}
 
 	return (
@@ -150,13 +167,12 @@ export default function EditModule( {
 
 					{ 'existing' === addMode && (
 						<PanelRow>
-							<TextControl
-								className="add-mode-text-field add-mode-existing-search"
-								onChange={ ( newSearch ) => setExistingSearch( newSearch ) }
+							<PostPicker
 								hideLabelFromVision={ true }
+								onSelectPost={ onAddExistingPage }
 								label={ __( 'Search for an existing page.', 'openlab-modules' ) }
 								placeholder={ __( 'Search for an existing page.', 'openlab-modules' ) }
-								value={ existingSearch }
+								postTypes={ [ 'pages' ] }
 							/>
 						</PanelRow>
 					) }

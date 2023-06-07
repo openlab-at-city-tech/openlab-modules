@@ -57,6 +57,8 @@ class Schema {
 		add_action( 'init', [ $this, 'register_taxonomies' ], 12 );
 		add_action( 'init', [ $this, 'set_up_cpttax' ], 14 );
 		add_action( 'init', [ $this, 'register_metas' ], 16 );
+
+		add_action( 'rest_api_init', [ $this, 'register_rest_fields' ] );
 	}
 
 	/**
@@ -244,6 +246,29 @@ class Schema {
 				'single'         => true,
 				'show_in_rest'   => true,
 				'description'    => __( 'Link to Module', 'openlab-modules' ),
+			]
+		);
+	}
+
+	/**
+	 * Registers fields for REST API responses.
+	 *
+	 * @return void
+	 */
+	public function register_rest_fields() {
+		register_rest_field(
+			'page',
+			'editUrl',
+			[
+				'get_callback'    => function( $object ) {
+					if ( ! current_user_can( 'edit_post', $object['id'] ) ) {
+						return null;
+					}
+
+					return get_edit_post_link( $object['id'], '' );
+				},
+				'update_callback' => null,
+				'schema'          => null,
 			]
 		);
 	}

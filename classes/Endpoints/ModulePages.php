@@ -78,7 +78,6 @@ class ModulePages extends WP_REST_Controller {
 				$pages[ $page_id ] = [
 					'id'      => $page_id,
 					'title'   => $page->post_title,
-					'order'   => $page->menu_order,
 					'editUrl' => get_edit_post_link( $page_id ),
 					'url'     => get_permalink( $page_id ),
 				];
