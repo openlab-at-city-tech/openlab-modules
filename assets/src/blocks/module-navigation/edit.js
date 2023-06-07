@@ -41,7 +41,8 @@ export default function edit( {
 
 	const {
 		allModules,
-		thisModulePages
+		thisModulePages,
+		thisModulePageIds
 	} = useSelect( ( select ) => {
 		const allModules = select( 'core' ).getEntityRecords(
 			'postType',
@@ -55,8 +56,13 @@ export default function edit( {
 
 		const thisModulePages = select( 'openlab-modules' ).getModulePages( moduleId )
 
+		const thisModule = select( 'core' ).getEntityRecord( 'postType', 'openlab_module', moduleId )
+		const thisModulePageIdsRaw = thisModule?.meta?.module_page_ids || null
+		const thisModulePageIds = thisModulePageIdsRaw ? JSON.parse( thisModulePageIdsRaw ) : []
+
 		return {
 			allModules,
+			thisModulePageIds,
 			thisModulePages
 		}
 	}, [ moduleId ] )
@@ -72,12 +78,14 @@ export default function edit( {
 	const selectedModuleTitle = selectedModuleObject ? selectedModuleObject.title.rendered : ''
 
 	const modulePagesForDisplay = []
-	for ( const modulePageId in thisModulePages ) {
-		modulePagesForDisplay.push( {
-			id: thisModulePages[ modulePageId ].id,
-			url: thisModulePages[ modulePageId ].url,
-			title: thisModulePages[ modulePageId ].title
-		} )
+	for ( const modulePageId of thisModulePageIds ) {
+		if ( thisModulePages && thisModulePages.hasOwnProperty( modulePageId ) ) {
+			modulePagesForDisplay.push( {
+				id: thisModulePages[ modulePageId ].id,
+				url: thisModulePages[ modulePageId ].url,
+				title: thisModulePages[ modulePageId ].title
+			} )
+		}
 	}
 
 	return (
