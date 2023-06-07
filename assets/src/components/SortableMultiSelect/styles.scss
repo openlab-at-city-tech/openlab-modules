@@ -14,6 +14,14 @@
 	margin-bottom: 5px;
 	padding: 6px 12px 6px 6px;
 	width: 100%;
+
+	a {
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
 }
 
 .sortable-multi-select-item-hover {
@@ -21,7 +29,7 @@
 }
 
 .sortable-multi-select-item-handle {
-	cursor: grab;
+	cursor: move;
 	font-weight: 700;
 	width: 100%;
 }
