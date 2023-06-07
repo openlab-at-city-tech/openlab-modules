@@ -13,11 +13,18 @@ import { PluginDocumentSettingPanel } from '@wordpress/edit-post'
 
 import SortableMultiSelect from './SortableMultiSelect'
 
+import { useState } from '@wordpress/element'
 import { select } from '@wordpress/data'
+
+import './module-pages.scss'
 
 export default function EditModule( {
 	isSelected
 } ) {
+	const [ addMode, setAddMode ] = useState( '' )
+	const [ createTitle, setCreateTitle ] = useState( '' )
+	const [ existingSearch, setExistingSearch ] = useState( '' )
+
 	const postType = useSelect( ( select ) => select( 'core/editor' ).getCurrentPostType() )
 
 	if ( ! postType || 'openlab_module' !== postType ) {
@@ -70,17 +77,92 @@ export default function EditModule( {
 	}
 
 	return (
-		<PluginDocumentSettingPanel
-			name="openlab-modules-edit-module"
-			title={ __( 'Module Pages', 'openlab-modules' ) }
-			>
+		<>
+			<PluginDocumentSettingPanel
+				name="openlab-modules-module-pages"
+				title={ __( 'Module Pages', 'openlab-modules' ) }
+				>
 
-			<PanelRow>
-				<SortableMultiSelect
-					options={sortedOptions}
-					onChange={onSort}
-				/>
-			</PanelRow>
-		</PluginDocumentSettingPanel>
+				<PanelRow>
+					<SortableMultiSelect
+						options={sortedOptions}
+						onChange={onSort}
+					/>
+				</PanelRow>
+			</PluginDocumentSettingPanel>
+
+			<PluginDocumentSettingPanel
+				name="openlab-modules-add-page-to-module"
+				title={ __( 'Add Page to Module', 'openlab-modules' ) }
+				>
+
+				<fieldset>
+					<PanelRow>
+						<legend>{ __( 'Add a page to this module by choosing one of the following options', 'openlab-modules' ) }</legend>
+					</PanelRow>
+
+					<PanelRow>
+						<div className="add-mode-toggle">
+							<Button
+								onClick={ () => setAddMode( 'create' ) }
+								text={ __( 'Create New Page', 'openlab-modules' ) }
+								variant="primary"
+							/>
+
+							{ 'create' === addMode && (
+								<span
+									className="add-mode-cancel"
+									onClick={ () => setAddMode( '' ) }
+								>{'\u2716'}</span>
+							) }
+						</div>
+					</PanelRow>
+
+					{ 'create' === addMode && (
+						<PanelRow>
+							<TextControl
+								className="add-mode-text-field add-mode-create-title"
+								onChange={ ( newTitle ) => setCreateTitle( newTitle ) }
+								hideLabelFromVision={ true }
+								label={ __( 'Enter a title for the new page', 'openlab-modules' ) }
+								placeholder={ __( 'Enter a title for the new page', 'openlab-modules' ) }
+								value={ createTitle }
+							/>
+						</PanelRow>
+					) }
+
+					<PanelRow>
+						<div className="add-mode-toggle">
+							<Button
+								onClick={ () => setAddMode( 'existing' ) }
+								text={ __( 'Add Existing Page', 'openlab-modules' ) }
+								variant="primary"
+							/>
+
+							{ 'existing' === addMode && (
+								<span
+									className="add-mode-cancel"
+									onClick={ () => setAddMode( '' ) }
+								>{'\u2716'}</span>
+							) }
+						</div>
+					</PanelRow>
+
+					{ 'existing' === addMode && (
+						<PanelRow>
+							<TextControl
+								className="add-mode-text-field add-mode-existing-search"
+								onChange={ ( newSearch ) => setExistingSearch( newSearch ) }
+								hideLabelFromVision={ true }
+								label={ __( 'Search for an existing page.', 'openlab-modules' ) }
+								placeholder={ __( 'Search for an existing page.', 'openlab-modules' ) }
+								value={ existingSearch }
+							/>
+						</PanelRow>
+					) }
+
+				</fieldset>
+			</PluginDocumentSettingPanel>
+		</>
 	);
 }

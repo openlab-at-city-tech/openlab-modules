@@ -1,0 +1,15 @@
+.add-mode-toggle {
+	align-items: flex-end;
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+
+	.add-mode-cancel {
+		color: #aaa;
+		cursor: pointer;
+	}
+}
+
+.add-mode-text-field {
+	width: 100%;
+}
