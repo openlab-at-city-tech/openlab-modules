@@ -60,6 +60,7 @@ class Schema {
 
 		add_action( 'rest_api_init', [ $this, 'register_rest_fields' ] );
 
+		// Save actions.
 		add_action( 'updated_post_meta', [ $this, 'validate_module_pages' ], 10, 3 );
 	}
 
@@ -276,23 +277,27 @@ class Schema {
 	}
 
 	/**
-	 * Ensures that pages in the module_page_ids array are linked via taxonomy to the module.
+	 * Performs validation tasks when module_page_ids array is saved.
 	 *
-	 * @param int    $meta_id  Meta ID.
-	 * @param int    $post_id  Post ID.
-	 * @param string $meta_key Meta key.
+	 * - Ensures that pages in the module_page_ids array are linked via taxonomy to the module.
+	 * - Inserts Navigation block, if necessary.
+	 *
+	 * @param int    $meta_id   Meta ID.
+	 * @param int    $module_id Post ID.
+	 * @param string $meta_key  Meta key.
 	 * @return void
 	 */
-	public function validate_module_pages( $meta_id, $post_id, $meta_key ) {
+	public function validate_module_pages( $meta_id, $module_id, $meta_key ) {
 		if ( 'module_page_ids' !== $meta_key ) {
 			return;
 		}
 
-		$module = Module::get_instance( $post_id );
+		$module = Module::get_instance( $module_id );
 		if ( ! $module ) {
 			return;
 		}
 
+		// Taxonomy linking.
 		$module_page_ids = $module->get_page_ids();
 		$module_term_id  = $module->get_term_id();
 		foreach ( $module_page_ids as $page_id ) {
@@ -303,5 +308,31 @@ class Schema {
 			wp_set_object_terms( $page_id, [ $module_term_id ], self::get_module_taxonomy(), true );
 		}
 
+		// Navigation insertion.
+		$nav_block = [
+			'blockName' => 'openlab-modules/module-navigation',
+			'attrs' => [
+				'moduleId' => $module_id,
+			],
+		];
+
+		$nav_block_markup = serialize_block( $nav_block );
+
+		foreach ( $module_page_ids as $page_id ) {
+			if ( get_post_meta( $page_id, 'openlab_modules_inserted_navigation_' . $module_id ) ) {
+				continue;
+			}
+
+			$page_content = get_post_field( 'post_content', $page_id );
+
+			wp_update_post(
+				[
+					'ID'           => $page_id,
+					'post_content' => $nav_block_markup . "\n" . $page_content,
+				]
+			);
+
+			update_post_meta( $page_id, 'openlab_modules_inserted_navigation_' . $module_id, '1' );
+		}
 	}
 }
