@@ -59,6 +59,8 @@ class Schema {
 		add_action( 'init', [ $this, 'register_metas' ], 16 );
 
 		add_action( 'rest_api_init', [ $this, 'register_rest_fields' ] );
+
+		add_action( 'updated_post_meta', [ $this, 'validate_module_pages' ], 10, 3 );
 	}
 
 	/**
@@ -271,5 +273,35 @@ class Schema {
 				'schema'          => null,
 			]
 		);
+	}
+
+	/**
+	 * Ensures that pages in the module_page_ids array are linked via taxonomy to the module.
+	 *
+	 * @param int    $meta_id  Meta ID.
+	 * @param int    $post_id  Post ID.
+	 * @param string $meta_key Meta key.
+	 * @return void
+	 */
+	public function validate_module_pages( $meta_id, $post_id, $meta_key ) {
+		if ( 'module_page_ids' !== $meta_key ) {
+			return;
+		}
+
+		$module = Module::get_instance( $post_id );
+		if ( ! $module ) {
+			return;
+		}
+
+		$module_page_ids = $module->get_page_ids();
+		$module_term_id  = $module->get_term_id();
+		foreach ( $module_page_ids as $page_id ) {
+			if ( is_object_in_term( $page_id, self::get_module_taxonomy(), $module_term_id ) ) {
+				continue;
+			}
+
+			wp_set_object_terms( $page_id, [ $module_term_id ], self::get_module_taxonomy(), true );
+		}
+
 	}
 }
