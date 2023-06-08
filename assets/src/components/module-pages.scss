@@ -13,3 +13,21 @@
 .add-mode-text-field {
 	width: 100%;
 }
+
+.openlab-modules-add-page-to-module {
+	.progress-spinner {
+		display: inline-block;
+		width: 20px;
+		height: 20px;
+		border-radius: 50%;
+		border: 2px solid #fff;
+		border-top-color: transparent;
+		animation: spin 1s infinite linear;
+	}
+
+	@keyframes spin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+}

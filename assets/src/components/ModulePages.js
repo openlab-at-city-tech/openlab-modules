@@ -17,6 +17,8 @@ import SortableMultiSelect from './SortableMultiSelect'
 
 import { useState } from '@wordpress/element'
 
+import apiFetch from '@wordpress/api-fetch'
+
 import './module-pages.scss'
 
 export default function EditModule( {
@@ -24,6 +26,7 @@ export default function EditModule( {
 } ) {
 	const [ addMode, setAddMode ] = useState( '' )
 	const [ createTitle, setCreateTitle ] = useState( '' )
+	const [ createInProgress, setCreateInProgress ] = useState( false )
 
 	const postType = useSelect( ( select ) => select( 'core/editor' ).getCurrentPostType() )
 
@@ -86,6 +89,43 @@ export default function EditModule( {
 			return
 		}
 
+		addPage( newPage )
+	}
+
+	const onCreateClick = () => {
+		setCreateInProgress( true )
+
+		const postData = {
+			title: createTitle,
+			content: '',
+			status: 'publish',
+			type: 'page'
+		}
+
+		apiFetch({
+			path: '/wp/v2/pages',
+			method: 'POST',
+			data: postData
+		})
+			.then((response) => {
+				// Handle successful response
+				const { id, title, link } = response
+
+				addPage( response )
+
+				setCreateTitle( '' )
+				setCreateInProgress( false )
+				setAddMode( '' )
+			})
+			.catch((error) => {
+				// Handle error
+				console.error('Failed to create post:', error)
+
+				setCreateInProgress( false )
+			})
+	}
+
+	const addPage = ( newPage ) => {
 		const newModulePageIds = [ ...modulePageIds, newPage.id ]
 
 		editPostMeta( { module_page_ids: JSON.stringify( newModulePageIds ) } )
@@ -105,6 +145,7 @@ export default function EditModule( {
 		dispatch( 'openlab-modules' ).setModulePages( postId, newModulePages )
 	}
 
+
 	return (
 		<>
 			<PluginDocumentSettingPanel
@@ -121,6 +162,7 @@ export default function EditModule( {
 			</PluginDocumentSettingPanel>
 
 			<PluginDocumentSettingPanel
+				className="openlab-modules-add-page-to-module"
 				name="openlab-modules-add-page-to-module"
 				title={ __( 'Add Page to Module', 'openlab-modules' ) }
 				>
@@ -148,16 +190,26 @@ export default function EditModule( {
 					</PanelRow>
 
 					{ 'create' === addMode && (
-						<PanelRow>
-							<TextControl
-								className="add-mode-text-field add-mode-create-title"
-								onChange={ ( newTitle ) => setCreateTitle( newTitle ) }
-								hideLabelFromVision={ true }
-								label={ __( 'Enter a title for the new page', 'openlab-modules' ) }
-								placeholder={ __( 'Enter a title for the new page', 'openlab-modules' ) }
-								value={ createTitle }
-							/>
-						</PanelRow>
+						<>
+							<PanelRow>
+								<TextControl
+									className="add-mode-text-field add-mode-create-title"
+									onChange={ ( newTitle ) => setCreateTitle( newTitle ) }
+									hideLabelFromVision={ true }
+									label={ __( 'Enter a title for the new page', 'openlab-modules' ) }
+									placeholder={ __( 'Enter a title for the new page', 'openlab-modules' ) }
+									value={ createTitle }
+								/>
+
+								<Button
+									disabled={ 0 === createTitle.length }
+									onClick={ onCreateClick }
+									variant="primary"
+								>
+									{ createInProgress ? <span className="progress-spinner"></span> : __( 'Create', 'openlab-modules' ) }
+								</Button>
+							</PanelRow>
+						</>
 					) }
 
 					<PanelRow>
