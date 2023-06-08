@@ -2,6 +2,7 @@ import apiFetch from '@wordpress/api-fetch'
 import { registerStore } from '@wordpress/data'
 
 const DEFAULT_STATE = {
+	modulePageIdsByModuleId: {},
 	modulePagesByModuleId: {},
 	pageModulesByPageId: {}
 }
@@ -24,6 +25,14 @@ const actions = {
 		}
 	},
 
+	setModulePageIds( moduleId, modulePageIds ) {
+		return {
+			type: 'SET_MODULE_PAGE_IDS',
+			moduleId,
+			modulePageIds
+		}
+	},
+
 	setModulePages( moduleId, modulePages ) {
 		return {
 			type: 'SET_MODULE_PAGES',
@@ -35,6 +44,15 @@ const actions = {
 
 const reducer = ( state = DEFAULT_STATE, action ) => {
 	switch ( action.type ) {
+		case 'SET_MODULE_PAGE_IDS' :
+			return {
+				...state,
+				modulePageIdsByModuleId: {
+					...state.modulePageIdsByModuleId,
+					[ action.moduleId ]: action.modulePageIds
+				}
+			}
+
 		case 'SET_MODULE_PAGES' :
 			return {
 				...state,
@@ -65,6 +83,18 @@ const controls = {
 }
 
 const selectors = {
+	getModulePageIds( state, moduleId ) {
+		const { modulePageIdsByModuleId } = state
+
+		if ( 0 === moduleId ) {
+			return []
+		}
+
+		const modulePageIds = modulePageIdsByModuleId[ moduleId ]
+
+		return modulePageIds
+	},
+
 	getModulePages( state, moduleId ) {
 		const { modulePagesByModuleId } = state
 
@@ -76,6 +106,7 @@ const selectors = {
 
 		return modulePages
 	},
+
 	getPageModules( state, pageId ) {
 		const { pageModulesByPageId } = state
 		const pageModules = pageModulesByPageId[ pageId ]
@@ -85,11 +116,20 @@ const selectors = {
 }
 
 const resolvers = {
+	*getModulePageIds( moduleId ) {
+		const path = '/wp/v2/openlab_module/' + moduleId
+		const moduleObject = yield actions.fetchFromAPI( path )
+		const modulePageIdsRaw = moduleObject?.meta?.module_page_ids || ''
+		const modulePageIds = modulePageIdsRaw ? JSON.parse( modulePageIdsRaw ) : []
+		return actions.setModulePageIds( moduleId, modulePageIds )
+	},
+
 	*getModulePages( moduleId ) {
 		const path = '/openlab-modules/v1/module-pages/' + moduleId
 		const modulePages = yield actions.fetchFromAPI( path )
 		return actions.setModulePages( moduleId, modulePages )
 	},
+
 	*getPageModules( pageId ) {
 		const path = '/openlab-modules/v1/page-modules/' + pageId
 		const pageModules = yield actions.fetchFromAPI( path )

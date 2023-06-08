@@ -41,8 +41,8 @@ export default function edit( {
 
 	const {
 		allModules,
-		thisModulePages,
-		thisModulePageIds
+		thisModulePageIds,
+		thisModulePages
 	} = useSelect( ( select ) => {
 		const allModules = select( 'core' ).getEntityRecords(
 			'postType',
@@ -56,9 +56,7 @@ export default function edit( {
 
 		const thisModulePages = select( 'openlab-modules' ).getModulePages( moduleId )
 
-		const thisModule = select( 'core' ).getEntityRecord( 'postType', 'openlab_module', moduleId )
-		const thisModulePageIdsRaw = thisModule?.meta?.module_page_ids || null
-		const thisModulePageIds = thisModulePageIdsRaw ? JSON.parse( thisModulePageIdsRaw ) : []
+		const thisModulePageIds = select( 'openlab-modules' ).getModulePageIds( moduleId ) || []
 
 		return {
 			allModules,
@@ -79,7 +77,7 @@ export default function edit( {
 
 	const modulePagesForDisplay = []
 	for ( const modulePageId of thisModulePageIds ) {
-		if ( thisModulePages && thisModulePages.hasOwnProperty( modulePageId ) ) {
+		if ( thisModulePages.hasOwnProperty( modulePageId ) ) {
 			modulePagesForDisplay.push( {
 				id: thisModulePages[ modulePageId ].id,
 				url: thisModulePages[ modulePageId ].url,
