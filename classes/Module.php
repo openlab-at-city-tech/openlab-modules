@@ -95,14 +95,22 @@ class Module {
 	 * Gets IDs of modules to which a page is linked.
 	 *
 	 * @param int $page_id ID of the page.
-	 * @return int[]
+	 * @return int[] IDs of module CPT objects.
 	 */
 	public static function get_module_ids_of_page( $page_id ) {
 		$terms = wp_get_object_terms( $page_id, Schema::get_module_taxonomy() );
 		if ( is_wp_error( $terms ) ) {
 			return [];
 		}
-		return wp_list_pluck( $terms, 'term_id' );
+
+		$module_ids = array_map(
+			function( $term ) {
+				return \HardG\CptTax\Registry::get_post_id_for_term_id( 'module', $term->term_id );
+			},
+			$terms
+		);
+
+		return array_filter( $module_ids );
 	}
 
 	/**

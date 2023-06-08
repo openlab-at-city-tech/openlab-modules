@@ -64,31 +64,25 @@ class PageModules extends WP_REST_Controller {
 		$modules = [];
 
 		if ( $page_id && is_numeric( $page_id ) ) {
-			$module_term_ids = Module::get_module_ids_of_page( (int) $page_id );
+			$module_ids = Module::get_module_ids_of_page( (int) $page_id );
 
 			$modules = array_map(
-				function( $module_term_id ) {
-					$post_id = \HardG\CptTax\Registry::get_post_id_for_term_id( 'module', $module_term_id );
-
-					if ( ! $post_id ) {
-						return;
-					}
-
-					$post = get_post( $post_id );
+				function( $module_id ) {
+					$post = get_post( $module_id );
 
 					if ( ! $post ) {
 						return;
 					}
 
 					return [
-						'id'      => $post_id,
+						'id'      => $module_id,
 						'title'   => $post->post_title,
 						'editUrl' => get_edit_post_link( $post_id ),
 						'url'     => get_permalink( $post_id ),
 					];
 
 				},
-				$module_term_ids
+				$module_ids
 			);
 		}
 
