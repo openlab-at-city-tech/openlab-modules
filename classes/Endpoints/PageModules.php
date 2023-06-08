@@ -77,8 +77,8 @@ class PageModules extends WP_REST_Controller {
 					return [
 						'id'      => $module_id,
 						'title'   => $post->post_title,
-						'editUrl' => get_edit_post_link( $post_id ),
-						'url'     => get_permalink( $post_id ),
+						'editUrl' => get_edit_post_link( $module_id ),
+						'url'     => get_permalink( $module_id ),
 					];
 
 				},
