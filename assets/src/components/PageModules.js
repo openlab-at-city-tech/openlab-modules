@@ -7,7 +7,7 @@ import {
 	__experimentalDivider as Divider
 } from '@wordpress/components'
 
-import { __ } from '@wordpress/i18n'
+import { __, _n } from '@wordpress/i18n'
 import { useDispatch, useSelect } from '@wordpress/data'
 import { PluginDocumentSettingPanel } from '@wordpress/edit-post'
 
@@ -78,7 +78,7 @@ export default function PageModules( {
 			{ isExistingPostWithModules && (
 				<>
 					<PanelRow>
-						{ __( 'This item is linked to the following modules:', 'openlab-modules' ) }
+						{ _n( 'This item is linked to the following module:', 'This item is linked to the following modules:', pageModules.length, 'openlab-modules' ) }
 					</PanelRow>
 
 					{ pageModules.map( (pageModule) => (
