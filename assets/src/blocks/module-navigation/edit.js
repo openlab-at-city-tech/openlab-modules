@@ -13,6 +13,7 @@ import {
 } from '@wordpress/components'
 
 import { useSelect } from '@wordpress/data'
+import { useEffect } from '@wordpress/element'
 
 /**
  * Editor styles.
@@ -41,6 +42,9 @@ export default function edit( {
 
 	const {
 		allModules,
+		currentPostId,
+		currentPostTitle,
+		isNewModule,
 		thisModulePageIds,
 		thisModulePages
 	} = useSelect( ( select ) => {
@@ -58,12 +62,32 @@ export default function edit( {
 
 		const thisModulePageIds = select( 'openlab-modules' ).getModulePageIds( moduleId ) || []
 
+		const currentPostId = select( 'core/editor' ).getCurrentPostId()
+
+		const editedPostId = select( 'core/editor' ).getEditedPostAttribute( 'id' )
+
+		const postStatus = select( 'core/editor' ).getEditedPostAttribute( 'status' )
+		const postType = select( 'core/editor' ).getCurrentPostType()
+		const isNewModule = postStatus && 'auto-draft' === postStatus && postType && 'openlab_module' === postType
+
+		const currentPostTitle = select( 'core/editor' ).getEditedPostAttribute( 'title' )
+
 		return {
 			allModules,
+			currentPostId,
+			currentPostTitle,
+			isNewModule,
 			thisModulePageIds,
 			thisModulePages
 		}
 	}, [ moduleId ] )
+
+	// When inserting into a new module, this block should be associated with the new module.
+	useEffect( () => {
+		if ( ! moduleId && isNewModule && currentPostId ) {
+			setAttributes({ moduleId: currentPostId });
+		}
+	}, [ currentPostId ] );
 
 	const moduleOptions = allModules ? allModules.map( ( module ) => {
 		return {
@@ -72,8 +96,25 @@ export default function edit( {
 		}
 	} ) : []
 
-	const selectedModuleObject = allModules ? allModules.find( ( module ) => module.id === moduleId ) : null
-	const selectedModuleTitle = selectedModuleObject ? selectedModuleObject.title.rendered : ''
+	// During module creation, the new module should appear as one of the dropdown options.
+	if ( isNewModule ) {
+		moduleOptions.unshift(
+			{
+				label: currentPostTitle,
+				value: currentPostId
+			}
+		)
+	}
+
+	// When this block appears in the context of the associated module, the title should live-update.
+	const selectedModuleTitle = () => {
+		if ( isNewModule || ( currentPostId && moduleId === currentPostId ) ) {
+			return currentPostTitle
+		} else {
+			const selectedModuleObject = allModules ? allModules.find( ( module ) => module.id === moduleId ) : null
+			return selectedModuleObject ? selectedModuleObject.title.rendered : ''
+		}
+	}
 
 	const modulePagesForDisplay = []
 	for ( const modulePageId of thisModulePageIds ) {
@@ -105,7 +146,7 @@ export default function edit( {
 			<div { ...blockProps() }>
 				<div className="openlab-modules-module-navigation">
 					<p className="openlab-modules-module-navigation-heading">
-						{ sprintf( __( 'Contents for Module: %s' ), selectedModuleTitle ) }
+						{ sprintf( __( 'Contents for Module: %s' ), selectedModuleTitle() ) }
 					</p>
 
 					<ul className="openlab-modules-module-navigation-list" role="list">

@@ -132,6 +132,9 @@ class Schema {
 				'menu_icon'         => 'dashicons-excerpt-view',
 				'show_in_rest'      => true,
 				'rest_base'         => 'openlab_module',
+				'template'          => [
+					[ 'openlab-modules/module-navigation' ],
+				],
 			]
 		);
 	}
