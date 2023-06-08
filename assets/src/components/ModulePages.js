@@ -80,6 +80,12 @@ export default function EditModule( {
 	}
 
 	const onAddExistingPage = ( newPage ) => {
+		// Don't allow existing pages to be added.
+		const existingIndex = modulePageIds.indexOf( newPage.id )
+		if ( -1 !== existingIndex ) {
+			return
+		}
+
 		const newModulePageIds = [ ...modulePageIds, newPage.id ]
 
 		editPostMeta( { module_page_ids: JSON.stringify( newModulePageIds ) } )
