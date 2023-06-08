@@ -91,7 +91,7 @@ export default function EditModule( {
 		editPostMeta( { module_page_ids: JSON.stringify( newModulePageIds ) } )
 
 		// We mirror the page order in our own store to ensure accuracy of navigation block.
-		dispatch( 'openlab-modules' ).setModulePageIds( postId, sortedIds )
+		dispatch( 'openlab-modules' ).setModulePageIds( postId, newModulePageIds )
 
 		const newModulePage = {
 			editUrl: newPage.editUrl,
