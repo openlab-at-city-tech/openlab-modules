@@ -29,6 +29,9 @@ const SortableItem = (props) => {
 		'sortable-multi-select-item-hover': hovered
 	})
 
+	// The REST API returns escaped characters.
+	const editUrlClean = editUrl.replace( '&amp;', '&' )
+
   return (
     <Item
 			ref={setNodeRef}
@@ -45,7 +48,7 @@ const SortableItem = (props) => {
 			>{label}</div>
 
 			<div>
-				<a href={editUrl}>{ __( 'Edit', 'openlab-modules' ) }</a>
+				<a href={editUrlClean}>{ __( 'Edit', 'openlab-modules' ) }</a>
 				&nbsp;|&nbsp;
 				<a href={url}>{ __( 'View', 'openlab-modules' ) }</a>
 				&nbsp;|&nbsp;
