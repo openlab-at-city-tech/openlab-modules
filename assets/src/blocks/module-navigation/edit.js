@@ -77,7 +77,7 @@ export default function edit( {
 
 	const modulePagesForDisplay = []
 	for ( const modulePageId of thisModulePageIds ) {
-		if ( thisModulePages.hasOwnProperty( modulePageId ) ) {
+		if ( thisModulePages && thisModulePages.hasOwnProperty( modulePageId ) ) {
 			modulePagesForDisplay.push( {
 				id: thisModulePages[ modulePageId ].id,
 				url: thisModulePages[ modulePageId ].url,
