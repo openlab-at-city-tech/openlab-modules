@@ -62,6 +62,7 @@ class Schema {
 
 		// Save actions.
 		add_action( 'updated_post_meta', [ $this, 'validate_module_pages' ], 10, 3 );
+		add_action( 'save_post_' . self::get_module_post_type(), [ $this, 'maybe_create_all_modules_page' ] );
 	}
 
 	/**
@@ -337,5 +338,99 @@ class Schema {
 
 			update_post_meta( $page_id, 'openlab_modules_inserted_navigation_' . $module_id, '1' );
 		}
+	}
+
+	/**
+	 * Conditionally creates the 'All Modules' page when a module is published.
+	 *
+	 * It will be created once, once there's at least one published module.
+	 *
+	 * @param int $post_id ID of the post being saved.
+	 * @return void
+	 */
+	public function maybe_create_all_modules_page( $post_id ) {
+		// We only create the page once. If it's deleted in the future, don't re-create.
+		if ( get_option( 'openlab_created_all_modules_page' ) ) {
+			return;
+		}
+
+		// Only if the module is published.
+		$post = get_post( $post_id );
+		if ( ! $post || 'publish' !== $post->post_status ) {
+			return;
+		}
+
+		$block = [
+			'blockName'   => 'core/query',
+			'attrs'       => [
+				'queryId' => 9,
+				'query'   => [
+					'perPage'  => 3,
+					'pages'    => 0,
+					'offset'   => 0,
+					'postType' => 'openlab_module',
+					'order'    => 'asc',
+					'orderBy'  => 'title',
+					'author'   => '',
+					'search'   => '',
+					'exclude'  => array(),
+					'sticky'   => '',
+					'inherit'  => false,
+					'parents'  => array(),
+				],
+			],
+			'innerBlocks' => [
+				[
+					'blockName'   => 'core/post-template',
+					'innerBlocks' => [
+						[
+							'blockName' => 'core/post-title',
+							'attrs'     => [
+								'isLink' => true,
+							],
+						],
+					],
+				],
+				[
+					'blockName'   => 'core/query-pagination',
+					'innerBlocks' => [
+						[
+							'blockName' => 'core/query-pagination-previous',
+						],
+						[
+							'blockName' => 'core/query-pagination-numbers',
+						],
+						[
+							'blockName' => 'core/query-pagination-next',
+						],
+					],
+				],
+				[
+					'blockName'   => 'core/query-no-results',
+					'innerBlocks' => [
+						[
+							'blockName' => 'core/paragraph',
+							'attrs'     => [
+								'placeholder' => __( 'Add text or blocks that will display when your site has no modules', 'openlab-modules' ),
+							],
+							'innerHTML' => '<p>' . __( 'There are no modules on this site.', 'openlab-modules' ) . '</p>',
+						],
+					],
+				],
+			],
+		];
+
+		$serialized_block = Editor::serialize_block_recursive( $block );
+
+		wp_insert_post(
+			[
+				'post_type'    => 'page',
+				'post_status'  => 'draft',
+				'post_title'   => __( 'All Modules', 'openlab-modules' ),
+				'post_content' => $serialized_block,
+			]
+		);
+
+		update_option( 'openlab_created_all_modules_page', '1' );
 	}
 }

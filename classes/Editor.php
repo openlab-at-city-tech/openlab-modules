@@ -176,4 +176,25 @@ class Editor {
 			delete_post_meta( $post_id, 'link_to_module' );
 		}
 	}
+
+	/**
+	 * Recursive version of serialize_block().
+	 *
+	 * @param mixed[] $block Block definition. See `serialize_block()`.
+	 * @return string
+	 */
+	public static function serialize_block_recursive( $block ) {
+		if ( empty( $block['innerBlocks'] ) || ! is_array( $block['innerBlocks'] ) ) {
+			return serialize_block( $block );
+		}
+
+		$inner_content = [];
+		foreach ( $block['innerBlocks'] as $inner_block ) {
+			$inner_content[] = self::serialize_block_recursive( $inner_block );
+		}
+
+		$block['innerContent'] = $inner_content;
+
+		return serialize_block( $block );
+	}
 }
