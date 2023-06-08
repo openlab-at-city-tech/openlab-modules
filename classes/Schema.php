@@ -311,7 +311,7 @@ class Schema {
 		// Navigation insertion.
 		$nav_block = [
 			'blockName' => 'openlab-modules/module-navigation',
-			'attrs' => [
+			'attrs'     => [
 				'moduleId' => $module_id,
 			],
 		];
