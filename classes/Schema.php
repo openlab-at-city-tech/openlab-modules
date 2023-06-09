@@ -364,9 +364,9 @@ class Schema {
 		$block = [
 			'blockName'   => 'core/query',
 			'attrs'       => [
-				'queryId' => 9,
+				'queryId' => 'all-modules-query',
 				'query'   => [
-					'perPage'  => 3,
+					'perPage'  => 10,
 					'pages'    => 0,
 					'offset'   => 0,
 					'postType' => 'openlab_module',
