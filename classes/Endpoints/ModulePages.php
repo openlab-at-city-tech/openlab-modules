@@ -80,6 +80,7 @@ class ModulePages extends WP_REST_Controller {
 					'title'   => $page->post_title,
 					'editUrl' => get_edit_post_link( $page_id ),
 					'url'     => get_permalink( $page_id ),
+					'status'  => $page->post_status,
 				];
 			}
 		}

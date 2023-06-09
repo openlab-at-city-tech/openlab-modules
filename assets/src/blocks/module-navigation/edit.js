@@ -119,10 +119,39 @@ export default function edit( {
 	const modulePagesForDisplay = []
 	for ( const modulePageId of thisModulePageIds ) {
 		if ( thisModulePages && thisModulePages.hasOwnProperty( modulePageId ) ) {
+			const statusEl = ( postStatus ) => {
+				switch ( postStatus ) {
+					case 'publish' :
+						return (
+							<></>
+						)
+
+					case 'trash' :
+						return (
+							<span className="module-page-status module-page-status-trash">{ __( 'This page is in the trash and will not appear on the frontend.', 'openlab-modules' ) }</span>
+						)
+
+					case 'draft' :
+						return (
+							<span className="module-page-status module-page-status-draft">{ __( 'This page is in draft status and will not appear on the frontend.', 'openlab-modules' ) }</span>
+						)
+
+					default :
+						const elClassName = 'module-page-status module-page-status-' + postStatus
+						return (
+							<span className={ elClassName }>{ __( 'Draft', 'openlab-modules' ) }</span>
+						)
+				}
+			}
+
+			const thisPage = thisModulePages[ modulePageId ]
+
 			modulePagesForDisplay.push( {
-				id: thisModulePages[ modulePageId ].id,
-				url: thisModulePages[ modulePageId ].url,
-				title: thisModulePages[ modulePageId ].title
+				id: thisPage.id,
+				url: thisPage.url,
+				title: thisPage.title,
+				statusCode: thisPage.status,
+				statusEl: statusEl( thisPage.status )
 			} )
 		}
 	}
@@ -150,11 +179,19 @@ export default function edit( {
 					</p>
 
 					<ul className="openlab-modules-module-navigation-list" role="list">
-						{modulePagesForDisplay.map((module)=>
-							<li key={'module-page-' + module.id}>
-								<a href={module.url}>{module.title}</a>
-							</li>
-						)}
+						{ modulePagesForDisplay.map( (module) => {
+							const pageClassName = 'publish' !== module.statusCode ? 'module-page-has-non-publish-status module-page-has-status-' + module.StatusCode : 'module-page-has-publish-status'
+
+							return (
+								<li key={'module-page-' + module.id} className={ pageClassName }>
+									<a href={module.url}>
+										{module.title}
+									</a>
+
+									{module.statusEl}
+								</li>
+							)
+						} ) }
 					</ul>
 				</div>
 

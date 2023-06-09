@@ -11,3 +11,20 @@
 	opacity: .7;
 	font-style: italic;
 }
+
+.module-page-has-non-publish-status {
+	color: #f00;
+	opacity: .7;
+
+	a {
+		color: #f00;
+	}
+}
+
+.module-page-status {
+	border-radius: 2px;
+	display: inline-block;
+	margin-left: 8px;
+	font-size: .8em;
+	font-style: italic;
+}

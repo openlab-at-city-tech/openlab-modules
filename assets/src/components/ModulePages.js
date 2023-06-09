@@ -137,7 +137,8 @@ export default function EditModule( {
 			editUrl: newPage.editUrl,
 			id: newPage.id,
 			title: newPage.title.rendered,
-			url: newPage.link
+			url: newPage.link,
+			status: 'publish'
 		}
 
 		const newModulePages = Object.assign( {}, modulePages, { [ newPage.id ]: newModulePage } )
@@ -154,10 +155,16 @@ export default function EditModule( {
 				>
 
 				<PanelRow>
-					<SortableMultiSelect
-						options={sortedOptions}
-						onChange={onSort}
-					/>
+					{ sortedOptions.length > 0 && (
+						<SortableMultiSelect
+							options={sortedOptions}
+							onChange={onSort}
+						/>
+					) }
+
+					{ sortedOptions.length === 0 && (
+						<p>{ __( 'This module has no pages yet. Add or create a new page using the tools below.', 'openlab-modules' ) }</p>
+					) }
 				</PanelRow>
 			</PluginDocumentSettingPanel>
 
