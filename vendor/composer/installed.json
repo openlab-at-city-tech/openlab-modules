@@ -1,0 +1,46 @@
+{
+    "packages": [
+        {
+            "name": "hard-g/cpt-tax",
+            "version": "v1.0.1",
+            "version_normalized": "1.0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hard-g/cpt-tax.git",
+                "reference": "cd87b64316ea5d563770d488845967760d098fca"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hard-g/cpt-tax/zipball/cd87b64316ea5d563770d488845967760d098fca",
+                "reference": "cd87b64316ea5d563770d488845967760d098fca",
+                "shasum": ""
+            },
+            "time": "2023-05-26T15:24:07+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "HardG\\CptTax\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Boone B Gorges",
+                    "email": "boonebgorges@gmail.com"
+                }
+            ],
+            "description": "WordPress library that creates a taxonomy term corresponding to each item in a given Custom Post Type. Useful for mimicking post-to-post relationships.",
+            "support": {
+                "issues": "https://github.com/hard-g/cpt-tax/issues",
+                "source": "https://github.com/hard-g/cpt-tax/tree/v1.0.1"
+            },
+            "install-path": "../hard-g/cpt-tax"
+        }
+    ],
+    "dev": false,
+    "dev-package-names": []
+}
