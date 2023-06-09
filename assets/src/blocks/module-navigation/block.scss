@@ -7,4 +7,13 @@
 	padding: 20px;
 	border: 1px solid #aaa;
 	border-radius: 2px;
+
+	li.is-current {
+		font-weight: bold;
+		pointer-events: none;
+
+		a {
+			text-decoration: none;
+		}
+	}
 }
