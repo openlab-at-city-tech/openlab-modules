@@ -108,7 +108,7 @@ const SortableMultiSelect = (props) => {
 						items={items}
 						strategy={verticalListSortingStrategy}
 					>
-						{ options.map( ( { editUrl, id, order, title, url } ) => {
+						{ options.map( ( { editUrl, id, order, title, url, status } ) => {
 							return (
 								<SortableItem
 									id={'sortable-' + id}
@@ -116,6 +116,7 @@ const SortableMultiSelect = (props) => {
 									value={id}
 									label={title}
 									url={url}
+									postStatus={status}
 									editUrl={editUrl}
 									handleRemoveClick={handleRemoveClick}
 								/>

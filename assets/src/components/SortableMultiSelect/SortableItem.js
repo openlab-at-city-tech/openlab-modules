@@ -8,7 +8,7 @@ import Item from './Item'
 import './styles.scss'
 
 const SortableItem = (props) => {
-	const { id, label, url, editUrl, handleRemoveClick } = props
+	const { id, label, url, editUrl, postStatus, handleRemoveClick } = props
 
 	const [ hovered, setHovered ] = useState( false )
 
@@ -29,6 +29,24 @@ const SortableItem = (props) => {
 		'sortable-multi-select-item-hover': hovered
 	})
 
+	const getStatusEl = ( postStatus ) => {
+		switch ( postStatus ) {
+			case 'trash' :
+				return (
+					<span className="module-page-inline-status module-page-non-publish-inline-status">{ __( '(Trash)', 'openlab-modules' ) }</span>
+				)
+
+			case 'draft' :
+				return (
+					<span className="module-page-inline-status module-page-non-publish-inline-status">{ __( '(Draft)', 'openlab-modules' ) }</span>
+				)
+
+			case 'publish' :
+			default :
+				return ( <></> )
+		}
+	}
+
 	// The REST API returns escaped characters.
 	const editUrlClean = editUrl.replace( '&amp;', '&' )
 
@@ -45,7 +63,7 @@ const SortableItem = (props) => {
 				onMouseEnter={() => setHovered(true)}
 				onMouseLeave={() => setHovered(false)}
 				{...listeners}
-			>{label}</div>
+			>{label}{getStatusEl(postStatus)}</div>
 
 			<div>
 				<a href={editUrlClean}>{ __( 'Edit', 'openlab-modules' ) }</a>
