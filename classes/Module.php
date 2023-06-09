@@ -55,9 +55,11 @@ class Module {
 	/**
 	 * Gets a list of page IDs.
 	 *
+	 * @param string $type 'publish' to get only those items that are published. 'all' to get all'.
+	 *
 	 * @return int[]
 	 */
-	public function get_page_ids() {
+	public function get_page_ids( $type = 'all' ) {
 		// Stored as JSON for better manipulation in Block Editor.
 		$module_page_ids_raw = get_post_meta( $this->id, 'module_page_ids', true );
 		if ( ! is_string( $module_page_ids_raw ) ) {
@@ -67,6 +69,17 @@ class Module {
 		$page_ids = json_decode( $module_page_ids_raw );
 		if ( ! is_array( $page_ids ) ) {
 			$page_ids = [];
+		}
+
+		$page_ids = array_map( 'intval', $page_ids );
+
+		if ( 'publish' === $type ) {
+			$page_ids = array_filter(
+				$page_ids,
+				function( $page_id ) {
+					return 'publish' === get_post_status( $page_id );
+				}
+			);
 		}
 
 		return array_map( 'intval', $page_ids );

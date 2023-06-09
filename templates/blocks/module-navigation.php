@@ -16,7 +16,7 @@ if ( ! $module ) {
 	return;
 }
 
-$module_page_ids = $module->get_page_ids();
+$module_page_ids = $module->get_page_ids( 'publish' );
 
 wp_enqueue_style( 'openlab-modules-frontend' );
 
