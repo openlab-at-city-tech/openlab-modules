@@ -105,6 +105,27 @@ class Module {
 	}
 
 	/**
+	 * Unlinks a page from the module.
+	 *
+	 * @param int $page_id ID of the page.
+	 * @return bool
+	 */
+	public function unlink_page_from_module( $page_id ) {
+		wp_remove_object_terms( $page_id, [ $this->get_term_id() ], Schema::get_module_taxonomy() );
+
+		$page_ids = array_filter(
+			$this->get_page_ids(),
+			function( $linked_page_id ) use ( $page_id ) {
+				return $linked_page_id !== $page_id;
+			}
+		);
+
+		$updated = update_post_meta( $this->id, 'module_page_ids', wp_json_encode( $page_ids ) );
+
+		return (bool) $updated;
+	}
+
+	/**
 	 * Gets IDs of modules to which a page is linked.
 	 *
 	 * @param int $page_id ID of the page.

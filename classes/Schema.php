@@ -63,6 +63,7 @@ class Schema {
 		// Save actions.
 		add_action( 'updated_post_meta', [ $this, 'validate_module_pages' ], 10, 3 );
 		add_action( 'save_post_' . self::get_module_post_type(), [ $this, 'maybe_create_all_modules_page' ] );
+		add_action( 'before_delete_post', [ $this, 'remove_page_from_modules' ] );
 	}
 
 	/**
@@ -432,5 +433,27 @@ class Schema {
 		);
 
 		update_option( 'openlab_created_all_modules_page', '1' );
+	}
+
+	/**
+	 * Removes an item from all linked modules on deletion.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return void
+	 */
+	public function remove_page_from_modules( $post_id ) {
+		$module_ids = Module::get_module_ids_of_page( $post_id );
+		if ( ! $module_ids ) {
+			return;
+		}
+
+		foreach ( $module_ids as $module_id ) {
+			$module = Module::get_instance( $module_id );
+			if ( ! $module ) {
+				continue;
+			}
+
+			$module->unlink_page_from_module( $post_id );
+		}
 	}
 }
