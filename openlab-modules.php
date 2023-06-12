@@ -24,4 +24,11 @@ const ROOT_FILE = __FILE__;
 require ROOT_DIR . '/constants.php';
 require ROOT_DIR . '/vendor/autoload.php';
 
+register_activation_hook(
+	__FILE__,
+	function() {
+		update_option( 'openlab_modules_rewrite_rules_flushed', '0' );
+	}
+);
+
 App::init();
