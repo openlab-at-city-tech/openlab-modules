@@ -126,7 +126,7 @@ class Schema {
 				'show_ui'           => true,
 				'show_in_nav_menus' => true,
 				'supports'          => [ 'title', 'editor', 'custom-fields' ],
-				'has_archive'       => true,
+				'has_archive'       => false,
 				'rewrite'           => [
 					'slug' => 'modules',
 				],
