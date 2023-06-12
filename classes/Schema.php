@@ -57,6 +57,7 @@ class Schema {
 		add_action( 'init', [ $this, 'register_taxonomies' ], 12 );
 		add_action( 'init', [ $this, 'set_up_cpttax' ], 14 );
 		add_action( 'init', [ $this, 'register_metas' ], 16 );
+		add_action( 'init', [ $this, 'maybe_flush_rewrite_rules' ], 1000 );
 
 		add_action( 'rest_api_init', [ $this, 'register_rest_fields' ] );
 
@@ -125,7 +126,7 @@ class Schema {
 				'show_ui'           => true,
 				'show_in_nav_menus' => true,
 				'supports'          => [ 'title', 'editor', 'custom-fields' ],
-				'has_archive'       => true,
+				'has_archive'       => false,
 				'rewrite'           => [
 					'slug' => 'modules',
 				],
@@ -455,5 +456,19 @@ class Schema {
 
 			$module->unlink_page_from_module( $post_id );
 		}
+	}
+
+	/**
+	 * Registers rewrite rules, if necessary.
+	 *
+	 * @return void
+	 */
+	public function maybe_flush_rewrite_rules() {
+		if ( '1' === get_option( 'openlab_modules_rewrite_rules_flushed' ) ) {
+			return;
+		}
+
+		flush_rewrite_rules( false );
+		update_option( 'openlab_modules_rewrite_rules_flushed', '1' );
 	}
 }
