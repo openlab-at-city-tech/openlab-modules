@@ -154,7 +154,7 @@ class Schema {
 			[
 				'hierarchical'      => false,
 				'public'            => false,
-				'show_in_nav_menus' => true,
+				'show_in_nav_menus' => false,
 				'show_ui'           => true,
 				'show_admin_column' => false,
 				'query_var'         => true,
