@@ -54,7 +54,8 @@ export default function edit( {
 			{
 				order: 'asc',
 				orderby: 'title',
-				per_page: 100
+				per_page: 100,
+				status: 'any'
 			}
 		)
 
@@ -89,9 +90,22 @@ export default function edit( {
 		}
 	}, [ currentPostId ] );
 
+	const optionLabel = ( title, status ) => {
+			switch ( status ) {
+				case 'publish' :
+					return title
+
+				case 'trash' :
+					return sprintf( __( '%s (Trash)', 'openlab-modules' ), title )
+
+				case 'draft' :
+					return sprintf( __( '%s (Draft)', 'openlab-modules' ), title )
+			}
+	}
+
 	const moduleOptions = allModules ? allModules.map( ( module ) => {
 		return {
-			label: module.title.rendered,
+			label: optionLabel( module.title.rendered, module.status ),
 			value: module.id.toString()
 		}
 	} ) : []
