@@ -141,6 +141,18 @@ class Schema {
 				'rest_base'         => 'openlab_module',
 				'template'          => [
 					[ 'openlab-modules/module-navigation' ],
+					[
+						'core/heading',
+						[
+							'placeholder' => __( 'Introduction', 'openlab-modules' ),
+						],
+					],
+					[
+						'core/paragraph',
+						[
+							'placeholder' => __( 'Add an introduction to this module. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', 'openlab-modules' ),
+						],
+					],
 				],
 			]
 		);
