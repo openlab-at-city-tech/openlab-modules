@@ -12,7 +12,7 @@ import {
 	SelectControl
 } from '@wordpress/components'
 
-import { useSelect } from '@wordpress/data'
+import { useSelect, useDispatch } from '@wordpress/data'
 import { useEffect } from '@wordpress/element'
 
 /**
@@ -156,6 +156,23 @@ export default function edit( {
 		}
 	}
 
+	const dispatch = useDispatch()
+
+	const onAddClick = () => {
+		wp.data.dispatch( 'core/edit-post' ).openGeneralSidebar( 'edit-post/document' )
+
+		setTimeout( () => {
+			const addPagePanel = document.querySelector( '.openlab-modules-add-page-to-module' )
+			if (addPagePanel) {
+					wp.data.dispatch( 'core/block-editor' ).clearSelectedBlock();
+					addPagePanel.classList.add('highlight');
+					setTimeout(() => {
+						addPagePanel.classList.remove('highlight');
+					}, 5000);
+			}
+		}, 100 )
+	}
+
 	return (
 		<>
 			<InspectorControls>
@@ -196,7 +213,17 @@ export default function edit( {
 				</div>
 
 				{ isSelected && (
-					<p className="openlab-modules-gloss">{ __( 'This navigation is dynamically generated based on the pages belonging to the Module.', 'openlab-modules' ) }</p>
+					<>
+						<p className="openlab-modules-gloss">{ __( 'This navigation is dynamically generated based on the pages belonging to the Module.', 'openlab-modules' ) }</p>
+
+						<p className="openlab-modules-gloss">
+							<button
+								className="add-a-page-link"
+								onClick={onAddClick}
+							>{ __( 'Add a page to this module', 'openlab-modules' ) }
+							</button>
+						</p>
+					</>
 				) }
 			</div>
 		</>
