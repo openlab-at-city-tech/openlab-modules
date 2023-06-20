@@ -390,63 +390,7 @@ class Schema {
 		}
 
 		$block = [
-			'blockName'   => 'core/query',
-			'attrs'       => [
-				'queryId' => 'all-modules-query',
-				'query'   => [
-					'perPage'  => 10,
-					'pages'    => 0,
-					'offset'   => 0,
-					'postType' => 'openlab_module',
-					'order'    => 'asc',
-					'orderBy'  => 'title',
-					'author'   => '',
-					'search'   => '',
-					'exclude'  => array(),
-					'sticky'   => '',
-					'inherit'  => false,
-					'parents'  => array(),
-				],
-			],
-			'innerBlocks' => [
-				[
-					'blockName'   => 'core/post-template',
-					'innerBlocks' => [
-						[
-							'blockName' => 'core/post-title',
-							'attrs'     => [
-								'isLink' => true,
-							],
-						],
-					],
-				],
-				[
-					'blockName'   => 'core/query-pagination',
-					'innerBlocks' => [
-						[
-							'blockName' => 'core/query-pagination-previous',
-						],
-						[
-							'blockName' => 'core/query-pagination-numbers',
-						],
-						[
-							'blockName' => 'core/query-pagination-next',
-						],
-					],
-				],
-				[
-					'blockName'   => 'core/query-no-results',
-					'innerBlocks' => [
-						[
-							'blockName' => 'core/paragraph',
-							'attrs'     => [
-								'placeholder' => __( 'Add text or blocks that will display when your site has no modules', 'openlab-modules' ),
-							],
-							'innerHTML' => '<p>' . __( 'There are no modules on this site.', 'openlab-modules' ) . '</p>',
-						],
-					],
-				],
-			],
+			'blockName' => 'openlab-modules/module-list',
 		];
 
 		$serialized_block = Editor::serialize_block_recursive( $block );
