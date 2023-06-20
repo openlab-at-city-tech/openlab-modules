@@ -99,8 +99,10 @@ class Frontend {
 			return $content;
 		}
 
+		// Offset keys so that the module page is 0.
 		$module_page_ids = $module->get_page_ids();
-		$current_index   = $is_module ? 0 : array_search( get_queried_object_id(), $module_page_ids, true );
+		$all_page_ids    = array_merge( [ $module_id ], $module_page_ids );
+		$current_index   = $is_module ? 0 : array_search( get_queried_object_id(), $all_page_ids, true );
 
 		if ( false === $current_index ) {
 			return $content;
@@ -109,8 +111,8 @@ class Frontend {
 		$current_index = (int) $current_index;
 
 		$neighbors = [
-			'prev' => $current_index > 0 ? $module_page_ids[ $current_index - 1 ] : null,
-			'next' => ( $current_index + 1 ) < count( $module_page_ids ) ? $module_page_ids[ $current_index + 1 ] : null,
+			'prev' => $current_index > 0 ? $all_page_ids[ $current_index - 1 ] : null,
+			'next' => ( $current_index + 1 ) < count( $all_page_ids ) ? $all_page_ids[ $current_index + 1 ] : null,
 		];
 
 		$links = [
