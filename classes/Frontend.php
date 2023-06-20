@@ -102,7 +102,16 @@ class Frontend {
 		// Offset keys so that the module page is 0.
 		$module_page_ids = $module->get_page_ids();
 		$all_page_ids    = array_merge( [ $module_id ], $module_page_ids );
-		$current_index   = $is_module ? 0 : array_search( get_queried_object_id(), $all_page_ids, true );
+
+		// Don't include non-published posts in pagination.
+		$all_page_ids = array_filter(
+			$all_page_ids,
+			function( $page_id ) {
+				return 'publish' === get_post_status( $page_id );
+			}
+		);
+
+		$current_index = $is_module ? 0 : array_search( get_queried_object_id(), $all_page_ids, true );
 
 		if ( false === $current_index ) {
 			return $content;
