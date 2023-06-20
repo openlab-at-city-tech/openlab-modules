@@ -12,7 +12,7 @@ import {
 	SelectControl
 } from '@wordpress/components'
 
-import { useSelect } from '@wordpress/data'
+import { useSelect, useDispatch } from '@wordpress/data'
 import { useEffect } from '@wordpress/element'
 
 /**
@@ -54,7 +54,8 @@ export default function edit( {
 			{
 				order: 'asc',
 				orderby: 'title',
-				per_page: 100
+				per_page: 100,
+				status: 'any'
 			}
 		)
 
@@ -89,9 +90,22 @@ export default function edit( {
 		}
 	}, [ currentPostId ] );
 
+	const optionLabel = ( title, status ) => {
+			switch ( status ) {
+				case 'publish' :
+					return title
+
+				case 'trash' :
+					return sprintf( __( '%s (Trash)', 'openlab-modules' ), title )
+
+				case 'draft' :
+					return sprintf( __( '%s (Draft)', 'openlab-modules' ), title )
+			}
+	}
+
 	const moduleOptions = allModules ? allModules.map( ( module ) => {
 		return {
-			label: module.title.rendered,
+			label: optionLabel( module.title.rendered, module.status ),
 			value: module.id.toString()
 		}
 	} ) : []
@@ -156,6 +170,23 @@ export default function edit( {
 		}
 	}
 
+	const dispatch = useDispatch()
+
+	const onAddClick = () => {
+		wp.data.dispatch( 'core/edit-post' ).openGeneralSidebar( 'edit-post/document' )
+
+		setTimeout( () => {
+			const addPagePanel = document.querySelector( '.openlab-modules-add-page-to-module' )
+			if (addPagePanel) {
+					wp.data.dispatch( 'core/block-editor' ).clearSelectedBlock();
+					addPagePanel.classList.add('highlight');
+					setTimeout(() => {
+						addPagePanel.classList.remove('highlight');
+					}, 5000);
+			}
+		}, 100 )
+	}
+
 	return (
 		<>
 			<InspectorControls>
@@ -196,7 +227,17 @@ export default function edit( {
 				</div>
 
 				{ isSelected && (
-					<p className="openlab-modules-gloss">{ __( 'This navigation is dynamically generated based on the pages belonging to the Module.', 'openlab-modules' ) }</p>
+					<>
+						<p className="openlab-modules-gloss">{ __( 'This navigation is dynamically generated based on the pages belonging to the Module.', 'openlab-modules' ) }</p>
+
+						<p className="openlab-modules-gloss">
+							<button
+								className="add-a-page-link"
+								onClick={onAddClick}
+							>{ __( 'Add a page to this module', 'openlab-modules' ) }
+							</button>
+						</p>
+					</>
 				) }
 			</div>
 		</>

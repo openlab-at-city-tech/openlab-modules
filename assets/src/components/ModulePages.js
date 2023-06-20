@@ -11,7 +11,7 @@ import { __ } from '@wordpress/i18n'
 import { dispatch, select, useDispatch, useSelect } from '@wordpress/data'
 import { PluginDocumentSettingPanel } from '@wordpress/edit-post'
 
-import { PostPicker } from 'gutenberg-post-picker'
+import { PostPicker } from './PostPicker'
 
 import SortableMultiSelect from './SortableMultiSelect'
 
@@ -146,6 +146,7 @@ export default function EditModule( {
 		dispatch( 'openlab-modules' ).setModulePages( postId, newModulePages )
 	}
 
+	const fetchParams = { excludeModulePages: '1' }
 
 	return (
 		<>
@@ -239,6 +240,7 @@ export default function EditModule( {
 					{ 'existing' === addMode && (
 						<PanelRow>
 							<PostPicker
+								fetchParams={fetchParams}
 								hideLabelFromVision={ true }
 								onSelectPost={ onAddExistingPage }
 								label={ __( 'Search for an existing page.', 'openlab-modules' ) }

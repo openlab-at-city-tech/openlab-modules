@@ -28,3 +28,26 @@
 	font-size: .8em;
 	font-style: italic;
 }
+
+.components-panel__body {
+  transition: background-color 1s;
+}
+
+.components-panel__body.highlight {
+  background-color: yellow;
+}
+
+.add-a-page-link {
+	background: none;
+	border: none;
+	text-decoration: underline;
+	padding: none;
+	cursor: pointer;
+	&:before {
+		content: '+';
+	}
+
+	&:hover {
+		text-decoration: none;
+	}
+}

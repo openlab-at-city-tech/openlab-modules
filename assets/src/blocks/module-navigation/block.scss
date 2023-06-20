@@ -1,12 +1,13 @@
 .wp-block-openlab-modules-module-navigation {
 	ul.openlab-modules-module-navigation-list {
 		list-style-type: none;
-		padding: 0;
+		padding: 0 0 0 30px;
 	}
 
 	padding: 20px;
-	border: 1px solid #aaa;
+	border: 2px solid #eee;
 	border-radius: 2px;
+	margin-bottom: 1em;
 
 	li.is-current {
 		font-weight: bold;

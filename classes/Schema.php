@@ -65,6 +65,10 @@ class Schema {
 		add_action( 'updated_post_meta', [ $this, 'validate_module_pages' ], 10, 3 );
 		add_action( 'save_post_' . self::get_module_post_type(), [ $this, 'maybe_create_all_modules_page' ] );
 		add_action( 'before_delete_post', [ $this, 'remove_page_from_modules' ] );
+
+		// edit.php mods.
+		add_filter( 'manage_' . self::$module_post_type . '_posts_columns', [ $this, 'module_custom_columns' ] );
+		add_action( 'manage_' . self::$module_post_type . '_posts_custom_column', [ $this, 'module_custom_column_contents' ], 10, 2 );
 	}
 
 	/**
@@ -137,6 +141,29 @@ class Schema {
 				'rest_base'         => 'openlab_module',
 				'template'          => [
 					[ 'openlab-modules/module-navigation' ],
+					[
+						'core/heading',
+						[
+							'placeholder' => __( 'Introduction', 'openlab-modules' ),
+						],
+					],
+					[
+						'core/paragraph',
+						[
+							'style'   => [
+								'color' => [
+									'background' => '#eeeeee',
+								],
+							],
+							'content' => __( '<strong>Faculty:</strong> Please edit this page to organize any additional course resources that you\'d like to share with your students. Please delete this informational block when you are ready to share your site with your students. For help working with OpenLab Course sites, visit <a href="https://openlab.citytech.cuny.edu/blog/help/creating-a-course-faculty-only/">OpenLab Help</a>.', 'openlab-modules' ),
+						],
+					],
+					[
+						'core/paragraph',
+						[
+							'placeholder' => __( 'Add an introduction to this module. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', 'openlab-modules' ),
+						],
+					],
 				],
 			]
 		);
@@ -470,5 +497,53 @@ class Schema {
 
 		flush_rewrite_rules( false );
 		update_option( 'openlab_modules_rewrite_rules_flushed', '1' );
+	}
+
+	/**
+	 * Adds custom columns to Modules edit.php screen.
+	 *
+	 * @param string[] $columns Column keys and header text.
+	 * @return string[]
+	 */
+	public function module_custom_columns( $columns ) {
+		$new_columns = [];
+		foreach ( $columns as $key => $column_name ) {
+			$new_columns[ $key ] = $column_name;
+
+			if ( 'title' === $key ) {
+				$new_columns['module_author'] = __( 'Author', 'openlab-modules' );
+			}
+		}
+
+		return $new_columns;
+	}
+
+	/**
+	 * Generates content for Modules edit.php custom columns.
+	 *
+	 * @param string $column_name String defining the column.
+	 * @param int    $post_id     ID of the current post in the loop.
+	 * @return void
+	 */
+	public function module_custom_column_contents( $column_name, $post_id ) {
+		if ( 'module_author' === $column_name ) {
+			$post = get_post( $post_id );
+			if ( $post ) {
+				if ( ! function_exists( 'bp_core_get_userlink' ) ) {
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					echo bp_core_get_userlink( $post->post_author ); // @phpstan-ignore-line
+				} else {
+					$author_id = (int) $post->post_author;
+					$author    = get_userdata( $author_id );
+					if ( $author ) {
+						printf(
+							'<a href="%s">%s</a>',
+							esc_url( get_author_posts_url( $author_id ) ),
+							esc_html( $author->display_name )
+						);
+					}
+				}
+			}
+		}
 	}
 }
