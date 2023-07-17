@@ -173,6 +173,15 @@ class Module {
 	}
 
 	/**
+	 * Gets the ID of the current module.
+	 *
+	 * @return int
+	 */
+	public function get_id() {
+		return (int) $this->id;
+	}
+
+	/**
 	 * Gets the title of the module.
 	 *
 	 * @return string
@@ -200,5 +209,30 @@ class Module {
 		}
 
 		return get_permalink( $post );
+	}
+
+	/**
+	 * Gets a list of modules.
+	 *
+	 * @return \OpenLab\Modules\Module[]
+	 */
+	public static function get() {
+		$args = [
+			'post_type'      => Schema::get_module_post_type(),
+			'posts_per_page' => -1,
+			'orderby'        => [ 'title' => 'ASC' ],
+			'fields'         => 'ids',
+		];
+
+		$post_ids = get_posts( $args );
+
+		$modules = array_map(
+			function( $post_id ) {
+				return self::get_instance( $post_id );
+			},
+			$post_ids
+		);
+
+		return array_filter( $modules );
 	}
 }
