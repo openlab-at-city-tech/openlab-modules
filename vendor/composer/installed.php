@@ -3,7 +3,7 @@
         'name' => 'openlab-at-city-tech/openlab-modules',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'e83aa37b644150f7d2ac55239431a2b18e69cf63',
+        'reference' => 'f5a9cc2780a384dfe165de8944e897c1944e0b4d',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -22,7 +22,7 @@
         'openlab-at-city-tech/openlab-modules' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'e83aa37b644150f7d2ac55239431a2b18e69cf63',
+            'reference' => 'f5a9cc2780a384dfe165de8944e897c1944e0b4d',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
