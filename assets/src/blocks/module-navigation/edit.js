@@ -120,6 +120,13 @@ export default function edit( {
 		)
 	}
 
+	moduleOptions.unshift(
+		{
+			label: __( '- Select Module -', 'openlab-modules' ),
+			value: '',
+		}
+	)
+
 	// When this block appears in the context of the associated module, the title should live-update.
 	const selectedModuleTitle = () => {
 		if ( isNewModule || ( currentPostId && moduleId === currentPostId ) ) {
