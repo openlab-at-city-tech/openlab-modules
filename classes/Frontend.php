@@ -134,8 +134,10 @@ class Frontend {
 				continue;
 			}
 
+			$page_title = $neighbor_id === $module_id ? __( 'Module Home', 'openlab-modules' ) : (string) get_the_title( $neighbor_id );
+
 			$links[ $neighbor_type ] = [
-				'title' => (string) get_the_title( $neighbor_id ),
+				'title' => $page_title,
 				'url'   => (string) get_permalink( $neighbor_id ),
 			];
 		}
