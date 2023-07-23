@@ -250,7 +250,7 @@ export default function edit( {
 							<button
 								className="add-a-page-link"
 								onClick={onAddClick}
-							>{ __( 'Add a page to this module', 'openlab-modules' ) }
+							>{ __( 'Add Page to Module (in the module settings panel)', 'openlab-modules' ) }
 							</button>
 						</p>
 					</>
