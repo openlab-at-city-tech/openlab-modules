@@ -151,25 +151,6 @@ export default function EditModule( {
 	return (
 		<>
 			<PluginDocumentSettingPanel
-				name="openlab-modules-module-pages"
-				title={ __( 'Module Pages', 'openlab-modules' ) }
-				>
-
-				<PanelRow>
-					{ sortedOptions.length > 0 && (
-						<SortableMultiSelect
-							options={sortedOptions}
-							onChange={onSort}
-						/>
-					) }
-
-					{ sortedOptions.length === 0 && (
-						<p>{ __( 'This module has no pages yet. Add or create a new page using the tools below.', 'openlab-modules' ) }</p>
-					) }
-				</PanelRow>
-			</PluginDocumentSettingPanel>
-
-			<PluginDocumentSettingPanel
 				className="openlab-modules-add-page-to-module"
 				name="openlab-modules-add-page-to-module"
 				title={ __( 'Add Page to Module', 'openlab-modules' ) }
@@ -252,6 +233,26 @@ export default function EditModule( {
 
 				</fieldset>
 			</PluginDocumentSettingPanel>
+
+			<PluginDocumentSettingPanel
+				name="openlab-modules-module-pages"
+				title={ __( 'Module Pages', 'openlab-modules' ) }
+				>
+
+				<PanelRow>
+					{ sortedOptions.length > 0 && (
+						<SortableMultiSelect
+							options={sortedOptions}
+							onChange={onSort}
+						/>
+					) }
+
+					{ sortedOptions.length === 0 && (
+						<p>{ __( 'This module has no pages yet. Add or create a new page using the tools below.', 'openlab-modules' ) }</p>
+					) }
+				</PanelRow>
+			</PluginDocumentSettingPanel>
+
 		</>
 	);
 }
