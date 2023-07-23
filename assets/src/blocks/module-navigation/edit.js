@@ -138,6 +138,15 @@ export default function edit( {
 	}
 
 	const modulePagesForDisplay = []
+
+	modulePagesForDisplay.push( {
+		id: moduleId,
+		url: '',
+		title: __( 'Module Home', 'openlab-modules' ),
+		statusCode: 'publish',
+		statusEl: <></>
+	} )
+
 	for ( const modulePageId of thisModulePageIds ) {
 		if ( thisModulePages && thisModulePages.hasOwnProperty( modulePageId ) ) {
 			const statusEl = ( postStatus ) => {

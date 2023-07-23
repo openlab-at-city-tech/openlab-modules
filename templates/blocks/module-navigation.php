@@ -45,6 +45,13 @@ wp_enqueue_style( 'openlab-modules-frontend' );
 		</p>
 
 		<ul class="openlab-modules-module-navigation-list">
+			<?php
+			$module_home_current_class = get_queried_object_id() === $module_id ? 'is-current' : '';
+			?>
+			<li class="<?php echo esc_attr( $module_home_current_class ); ?>">
+				<a href="<?php the_permalink( $module_id ); ?>"><?php esc_html_e( 'Module Home', 'openlab-modules' ); ?></a>
+			</li>
+
 			<?php foreach ( $module_page_ids as $module_page_id ) : ?>
 				<?php
 				$module_page = get_post( $module_page_id );
