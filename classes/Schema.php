@@ -62,7 +62,9 @@ class Schema {
 		add_action( 'rest_api_init', [ $this, 'register_rest_fields' ] );
 
 		// Save actions.
+		add_action( 'added_post_meta', [ $this, 'validate_module_pages' ], 10, 3 );
 		add_action( 'updated_post_meta', [ $this, 'validate_module_pages' ], 10, 3 );
+
 		add_action( 'save_post_' . self::get_module_post_type(), [ $this, 'maybe_create_all_modules_page' ] );
 		add_action( 'before_delete_post', [ $this, 'remove_page_from_modules' ] );
 
