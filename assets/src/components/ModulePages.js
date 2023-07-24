@@ -54,6 +54,14 @@ export default function EditModule( {
 		}
 	}, [] )
 
+	const toggleAddMode = ( mode ) => {
+		if ( mode === addMode ) {
+			setAddMode( '' )
+		} else {
+			setAddMode( mode )
+		}
+	}
+
 	const { editPost } = useDispatch( 'core/editor' )
 
 	const editPostMeta = ( metaToUpdate ) => {
@@ -148,6 +156,12 @@ export default function EditModule( {
 
 	const fetchParams = { excludeModulePages: '1' }
 
+	const returnIcon = (
+		<svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48">
+			<path d="M359-240 120-479l239-239 43 43-167 167h545v-172h60v231H236l166 166-43 43Z" fill="#3c7cb6" />
+		</svg>
+	)
+
 	return (
 		<>
 			<PluginDocumentSettingPanel
@@ -158,78 +172,83 @@ export default function EditModule( {
 
 				<fieldset>
 					<PanelRow>
-						<legend>{ __( 'Add a page to this module by choosing one of the following options', 'openlab-modules' ) }</legend>
+						<legend>{ __( 'Add a page to this module by choosing one of the following options:', 'openlab-modules' ) }</legend>
 					</PanelRow>
 
-					<PanelRow>
-						<div className="add-mode-toggle">
-							<Button
-								onClick={ () => setAddMode( 'create' ) }
-								text={ __( 'Create New Page', 'openlab-modules' ) }
-								variant="primary"
-							/>
-
-							{ 'create' === addMode && (
-								<span
-									className="add-mode-cancel"
-									onClick={ () => setAddMode( '' ) }
-								>{'\u2716'}</span>
-							) }
-						</div>
-					</PanelRow>
-
-					{ 'create' === addMode && (
-						<>
-							<PanelRow>
-								<TextControl
-									className="add-mode-text-field add-mode-create-title"
-									onChange={ ( newTitle ) => setCreateTitle( newTitle ) }
-									hideLabelFromVision={ true }
-									label={ __( 'Enter a title for the new page', 'openlab-modules' ) }
-									placeholder={ __( 'Enter a title for the new page', 'openlab-modules' ) }
-									value={ createTitle }
-								/>
-
-								<Button
-									disabled={ 0 === createTitle.length }
-									onClick={ onCreateClick }
-									variant="primary"
-								>
-									{ createInProgress ? <span className="progress-spinner"></span> : __( 'Create', 'openlab-modules' ) }
-								</Button>
-							</PanelRow>
-						</>
-					) }
-
-					<PanelRow>
-						<div className="add-mode-toggle">
-							<Button
-								onClick={ () => setAddMode( 'existing' ) }
-								text={ __( 'Add Existing Page', 'openlab-modules' ) }
-								variant="primary"
-							/>
-
-							{ 'existing' === addMode && (
-								<span
-									className="add-mode-cancel"
-									onClick={ () => setAddMode( '' ) }
-								>{'\u2716'}</span>
-							) }
-						</div>
-					</PanelRow>
-
-					{ 'existing' === addMode && (
+					<div className="add-mode">
 						<PanelRow>
-							<PostPicker
-								fetchParams={fetchParams}
-								hideLabelFromVision={ true }
-								onSelectPost={ onAddExistingPage }
-								label={ __( 'Search for an existing page.', 'openlab-modules' ) }
-								placeholder={ __( 'Search for an existing page.', 'openlab-modules' ) }
-								postTypes={ [ 'pages' ] }
-							/>
+							<div className={ 'create' === addMode ? 'add-mode-toggle add-mode-toggle-active' : 'add-mode-toggle' }>
+								<Button
+									onClick={ () => toggleAddMode( 'create' ) }
+									text={ __( 'Create New Page', 'openlab-modules' ) }
+								/>
+							</div>
 						</PanelRow>
-					) }
+
+						{ 'create' === addMode && (
+							<div className="add-mode-content">
+									<div className="add-mode-create-fields">
+										<TextControl
+											className="add-mode-text-field add-mode-create-title"
+											onChange={ ( newTitle ) => setCreateTitle( newTitle ) }
+											hideLabelFromVision={ true }
+											label={ __( 'Add page title and press enter.', 'openlab-modules' ) }
+											placeholder={ __( 'Add page title and press enter.', 'openlab-modules' ) }
+											value={ createTitle }
+										/>
+
+										<Button
+											className="add-mode-create-submit"
+											disabled={ 0 === createTitle.length }
+											onClick={ onCreateClick }
+										>
+											{ createInProgress ?
+												( <>
+														<div className="progress-spinner">&nbsp;</div>
+														<div className="screen-reader-text">
+															{ __( 'Page creation in progress', 'openlab-modules' ) }
+														</div>
+													</>
+												) :
+												( <>
+														{returnIcon}
+														<div className="screen-reader-text">
+															{ __( 'Click to create page', 'openlab-modules' ) }
+														</div>
+													</>
+												)
+											}
+										</Button>
+									</div>
+							</div>
+						) }
+					</div>
+
+					<div className="add-mode">
+						<PanelRow>
+							<div className={ 'existing' === addMode ? 'add-mode-toggle add-mode-toggle-active' : 'add-mode-toggle' }>
+								<Button
+									onClick={ () => toggleAddMode( 'existing' ) }
+									text={ __( 'Add Existing Page', 'openlab-modules' ) }
+								/>
+							</div>
+						</PanelRow>
+
+						{ 'existing' === addMode && (
+							<div className="add-mode-content">
+								<PanelRow>
+									<PostPicker
+										fetchParams={fetchParams}
+										hideLabelFromVision={ true }
+										onSelectPost={ onAddExistingPage }
+										label={ __( 'Search for an existing page.', 'openlab-modules' ) }
+										placeholder={ __( 'Search for an existing page.', 'openlab-modules' ) }
+										postTypes={ [ 'pages' ] }
+									/>
+								</PanelRow>
+							</div>
+						) }
+					</div>
 
 				</fieldset>
 			</PluginDocumentSettingPanel>

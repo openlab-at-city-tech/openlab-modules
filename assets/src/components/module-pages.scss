@@ -1,17 +1,65 @@
+.add-mode {
+	background: #fafafa;
+	border: 1px solid #aaa;
+	margin-top: 12px;
+}
+
 .add-mode-toggle {
 	align-items: flex-end;
 	display: flex;
 	width: 100%;
 	justify-content: space-between;
+	position: relative;
 
-	.add-mode-cancel {
-		color: #aaa;
-		cursor: pointer;
+	button {
+		padding-bottom: 1em;
+		padding-top: 1em;
+		width: 100%;
 	}
+
+	::after {
+		content: "\f103";
+		font-family: 'FontAwesome';
+		font-size: 18px;
+		position: absolute;
+		right: 12px;
+	}
+
+	&.add-mode-toggle-active {
+		::after {
+			content: "\f00d";
+			font-size: 13px;
+		}
+	}
+}
+
+.add-mode-content {
+	padding: 6px 12px;
 }
 
 .add-mode-text-field {
 	width: 100%;
+}
+
+.add-mode-create-title {
+	input {
+		padding-right: 30px;
+	}
+}
+
+.add-mode-create-fields {
+	position: relative;
+
+	.add-mode-create-submit {
+		position: absolute;
+		right: -7px;
+		top: -2px;
+
+		svg {
+			height: 22px;
+			width: 22px;
+		}
+	}
 }
 
 .openlab-modules-add-page-to-module {
@@ -20,7 +68,7 @@
 		width: 20px;
 		height: 20px;
 		border-radius: 50%;
-		border: 2px solid #fff;
+		border: 2px solid #3c7cb6;
 		border-top-color: transparent;
 		animation: spin 1s infinite linear;
 	}
