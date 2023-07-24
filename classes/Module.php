@@ -212,6 +212,23 @@ class Module {
 	}
 
 	/**
+	 * Gets the description of the module.
+	 *
+	 * @return string
+	 */
+	public function get_description() {
+		$post = $this->get_post();
+
+		if ( ! $post ) {
+			return '';
+		}
+
+		$description = get_post_meta( $post->ID, 'module_description', true );
+
+		return (string) $description;
+	}
+
+	/**
 	 * Gets a list of modules.
 	 *
 	 * @return \OpenLab\Modules\Module[]

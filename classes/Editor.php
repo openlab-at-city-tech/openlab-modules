@@ -79,6 +79,16 @@ class Editor {
 	 */
 	public function register_dynamic_blocks() {
 		register_block_type(
+			'openlab-modules/module-list',
+			[
+				'api_version'     => '2',
+				'render_callback' => function( $attributes, $content ) {
+					return $this->render_block( 'module-list', $attributes, $content );
+				},
+			]
+		);
+
+		register_block_type(
 			'openlab-modules/module-navigation',
 			[
 				'api_version'     => '2',
