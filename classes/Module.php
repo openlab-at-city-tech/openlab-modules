@@ -225,7 +225,11 @@ class Module {
 
 		$description = get_post_meta( $post->ID, 'module_description', true );
 
-		return (string) $description;
+		if ( ! is_string( $description ) ) {
+			$description = '';
+		}
+
+		return $description;
 	}
 
 	/**
