@@ -1,0 +1,33 @@
+<?php
+/**
+ * Template for module-navigation block.
+ *
+ * @package openlab-modules
+ */
+
+$modules = \OpenLab\Modules\Module::get();
+
+wp_enqueue_style( 'openlab-modules-frontend' );
+
+?>
+
+<div class="wp-block-openlab-modules-module-list">
+	<?php if ( $modules ) : ?>
+	<ul class="openlab-modules-module-list">
+		<?php foreach ( $modules as $module ) : ?>
+			<li>
+				<article>
+					<h2><a href="<?php echo esc_url( $module->get_url() ); ?>"><?php echo esc_html( $module->get_title() ); ?></a></h2>
+
+					<p class="module-description">
+						<?php echo esc_html( $module->get_description() ); ?>
+					</p>
+				</article>
+			</li>
+		<?php endforeach; ?>
+	</ul>
+
+	<?php elseif ( current_user_can( 'edit_others_posts' ) ) : ?>
+		<p><?php esc_html_e( 'This site has no modules to display.', 'openlab-modules' ); ?></p>
+	<?php endif; ?>
+</div>

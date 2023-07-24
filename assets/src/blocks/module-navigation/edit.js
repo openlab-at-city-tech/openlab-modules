@@ -138,6 +138,15 @@ export default function edit( {
 	}
 
 	const modulePagesForDisplay = []
+
+	modulePagesForDisplay.push( {
+		id: moduleId,
+		url: '',
+		title: __( 'Module Home', 'openlab-modules' ),
+		statusCode: 'publish',
+		statusEl: <></>
+	} )
+
 	for ( const modulePageId of thisModulePageIds ) {
 		if ( thisModulePages && thisModulePages.hasOwnProperty( modulePageId ) ) {
 			const statusEl = ( postStatus ) => {
@@ -241,7 +250,7 @@ export default function edit( {
 							<button
 								className="add-a-page-link"
 								onClick={onAddClick}
-							>{ __( 'Add a page to this module', 'openlab-modules' ) }
+							>{ __( 'Add Page to Module (in the module settings panel)', 'openlab-modules' ) }
 							</button>
 						</p>
 					</>

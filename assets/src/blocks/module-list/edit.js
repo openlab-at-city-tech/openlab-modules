@@ -1,54 +1,11 @@
 import { __, sprintf } from '@wordpress/i18n';
-import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
+import { useBlockProps } from '@wordpress/block-editor';
 
-const BLOCKS_TEMPLATE = [
-	[
-		'core/query',
-		{
-			queryId: 'module-list-query',
-			query: {
-				perPage: 10,
-				pages: 0,
-				offset: 0,
-				postType: 'openlab_module',
-				order: 'asc',
-				orderBy: 'title',
-				author: '',
-				search: '',
-				exclude: [],
-				sticky: '',
-				inherit: false,
-				parents: []
-			}
-		},
-		[
-			[
-				'core/post-template',
-				{},
-				[
-					[ 'core/post-title', { isLink: true } ]
-				]
-			],
-			[
-				'core/query-pagination',
-				{},
-				[
-					[ 'core/query-pagination-previous' ],
-					[ 'core/query-pagination-numbers' ],
-					[ 'core/query-pagination-next' ]
-				]
-			],
-			[
-				'core/paragraph',
-				{
-					content: '<p>' + __( 'There are no modules on this site.', 'openlab-modules' ) + '</p>',
-					placeholder: __( 'Add text or blocks that will display when your site has no modules.', 'openlab-modules' )
-				}
-			]
-		]
-	]
-]
+import { Spinner } from '@wordpress/components'
 
+import { useSelect } from '@wordpress/data'
+
+import './editor.scss'
 
 /**
  * Edit function.
@@ -66,11 +23,48 @@ export default function edit( {
 		} )
 	}
 
+	const { allModules } = useSelect( ( select ) => {
+		const rawModules = select( 'core' ).getEntityRecords(
+			'postType',
+			'openlab_module',
+			{
+				order: 'asc',
+				orderby: 'title',
+				per_page: 100,
+				status: 'any'
+			}
+		)
+
+		const allModules = rawModules ? rawModules.filter( ( module ) => module.title.rendered.length > 0 ) : null
+
+		return {
+			allModules
+		}
+	} )
+
 	return (
 		<div { ...blockProps() }>
-			<InnerBlocks
-				template={ BLOCKS_TEMPLATE }
-			/>
+			{ ( null !== allModules && allModules.length > 0 ) && (
+				<ul className="openlab-modules-module-list">
+					{ allModules.map( ( module ) => (
+						<li key={ 'module-' + module.id }>
+							<h2><a href={ module.link }>{ module.title.rendered }</a></h2>
+
+							<p className="module-description">
+								{ module.meta.module_description }
+							</p>
+						</li>
+					) ) }
+				</ul>
+			) }
+
+			{ ( null !== allModules && allModules.length === 0 ) && (
+				<p>{ __( 'This site has no modules to display.', 'openlab-modules' ) }</p>
+			) }
+
+			{ ( null === allModules ) && (
+				<Spinner />
+			) }
 		</div>
 	)
 }
