@@ -88,7 +88,7 @@ export default function PageModules( {
 							</div>
 
 							<div className="page-module-actions">
-								<a href={ pageModule.editUrl }
+								<a href={ pageModule.editUrl.replace( '&amp;', '&' ) }
 									>{ __( 'Edit', 'openlab-modules' ) }</a>
 								&nbsp;|&nbsp;
 								<a href={ pageModule.url }
