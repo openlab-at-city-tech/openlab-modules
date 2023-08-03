@@ -16,13 +16,11 @@ wp_enqueue_style( 'openlab-modules-frontend' );
 	<ul class="openlab-modules-module-list">
 		<?php foreach ( $modules as $module ) : ?>
 			<li>
-				<article>
-					<h2><a href="<?php echo esc_url( $module->get_url() ); ?>"><?php echo esc_html( $module->get_title() ); ?></a></h2>
+				<h2><a href="<?php echo esc_url( $module->get_url() ); ?>"><?php echo esc_html( $module->get_title() ); ?></a></h2>
 
-					<p class="module-description">
-						<?php echo esc_html( $module->get_description() ); ?>
-					</p>
-				</article>
+				<p class="module-description">
+					<?php echo esc_html( $module->get_description() ); ?>
+				</p>
 			</li>
 		<?php endforeach; ?>
 	</ul>
