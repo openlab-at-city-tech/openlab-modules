@@ -301,12 +301,12 @@ class Schema {
 			'page',
 			'editUrl',
 			[
-				'get_callback'    => function( $object ) {
-					if ( ! current_user_can( 'edit_post', $object['id'] ) ) {
+				'get_callback'    => function ( $data_object ) {
+					if ( ! current_user_can( 'edit_post', $data_object['id'] ) ) {
 						return null;
 					}
 
-					return get_edit_post_link( $object['id'], '' );
+					return get_edit_post_link( $data_object['id'], '' );
 				},
 				'update_callback' => null,
 				'schema'          => null,

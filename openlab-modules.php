@@ -26,7 +26,7 @@ require ROOT_DIR . '/vendor/autoload.php';
 
 register_activation_hook(
 	__FILE__,
-	function() {
+	function () {
 		update_option( 'openlab_modules_rewrite_rules_flushed', '0' );
 	}
 );

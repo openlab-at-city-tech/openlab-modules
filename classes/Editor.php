@@ -82,7 +82,7 @@ class Editor {
 			'openlab-modules/module-list',
 			[
 				'api_version'     => '2',
-				'render_callback' => function( $attributes, $content ) {
+				'render_callback' => function ( $attributes, $content ) {
 					return $this->render_block( 'module-list', $attributes, $content );
 				},
 			]
@@ -98,7 +98,7 @@ class Editor {
 						'default' => 0,
 					],
 				],
-				'render_callback' => function( $attributes, $content ) {
+				'render_callback' => function ( $attributes, $content ) {
 					return $this->render_block( 'module-navigation', $attributes, $content );
 				},
 			]

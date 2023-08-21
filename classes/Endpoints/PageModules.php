@@ -7,12 +7,12 @@
 
 namespace OpenLab\Modules\Endpoints;
 
-use \WP_REST_Controller;
-use \WP_REST_Request;
-use \WP_REST_Server;
-use \WP_Error;
+use WP_REST_Controller;
+use WP_REST_Request;
+use WP_REST_Server;
+use WP_Error;
 
-use \OpenLab\Modules\Module;
+use OpenLab\Modules\Module;
 
 /**
  * Definition for module-pages endpoint.
@@ -67,7 +67,7 @@ class PageModules extends WP_REST_Controller {
 			$module_ids = Module::get_module_ids_of_page( (int) $page_id );
 
 			$modules = array_map(
-				function( $module_id ) {
+				function ( $module_id ) {
 					$post = get_post( $module_id );
 
 					if ( ! $post ) {
@@ -80,7 +80,6 @@ class PageModules extends WP_REST_Controller {
 						'editUrl' => get_edit_post_link( $module_id ),
 						'url'     => get_permalink( $module_id ),
 					];
-
 				},
 				$module_ids
 			);

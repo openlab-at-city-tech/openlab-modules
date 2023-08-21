@@ -106,7 +106,7 @@ class Frontend {
 		// Don't include non-published posts in pagination.
 		$all_page_ids = array_filter(
 			$all_page_ids,
-			function( $page_id ) {
+			function ( $page_id ) {
 				return 'publish' === get_post_status( $page_id );
 			}
 		);
