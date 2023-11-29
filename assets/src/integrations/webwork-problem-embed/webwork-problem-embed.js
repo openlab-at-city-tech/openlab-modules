@@ -1,4 +1,7 @@
-/* global wwpe, openlabModulesWwpe */
+/* global wwpe, openlabModulesWwpe, openlabModulesWwpeStrings */
+
+import './webwork-problem-embed.scss';
+
 (() => {
 	const problemFrames = {};
 	let problemFramesInitialized = false;
@@ -146,5 +149,59 @@
 				}
 			}
 		}
+	} )
+
+	// Add overlays to Renderer problems for non-authenticated users.
+	window.addEventListener( 'load', () => {
+		const { isUserLoggedIn } = openlabModulesWwpe;
+		if ( isUserLoggedIn ) {
+			return;
+		}
+
+		let overlayHTML = '<p>' + openlabModulesWwpeStrings.youAreNotLoggedIn + '</p>';
+		overlayHTML += '<p>' + openlabModulesWwpeStrings.toReceiveCredit + '</p>';
+		overlayHTML += '<p>' + '<button class="overlay-button" data-redirect-url="' + openlabModulesWwpe.loginUrl + '">' + openlabModulesWwpeStrings.logIn + '</button>' + '</p>';
+		overlayHTML += '<p>' + '<a class="overlay-button-dismiss" href="#">' + openlabModulesWwpeStrings.continueWithout + '</a>' + '</p>';
+
+		const rendererProblems = document.querySelectorAll( '.renderer-problem' );
+		const rendererProblemsArray = [...rendererProblems];
+		rendererProblemsArray.forEach( ( problem ) => {
+			const overlay = document.createElement( 'div' );
+			overlay.classList.add( 'renderer-problem-overlay' );
+			overlay.innerHTML = overlayHTML;
+			problem.closest( '.wwpe-problem-wrapper' ).appendChild( overlay );
+		} )
+	} )
+
+	// Handle clicks on the Log In overlay button.
+	window.addEventListener( 'click', ( event ) => {
+		const { target } = event;
+		if ( ! target.classList.contains( 'overlay-button' ) ) {
+			return;
+		}
+
+		event.preventDefault();
+
+		const { redirectUrl } = target.dataset;
+		if ( redirectUrl ) {
+			window.location.href = redirectUrl;
+		}
+	} )
+
+	// Handle clicks on the Continue Without Logging In overlay button.
+	window.addEventListener( 'click', ( event ) => {
+		const { target } = event;
+		if ( ! target.classList.contains( 'overlay-button-dismiss' ) ) {
+			return;
+		}
+
+		event.preventDefault();
+
+		// Remove all overlays.
+		const overlays = document.querySelectorAll( '.renderer-problem-overlay' );
+		const overlaysArray = [...overlays];
+		overlaysArray.forEach( ( overlay ) => {
+			overlay.remove();
+		} )
 	} )
 })()

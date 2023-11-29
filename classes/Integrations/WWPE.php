@@ -67,16 +67,38 @@ class WWPE {
 			true
 		);
 
+		wp_localize_script(
+			'openlab-modules-wwpe',
+			'openlabModulesWwpeStrings',
+			[
+				'continueWithout'   => __( 'Continue without logging in', 'openlab-modules' ),
+				'logIn'             => __( 'Log In', 'openlab-modules' ),
+				'toReceiveCredit'   => __( 'To receive credit for completing this problem, you must log in.', 'openlab-modules' ),
+				'youAreNotLoggedIn' => __( 'You are not logged in.', 'openlab-modules' ),
+			]
+		);
+
+		$current_page_permalink = get_permalink();
+
 		wp_add_inline_script(
 			'openlab-modules-wwpe',
 			'const openlabModulesWwpe = ' . wp_json_encode(
 				[
-					'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-					'nonce'   => wp_create_nonce( 'openlab-modules' ),
-					'postId'  => get_queried_object_id(),
+					'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
+					'isUserLoggedIn' => is_user_logged_in(),
+					'loginUrl'       => wp_login_url( (string) $current_page_permalink ),
+					'nonce'          => wp_create_nonce( 'openlab-modules' ),
+					'postId'         => get_queried_object_id(),
 				]
 			),
 			'before'
+		);
+
+		wp_enqueue_style(
+			'openlab-modules-wwpe',
+			OPENLAB_MODULES_PLUGIN_URL . '/build/webwork-problem-embed.css',
+			[],
+			$blocks_asset_file['version']
 		);
 	}
 

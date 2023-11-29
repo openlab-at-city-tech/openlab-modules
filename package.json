@@ -10,7 +10,7 @@
 	},
 	"scripts": {
 		"build": "wp-scripts build assets/src/frontend.js assets/src/index.js",
-		"start": "wp-scripts start assets/src/frontend.js assets/src/index.js assets/src/integrations/webwork-problem-embed.js"
+		"start": "wp-scripts start assets/src/frontend.js assets/src/index.js assets/src/integrations/webwork-problem-embed/webwork-problem-embed.js"
 	},
 	"dependencies": {
 		"@dnd-kit/sortable": "^7.0.2",
