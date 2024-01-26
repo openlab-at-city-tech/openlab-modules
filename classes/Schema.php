@@ -346,6 +346,15 @@ class Schema {
 			wp_set_object_terms( $page_id, [ $module_term_id ], self::get_module_taxonomy(), true );
 		}
 
+		// Pages that have been unlinked have to be removed from the taxonomy.
+		$items_in_module_term = get_objects_in_term( $module_term_id, self::get_module_taxonomy() );
+		if ( $items_in_module_term && is_array( $items_in_module_term ) ) {
+			$items_to_remove = array_diff( $items_in_module_term, $module_page_ids );
+			foreach ( $items_to_remove as $item_id ) {
+				wp_remove_object_terms( (int) $item_id, [ $module_term_id ], self::get_module_taxonomy() );
+			}
+		}
+
 		// Navigation insertion.
 		$nav_block = [
 			'blockName' => 'openlab-modules/module-navigation',
