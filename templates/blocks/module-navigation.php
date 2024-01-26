@@ -32,7 +32,7 @@ wp_enqueue_style( 'openlab-modules-frontend' );
 
 		<p class="openlab-modules-module-navigation-heading">
 			<?php
-			echo sprintf(
+			printf(
 				// translators: Module link or title.
 				esc_html__( 'Contents for Module: %s', 'openlab-modules' ),
 				sprintf(

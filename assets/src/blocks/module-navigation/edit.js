@@ -1,5 +1,7 @@
 import { __, sprintf } from '@wordpress/i18n';
 
+import he from 'he';
+
 import {
 	InspectorControls,
 	useBlockProps
@@ -105,7 +107,7 @@ export default function edit( {
 
 	const moduleOptions = allModules ? allModules.map( ( module ) => {
 		return {
-			label: optionLabel( module.title.rendered, module.status ),
+			label: optionLabel( module.title.raw, module.status ),
 			value: module.id.toString()
 		}
 	} ) : []
@@ -133,7 +135,7 @@ export default function edit( {
 			return currentPostTitle
 		} else {
 			const selectedModuleObject = allModules ? allModules.find( ( module ) => module.id === moduleId ) : null
-			return selectedModuleObject ? selectedModuleObject.title.rendered : ''
+			return selectedModuleObject ? selectedModuleObject.title.raw : ''
 		}
 	}
 
@@ -179,7 +181,7 @@ export default function edit( {
 			modulePagesForDisplay.push( {
 				id: thisPage.id,
 				url: thisPage.url,
-				title: thisPage.title,
+				title: he.decode( thisPage.title ),
 				statusCode: thisPage.status,
 				statusEl: statusEl( thisPage.status )
 			} )

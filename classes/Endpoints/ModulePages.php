@@ -7,12 +7,12 @@
 
 namespace OpenLab\Modules\Endpoints;
 
-use \WP_REST_Controller;
-use \WP_REST_Request;
-use \WP_REST_Server;
-use \WP_Error;
+use WP_REST_Controller;
+use WP_REST_Request;
+use WP_REST_Server;
+use WP_Error;
 
-use \OpenLab\Modules\Module;
+use OpenLab\Modules\Module;
 
 /**
  * Definition for module-pages endpoint.

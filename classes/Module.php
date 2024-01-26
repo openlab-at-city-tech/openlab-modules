@@ -76,7 +76,7 @@ class Module {
 		if ( 'publish' === $type ) {
 			$page_ids = array_filter(
 				$page_ids,
-				function( $page_id ) {
+				function ( $page_id ) {
 					return 'publish' === get_post_status( $page_id );
 				}
 			);
@@ -115,7 +115,7 @@ class Module {
 
 		$page_ids = array_filter(
 			$this->get_page_ids(),
-			function( $linked_page_id ) use ( $page_id ) {
+			function ( $linked_page_id ) use ( $page_id ) {
 				return $linked_page_id !== $page_id;
 			}
 		);
@@ -138,7 +138,7 @@ class Module {
 		}
 
 		$module_ids = array_map(
-			function( $term ) {
+			function ( $term ) {
 				return \HardG\CptTax\Registry::get_post_id_for_term_id( 'module', $term->term_id );
 			},
 			$terms
@@ -248,7 +248,7 @@ class Module {
 		$post_ids = get_posts( $args );
 
 		$modules = array_map(
-			function( $post_id ) {
+			function ( $post_id ) {
 				return self::get_instance( $post_id );
 			},
 			$post_ids
