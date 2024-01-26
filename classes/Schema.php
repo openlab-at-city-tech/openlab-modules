@@ -366,7 +366,8 @@ class Schema {
 			wp_update_post(
 				[
 					'ID'           => $page_id,
-					'post_content' => $nav_block_markup . "\n" . $page_content,
+					// wp_update_post() expects slashed.
+					'post_content' => wp_slash( $nav_block_markup . "\n" . $page_content ),
 				]
 			);
 
