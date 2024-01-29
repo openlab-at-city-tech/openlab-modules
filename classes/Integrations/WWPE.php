@@ -72,7 +72,9 @@ class WWPE {
 			'openlabModulesWwpeStrings',
 			[
 				'continueWithout'   => __( 'Continue without logging in', 'openlab-modules' ),
+				'dismiss'           => __( 'Dismiss', 'openlab-modules' ),
 				'logIn'             => __( 'Log In', 'openlab-modules' ),
+				'sectionComplete'   => __( 'You have completed this section. You will receive a private message confirming the completion.', 'openlab-modules' ),
 				'toReceiveCredit'   => __( 'To receive credit for completing this problem, you must log in.', 'openlab-modules' ),
 				'youAreNotLoggedIn' => __( 'You are not logged in.', 'openlab-modules' ),
 			]

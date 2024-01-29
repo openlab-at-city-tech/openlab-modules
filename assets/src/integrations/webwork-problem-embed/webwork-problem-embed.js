@@ -83,6 +83,34 @@ import './webwork-problem-embed.scss';
 			sectionCompleteRequestSent = true;
 			console.log( 'Successfully marked section as complete.' ); // eslint-disable-line no-console
 		} )
+
+		createSectionCompleteNotice();
+	}
+
+	/**
+	 * Creates a notice to display when the section is complete.
+	 *
+	 * @return {void}
+	 */
+	const createSectionCompleteNotice = () => {
+		const notice = document.createElement( 'div' );
+
+		const dismissButton = document.createElement( 'button' );
+		dismissButton.classList.add( 'wwpe-section-complete-notice-dismiss' );
+		dismissButton.innerHTML = '&times; <span class="screen-reader-text">' + openlabModulesWwpeStrings.dismiss + '</span>';
+		dismissButton.addEventListener( 'click', () => {
+			overlay.remove();
+		} )
+
+		notice.classList.add( 'wwpe-section-complete-notice' );
+		notice.innerHTML = '<p>' + openlabModulesWwpeStrings.sectionComplete + '</p>';
+		notice.appendChild( dismissButton );
+
+		const overlay = document.createElement( 'div' );
+		overlay.classList.add( 'wwpe-section-complete-notice-overlay' );
+		overlay.appendChild( notice );
+
+		document.body.appendChild( overlay );
 	}
 
 	/**
