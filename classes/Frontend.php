@@ -255,7 +255,7 @@ class Frontend {
 
 			$messages = \messages_new_message(
 				[
-					'sender_id'  => bp_loggedin_user_id(),
+					'sender_id'  => $post->post_author,
 					'recipients' => bp_loggedin_user_id(),
 					'subject'    => $message_subject,
 					'content'    => $message_content,
