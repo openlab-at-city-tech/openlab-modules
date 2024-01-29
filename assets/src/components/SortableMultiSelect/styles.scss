@@ -37,6 +37,14 @@
 .gutenberg-post-picker {
 	width: 100%;
 
+	li.gutenberg-post-picker-grid-item {
+		border-bottom: 1px solid #ddd;
+
+		&:last-child {
+			border-bottom: 0;
+		}
+	}
+
 	label {
 		overflow: hidden;
 		clip: rect (1px, 1px, 1px, 1px);
@@ -51,5 +59,14 @@
 
 	input {
 		width: 100%;
+	}
+
+	button.components-button {
+		height: auto;
+	}
+
+	.block-editor-link-control__search-item-info {
+		font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, Courier, monospace;
+		opacity: .8;
 	}
 }
