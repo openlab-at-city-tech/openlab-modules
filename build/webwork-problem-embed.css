@@ -1,0 +1,65 @@
+/*!*************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].use[2]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[4].use[3]!./assets/src/integrations/webwork-problem-embed/webwork-problem-embed.scss ***!
+  \*************************************************************************************************************************************************************************************************************************************************************************************************/
+.wwpe-problem-wrapper {
+  position: relative;
+}
+
+.renderer-problem-overlay {
+  padding: 20px 50px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+  z-index: 100;
+}
+.renderer-problem-overlay .overlay-button {
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+}
+.renderer-problem-overlay p {
+  margin-bottom: 1em;
+}
+
+.wwpe-section-complete-notice-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.wwpe-section-complete-notice {
+  padding: 20px 50px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  border-radius: 5px;
+  border: 1px solid #333;
+}
+.wwpe-section-complete-notice p {
+  margin: 0;
+  padding: 0;
+}
+
+.wwpe-section-complete-notice-dismiss {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 10px;
+  cursor: pointer;
+  color: #666;
+  background-color: #fff;
+  border-radius: 5px;
+}
+
+/*# sourceMappingURL=webwork-problem-embed.css.map*/
