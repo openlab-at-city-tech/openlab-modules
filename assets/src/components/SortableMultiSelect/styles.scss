@@ -37,14 +37,6 @@
 .gutenberg-post-picker {
 	width: 100%;
 
-	li.gutenberg-post-picker-grid-item {
-		border-bottom: 1px solid #ddd;
-
-		&:last-child {
-			border-bottom: 0;
-		}
-	}
-
 	label {
 		overflow: hidden;
 		clip: rect (1px, 1px, 1px, 1px);
@@ -62,11 +54,25 @@
 	}
 
 	button.components-button {
+		align-items: flex-start;
 		height: auto;
+		text-align: left;
+		padding-bottom: 8px;
+		padding-top: 12px;
+	}
+
+	.block-editor-link-control__search-item .block-editor-link-control__search-item-title {
+		font-size: 1.1em;
+		line-height: 1.2em;
+		margin-bottom: .3em;
 	}
 
 	.block-editor-link-control__search-item-info {
-		font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, Courier, monospace;
-		opacity: .8;
+		opacity: .7;
+	}
+
+	.block-editor-link-control__search-item-type {
+		background: #f1f1f1;
+		padding: 2px 8px 4px;
 	}
 }
