@@ -42,6 +42,8 @@ class Frontend {
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_assets' ] );
 
 		add_filter( 'the_content', [ __CLASS__, 'append_pagination' ] );
+
+		add_action( 'wp_ajax_mark_module_section_complete', [ __CLASS__, 'ajax_mark_module_section_complete' ] );
 	}
 
 	/**
@@ -51,6 +53,14 @@ class Frontend {
 	 */
 	public function register_assets() {
 		$blocks_asset_file = Editor::get_blocks_asset_file();
+
+		wp_register_script(
+			'openlab-modules-frontend',
+			OPENLAB_MODULES_PLUGIN_URL . '/build/frontend.js',
+			[],
+			$blocks_asset_file['version'],
+			true
+		);
 
 		wp_register_style(
 			'openlab-modules-frontend',
@@ -183,5 +193,74 @@ class Frontend {
 		wp_enqueue_style( 'openlab-modules-frontend' );
 
 		return $content . $pagination;
+	}
+
+	/**
+	 * Marks a module section as complete.
+	 *
+	 * @return void
+	 */
+	public static function ajax_mark_module_section_complete() {
+		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'openlab-modules' ) ) {
+			wp_send_json_error( [ 'message' => __( 'Invalid nonce.', 'openlab-modules' ) ] );
+		}
+
+		if ( ! isset( $_POST['postId'] ) ) {
+			wp_send_json_error( [ 'message' => __( 'No post ID available', 'openlab-modules' ) ] );
+		}
+
+		$post_id = intval( $_POST['postId'] );
+		$post    = get_post( $post_id );
+
+		if ( ! $post ) {
+			return;
+		}
+
+		$module_id = null;
+		if ( Schema::get_module_post_type() === get_post_type( $post ) ) {
+			$is_module = true;
+			$module_id = $post_id;
+		} else {
+			$is_module  = false;
+			$module_ids = Module::get_module_ids_of_page( $post_id );
+			if ( $module_ids ) {
+				$module_id = $module_ids[0];
+			}
+		}
+
+		if ( ! $module_id ) {
+			return;
+		}
+
+		if ( function_exists( 'messages_new_message' ) ) {
+			// translators: 1. Module title, 2. Module URL.
+			$module_infos = '<p>' . esc_html( sprintf( __( 'Module: %1$s %2$s', 'openlab-modules' ), get_the_title( $module_id ), get_permalink( $module_id ) ) ) . '</p>';
+
+			if ( ! $is_module ) {
+				// translators: 1. section title, 2. section URL.
+				$module_infos .= '<p>' . esc_html( sprintf( __( 'Section: %1$s %2$s', 'openlab-modules' ), get_the_title( $post ), get_permalink( $post ) ) ) . '</p>';
+			}
+
+			$message_content = sprintf(
+				'<p>%s</p><p>%s</p>',
+				esc_html__( 'You have completed a module section.', 'openlab-modules' ),
+				$module_infos
+			);
+
+			$message_subject = sprintf(
+				// translators: 1. Module title.
+				__( 'You have completed a section of module %s', 'openlab-modules' ),
+				get_the_title( $module_id )
+			);
+
+			$messages = \messages_new_message(
+				[
+					'sender_id'  => $post->post_author,
+					'recipients' => bp_loggedin_user_id(),
+					'subject'    => $message_subject,
+					'content'    => $message_content,
+				]
+			);
+		}
 	}
 }

@@ -28,5 +28,10 @@ class App {
 
 		$frontend = Frontend::get_instance();
 		$frontend->init();
+
+		if ( function_exists( 'wwpe_block_init' ) ) {
+			$wwpe_integration = Integrations\WWPE::get_instance();
+			$wwpe_integration->init();
+		}
 	}
 }

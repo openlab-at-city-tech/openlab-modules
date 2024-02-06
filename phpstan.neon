@@ -19,3 +19,6 @@ parameters:
     - # $args is always passed
       message: '#Variable \$args might not be defined.#'
       path: templates/blocks/*
+
+    - # Can't easily scan BP
+      message: '#Function (bp_loggedin_user_id) not found.#'
