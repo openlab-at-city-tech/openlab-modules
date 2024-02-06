@@ -51,11 +51,13 @@ class Editor {
 	 * Used when enqueuing assets, to help with cache busting during development.
 	 *
 	 * @access protected
+	 *
+	 * @param string $asset_handle Asset handle. Defaults to 'index'.
 	 * @return array{"dependencies": string[], "version": string}
 	 */
-	public static function get_blocks_asset_file() {
+	public static function get_blocks_asset_file( $asset_handle = 'index' ) {
 		$blocks_dir        = ROOT_DIR . '/build/';
-		$blocks_asset_file = include $blocks_dir . 'index.asset.php';
+		$blocks_asset_file = include $blocks_dir . $asset_handle . '.asset.php';
 
 		// Replace "wp-blockEditor" with "wp-block-editor".
 		$blocks_asset_file['dependencies'] = array_replace(
