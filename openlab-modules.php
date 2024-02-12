@@ -31,4 +31,9 @@ register_activation_hook(
 	}
 );
 
-App::init();
+add_action(
+	'plugins_loaded',
+	function () {
+		App::init();
+	}
+);
