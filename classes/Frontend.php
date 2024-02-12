@@ -249,7 +249,7 @@ class Frontend {
 
 			$message_subject = sprintf(
 				// translators: 1. Module title.
-				__( 'You have completed a section of module %s', 'openlab-modules' ),
+				__( 'Well done! You have completed a section of the module: %s', 'openlab-modules' ),
 				get_the_title( $module_id )
 			);
 
