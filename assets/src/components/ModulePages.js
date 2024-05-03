@@ -66,6 +66,13 @@ export default function EditModule( {
 
 	const editPostMeta = ( metaToUpdate ) => {
 		editPost( { meta: metaToUpdate } )
+
+		// auto-draft posts should be saved as draft as soon as any metadata is updated.
+		const status = select( 'core/editor' ).getEditedPostAttribute( 'status' )
+		if ( 'auto-draft' === status ) {
+			editPost( { status: 'draft' } )
+			dispatch( 'core/editor' ).savePost()
+		}
 	}
 
 	const sortedOptions = []
