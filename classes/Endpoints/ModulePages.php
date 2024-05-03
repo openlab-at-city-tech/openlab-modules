@@ -75,12 +75,20 @@ class ModulePages extends WP_REST_Controller {
 					continue;
 				}
 
+				$excerpt = get_the_excerpt( $page_id );
+				if ( ! $excerpt ) {
+					$excerpt = get_post_field( 'post_content', $page_id );
+				}
+
+				$excerpt = wp_trim_words( $excerpt, 20, '...' );
+
 				$pages[ $page_id ] = [
-					'id'      => $page_id,
-					'title'   => $page->post_title,
-					'editUrl' => get_edit_post_link( $page_id ),
-					'url'     => get_permalink( $page_id ),
-					'status'  => $page->post_status,
+					'id'                => $page_id,
+					'title'             => $page->post_title,
+					'editUrl'           => get_edit_post_link( $page_id ),
+					'excerptForPopover' => $excerpt,
+					'url'               => get_permalink( $page_id ),
+					'status'            => $page->post_status,
 				];
 			}
 		}

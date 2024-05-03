@@ -287,7 +287,7 @@ class Schema {
 	 */
 	public function register_rest_fields() {
 		register_rest_field(
-			'page',
+			[ 'page', 'openlab_module' ],
 			'editUrl',
 			[
 				'get_callback'    => function ( $data_object ) {
@@ -296,6 +296,23 @@ class Schema {
 					}
 
 					return get_edit_post_link( $data_object['id'], '' );
+				},
+				'update_callback' => null,
+				'schema'          => null,
+			]
+		);
+
+		register_rest_field(
+			[ 'page', 'openlab_module' ],
+			'excerptForPopover',
+			[
+				'get_callback'    => function ( $data_object ) {
+					$excerpt = get_the_excerpt( $data_object['id'] );
+					if ( ! $excerpt ) {
+						$excerpt = get_post_field( 'post_content', $data_object['id'] );
+					}
+
+					return wp_trim_words( $excerpt, 20, '...' );
 				},
 				'update_callback' => null,
 				'schema'          => null,
