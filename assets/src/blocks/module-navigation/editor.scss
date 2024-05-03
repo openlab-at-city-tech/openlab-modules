@@ -1,9 +1,22 @@
 @use './block';
 
-.wp-block-openlab-modules-module-navigation {
-	ul.openlab-modules-module-navigation-list {
-		pointer-events: none;
+.module-navigation-link-popover {
+	min-width: 250px;
+	padding: 16px 16px 8px 16px;
+
+	& > div {
+		margin-bottom: 16px;
 	}
+}
+
+.module-navigation-link-popover-title {
+	.dashicons {
+		margin-right: 8px;
+	}
+}
+
+.module-navigation-link-popover-actions .components-button {
+	margin-right: 8px;
 }
 
 .openlab-modules-gloss {

@@ -8,14 +8,15 @@ import {
 } from '@wordpress/block-editor';
 
 import {
+	Button,
 	Panel,
 	PanelBody,
-	PanelRow,
+	Popover,
 	SelectControl
 } from '@wordpress/components'
 
 import { useSelect, useDispatch } from '@wordpress/data'
-import { useEffect } from '@wordpress/element'
+import { useEffect, useState } from '@wordpress/element'
 
 /**
  * Editor styles.
@@ -25,22 +26,54 @@ import './editor.scss';
 /**
  * Edit function.
  *
- * @return {WPElement} Element to render.
+ * @param {Object}   props               Props.
+ * @param {Object}   props.attributes    Block attributes.
+ * @param {boolean}  props.isSelected    Whether the block is selected.
+ * @param {Function} props.setAttributes Set attributes.
  */
-export default function edit( {
+export default function Edit( {
 	attributes,
 	isSelected,
 	setAttributes,
 } ) {
 	const { moduleId } = attributes
+	const [ activePopover, setActivePopover ] = useState( null );
 
-	const blockProps = () => {
-		let classNames = []
+	const closePopoverOnClick = ( event ) => {
+		if ( event.target.closest( '.module-navigation-link-popover' ) ) {
+			return;
+		}
 
-		return useBlockProps( {
-			className: classNames
-		} )
+		if ( event.target.closest( '.module-navigation-editor-link' ) ) {
+			return;
+		}
+
+		setActivePopover( null );
 	}
+
+	const closePopoverOnEsc = ( event ) => {
+		if ( 27 === event.keyCode ) {
+			setActivePopover( null );
+		}
+	}
+
+	const togglePopover = ( toggleModuleId ) => {
+		if ( activePopover === toggleModuleId ) {
+			setActivePopover( null );
+
+			document.removeEventListener( 'click', closePopoverOnClick );
+		} else {
+			setActivePopover( toggleModuleId );
+
+			// Catch clicks outside of the popover.
+			setTimeout( () => {
+				document.addEventListener( 'click', closePopoverOnClick );
+			}, 500 )
+
+			// Catch 'esc' keypresses.
+			document.addEventListener( 'keydown', closePopoverOnEsc );
+		}
+	};
 
 	const {
 		allModules,
@@ -54,6 +87,7 @@ export default function edit( {
 			'postType',
 			'openlab_module',
 			{
+				context: 'edit',
 				order: 'asc',
 				orderby: 'title',
 				per_page: 100,
@@ -129,19 +163,22 @@ export default function edit( {
 		}
 	)
 
+	const selectedModuleObject = allModules ? allModules.find( ( module ) => module.id === moduleId ) : null
+
 	// When this block appears in the context of the associated module, the title should live-update.
 	const selectedModuleTitle = () => {
 		if ( isNewModule || ( currentPostId && moduleId === currentPostId ) ) {
 			return currentPostTitle
-		} else {
-			const selectedModuleObject = allModules ? allModules.find( ( module ) => module.id === moduleId ) : null
-			return selectedModuleObject ? selectedModuleObject.title.raw : ''
 		}
+
+		return selectedModuleObject ? selectedModuleObject.title.raw : ''
 	}
 
 	const modulePagesForDisplay = []
 
 	modulePagesForDisplay.push( {
+		editUrl: selectedModuleObject ? selectedModuleObject.editUrl.replace( '&amp;', '&' ) : '',
+		excerpt: selectedModuleObject ? he.decode( selectedModuleObject.excerptForPopover ) : '',
 		id: moduleId,
 		url: '',
 		title: __( 'Module Home', 'openlab-modules' ),
@@ -179,6 +216,8 @@ export default function edit( {
 			const thisPage = thisModulePages[ modulePageId ]
 
 			modulePagesForDisplay.push( {
+				editUrl: thisPage.editUrl.replace( '&amp;', '&' ),
+				excerpt: he.decode( thisPage.excerptForPopover ),
 				id: thisPage.id,
 				url: thisPage.url,
 				title: he.decode( thisPage.title ),
@@ -221,20 +260,56 @@ export default function edit( {
 				</Panel>
 			</InspectorControls>
 
-			<div { ...blockProps() }>
+			<div { ...useBlockProps() }>
 				<div className="openlab-modules-module-navigation">
 					<p className="openlab-modules-module-navigation-heading">
 						{ sprintf( __( 'Contents for Module: %s' ), selectedModuleTitle() ) }
 					</p>
 
-					<ul className="openlab-modules-module-navigation-list" role="list">
+					<ul className="openlab-modules-module-navigation-list">
 						{ modulePagesForDisplay.map( (module) => {
 							const pageClassName = 'publish' !== module.statusCode ? 'module-page-has-non-publish-status module-page-has-status-' + module.StatusCode : 'module-page-has-publish-status'
 
 							return (
 								<li key={'module-page-' + module.id} className={ pageClassName }>
-									<a href={module.url}>
+									<a
+										className="module-navigation-editor-link"
+										onClick={() => togglePopover( module.id )}
+										href="#"
+									>
 										{module.title}
+
+										{activePopover === module.id && (
+											<Popover>
+												<div className="module-navigation-link-popover">
+													<div className="module-navigation-link-popover-title">
+														<span className="dashicons dashicons-excerpt-view"></span>
+														<a href={module.url} target="_blank">{module.title}</a>
+													</div>
+
+													<div className="module-navigation-link-popover-excerpt">
+														{module.excerpt}
+													</div>
+
+													<div className="module-navigation-link-popover-actions">
+														<Button
+															className="module-navigation-link-edit"
+															href={module.editUrl}
+															variant="secondary"
+															target="_blank"
+														>{ __( 'Edit Page', 'openlab-modules' ) }</Button>
+
+														<Button
+															className="module-navigation-link-visit"
+															href={module.url}
+															variant="secondary"
+															target="_blank"
+														>{ __( 'Visit Page', 'openlab-modules' ) }</Button>
+
+													</div>
+												</div>
+											</Popover>
+										)}
 									</a>
 
 									{module.statusEl}
