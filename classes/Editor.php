@@ -105,6 +105,20 @@ class Editor {
 				},
 			]
 		);
+
+		register_block_type(
+			'openlab-modules/placeholder-text',
+			[
+				'api_version'     => '2',
+				'attributes'      => [
+					'textContent' => [
+						'type'    => 'string',
+						'default' => '',
+					],
+				],
+				'render_callback' => '__return_empty_string',
+			]
+		);
 	}
 
 	/**

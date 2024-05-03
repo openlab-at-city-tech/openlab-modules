@@ -153,20 +153,9 @@ class Schema {
 						],
 					],
 					[
-						'core/paragraph',
+						'openlab-modules/placeholder-text',
 						[
-							'style'   => [
-								'color' => [
-									'background' => '#eeeeee',
-								],
-							],
-							'content' => __( '<strong>Faculty:</strong> Please edit this page to organize any additional course resources that you\'d like to share with your students. Please delete this informational block when you are ready to share your site with your students. For help working with OpenLab Course sites, visit <a href="https://openlab.citytech.cuny.edu/blog/help/creating-a-course-faculty-only/">OpenLab Help</a>.', 'openlab-modules' ),
-						],
-					],
-					[
-						'core/paragraph',
-						[
-							'placeholder' => __( 'Add an introduction to this module. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', 'openlab-modules' ),
+							'textContent' => '<p>' . wp_kses_post( __( '<strong>Faculty:</strong> Please edit this page to organize any additional course resources that you\'d like to share with your students. Please delete this informational block when you are ready to share your site with your students. For help working with OpenLab Course sites, visit <a href="https://openlab.citytech.cuny.edu/blog/help/creating-a-course-faculty-only/">OpenLab Help</a>.', 'openlab-modules' ) ),
 						],
 					],
 				],
