@@ -74,10 +74,16 @@ class PageModules extends WP_REST_Controller {
 						return;
 					}
 
+					$edit_url = add_query_arg(
+						'classic-editor__forget',
+						'true',
+						get_edit_post_link( $module_id )
+					);
+
 					return [
 						'id'      => $module_id,
 						'title'   => $post->post_title,
-						'editUrl' => get_edit_post_link( $module_id ),
+						'editUrl' => $edit_url,
 						'url'     => get_permalink( $module_id ),
 					];
 				},

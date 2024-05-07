@@ -291,7 +291,13 @@ class Schema {
 						return null;
 					}
 
-					return get_edit_post_link( $data_object['id'], '' );
+					$edit_url = add_query_arg(
+						'classic-editor__forget',
+						'true',
+						get_edit_post_link( $data_object['id'], '' )
+					);
+
+					return $edit_url;
 				},
 				'update_callback' => null,
 				'schema'          => null,
