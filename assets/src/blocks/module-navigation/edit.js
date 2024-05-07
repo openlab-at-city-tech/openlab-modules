@@ -83,7 +83,7 @@ export default function Edit( {
 		thisModulePageIds,
 		thisModulePages
 	} = useSelect( ( select ) => {
-		const allModules = select( 'core' ).getEntityRecords(
+		const _allModules = select( 'core' ).getEntityRecords(
 			'postType',
 			'openlab_module',
 			{
@@ -95,27 +95,16 @@ export default function Edit( {
 			}
 		)
 
-		const thisModulePages = select( 'openlab-modules' ).getModulePages( moduleId )
-
-		const thisModulePageIds = select( 'openlab-modules' ).getModulePageIds( moduleId ) || []
-
-		const currentPostId = select( 'core/editor' ).getCurrentPostId()
-
-		const editedPostId = select( 'core/editor' ).getEditedPostAttribute( 'id' )
-
 		const postStatus = select( 'core/editor' ).getEditedPostAttribute( 'status' )
 		const postType = select( 'core/editor' ).getCurrentPostType()
-		const isNewModule = postStatus && 'auto-draft' === postStatus && postType && 'openlab_module' === postType
-
-		const currentPostTitle = select( 'core/editor' ).getEditedPostAttribute( 'title' )
 
 		return {
-			allModules,
-			currentPostId,
-			currentPostTitle,
-			isNewModule,
-			thisModulePageIds,
-			thisModulePages
+			allModules: _allModules,
+			currentPostId: select( 'core/editor' ).getCurrentPostId(),
+			currentPostTitle: select( 'core/editor' ).getEditedPostAttribute( 'title' ),
+			isNewModule: postStatus && 'auto-draft' === postStatus && postType && 'openlab_module' === postType,
+			thisModulePageIds: select( 'openlab-modules' ).getModulePageIds( moduleId ) || [],
+			thisModulePages: select( 'openlab-modules' ).getModulePages( moduleId ) || []
 		}
 	}, [ moduleId ] )
 
@@ -124,7 +113,7 @@ export default function Edit( {
 		if ( ! moduleId && isNewModule && currentPostId ) {
 			setAttributes({ moduleId: currentPostId });
 		}
-	}, [ currentPostId ] );
+	}, [ currentPostId, isNewModule, moduleId, setAttributes ] );
 
 	const optionLabel = ( title, status ) => {
 			switch ( status ) {
@@ -132,9 +121,11 @@ export default function Edit( {
 					return title
 
 				case 'trash' :
+					// translators: %s: module title
 					return sprintf( __( '%s (Trash)', 'openlab-modules' ), title )
 
 				case 'draft' :
+					// translators: %s: module title
 					return sprintf( __( '%s (Draft)', 'openlab-modules' ), title )
 			}
 	}
