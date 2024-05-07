@@ -216,8 +216,11 @@ class Admin {
 	/**
 	 * Adds modules to the 'Page on Front' dropdown.
 	 *
-	 * @param string $output Dropdown HTML.
-	 * @param array  $r      Dropdown arguments.
+	 * @param string  $output Dropdown HTML.
+	 * @param mixed[] $r      {
+	 *    Arguments for building the dropdown. See wp_dropdown_pages() for complete docs.
+	 *    @type string $name Name of the dropdown.
+	 * }
 	 * @return string
 	 */
 	public function add_modules_to_page_on_front_dropdown( $output, $r ) {
