@@ -121,6 +121,9 @@ class Frontend {
 			}
 		);
 
+		// Reindex the array, as some keys may have been removed.
+		$all_page_ids = array_values( $all_page_ids );
+
 		$current_index = $is_module ? 0 : array_search( get_queried_object_id(), $all_page_ids, true );
 
 		if ( false === $current_index ) {
