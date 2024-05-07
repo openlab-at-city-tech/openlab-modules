@@ -1,4 +1,4 @@
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { useBlockProps } from '@wordpress/block-editor';
 
 import { Spinner } from '@wordpress/components'
@@ -10,19 +10,12 @@ import './editor.scss'
 /**
  * Edit function.
  *
- * @return {WPElement} Element to render.
+ * @param {Object} props            Props.
+ * @param {Object} props.attributes Block attributes.
  */
-export default function edit( {
+export default function Edit( {
 	attributes
 } ) {
-	const blockProps = () => {
-		let classNames = []
-
-		return useBlockProps( {
-			className: classNames
-		} )
-	}
-
 	const { allModules } = useSelect( ( select ) => {
 		const rawModules = select( 'core' ).getEntityRecords(
 			'postType',
@@ -35,15 +28,15 @@ export default function edit( {
 			}
 		)
 
-		const allModules = rawModules ? rawModules.filter( ( module ) => module.title.rendered.length > 0 ) : null
+		const filteredModules = rawModules ? rawModules.filter( ( module ) => module.title.rendered.length > 0 ) : null
 
 		return {
-			allModules
+			allModules: filteredModules
 		}
 	} )
 
 	return (
-		<div { ...blockProps() }>
+		<div { ...useBlockProps() }>
 			{ ( null !== allModules && allModules.length > 0 ) && (
 				<ul className="openlab-modules-module-list">
 					{ allModules.map( ( module ) => (
