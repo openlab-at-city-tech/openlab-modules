@@ -1,40 +1,36 @@
 import {
-	Button,
 	PanelRow,
 	TextControl,
 	TextareaControl,
-	ToggleControl,
-	__experimentalDivider as Divider
+	__experimentalDivider as Divider // eslint-disable-line
 } from '@wordpress/components'
 
 import { __ } from '@wordpress/i18n'
 import { useDispatch, useSelect } from '@wordpress/data'
 import { PluginDocumentSettingPanel } from '@wordpress/edit-post'
 
-import { select } from '@wordpress/data'
-
-export default function EditModule( {
-	isSelected
-} ) {
-	const postType = useSelect( ( select ) => select( 'core/editor' ).getCurrentPostType() )
-
-	if ( ! postType || 'openlab_module' !== postType ) {
-		return null
-	}
+export default function EditModule() {
+	const { editPost } = useDispatch( 'core/editor' )
 
 	const {
 		moduleAcknowledgements,
 		moduleDescription,
-		postTitle
+		moduleNavTitle,
+		postTitle,
+		postType
 	} = useSelect( ( select ) => {
 		return {
 			moduleAcknowledgements: select( 'core/editor' ).getEditedPostAttribute( 'meta' ).module_acknowledgements,
 			moduleDescription: select( 'core/editor' ).getEditedPostAttribute( 'meta' ).module_description,
-			postTitle: select( 'core/editor' ).getEditedPostAttribute( 'title' )
+			moduleNavTitle: select( 'core/editor' ).getEditedPostAttribute( 'moduleNavTitle' ),
+			postTitle: select( 'core/editor' ).getEditedPostAttribute( 'title' ),
+			postType: select( 'core/editor' ).getCurrentPostType()
 		}
 	}, [] )
 
-	const { editPost } = useDispatch( 'core/editor' )
+	if ( ! postType || 'openlab_module' !== postType ) {
+		return null
+	}
 
 	const editPostMeta = ( metaToUpdate ) => {
 		editPost( { meta: metaToUpdate } )
@@ -51,6 +47,17 @@ export default function EditModule( {
 					label={ __( 'Name', 'openlab-modules' ) }
 					onChange={ ( newTitle ) => editPost( { title: newTitle } ) }
 					value={ postTitle }
+				/>
+			</PanelRow>
+
+			<Divider />
+
+			<PanelRow>
+				<TextControl
+					label={ __( 'Navigation Title', 'openlab-modules' ) }
+					help={ __( 'The title of the module home page, for use in the Module Navigation block', 'openlab-modules' ) }
+					onChange={ ( newNavTitle ) => editPost( { moduleNavTitle: newNavTitle } ) }
+					value={ moduleNavTitle }
 				/>
 			</PanelRow>
 

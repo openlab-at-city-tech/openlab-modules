@@ -15,7 +15,7 @@ import {
 	SelectControl
 } from '@wordpress/components'
 
-import { useSelect, useDispatch } from '@wordpress/data'
+import { useSelect } from '@wordpress/data'
 import { useEffect, useState } from '@wordpress/element'
 
 /**
@@ -79,6 +79,8 @@ export default function Edit( {
 		allModules,
 		currentPostId,
 		currentPostTitle,
+		editedModuleNavTitle,
+		isModule,
 		isNewModule,
 		pageModuleId,
 		thisModulePageIds,
@@ -126,6 +128,8 @@ export default function Edit( {
 			allModules: _allModules,
 			currentPostId: thisPostId,
 			currentPostTitle: select( 'core/editor' ).getEditedPostAttribute( 'title' ),
+			editedModuleNavTitle: select( 'core/editor' ).getEditedPostAttribute( 'moduleNavTitle' ),
+			isModule: postType && 'openlab_module' === postType,
 			isNewModule: postStatus && 'auto-draft' === postStatus && postType && 'openlab_module' === postType,
 			pageModuleId: thisPageModuleId,
 			thisModulePageIds: select( 'openlab-modules' ).getModulePageIds( thisPageModuleId ) || [],
@@ -136,6 +140,15 @@ export default function Edit( {
 	// If a moduleId is passed as an attribute, trust it. Otherwise, fall back
 	// on the contextually correct module ID.
 	const selectedModuleId = moduleId > 0 ? moduleId : pageModuleId
+
+	// If a nonzero selectedModuleId has been calculated, set the corresponding
+	// block attribute. This ensures that newly created blocks will have their
+	// moduleId attribute set to the correct value.
+	useEffect( () => {
+		if ( selectedModuleId > 0 && 0 === moduleId ) {
+			setAttributes( { moduleId: selectedModuleId } )
+		}
+	}, [ selectedModuleId, moduleId, setAttributes ] )
 
 	const optionLabel = ( title, status ) => {
 			switch ( status ) {
@@ -189,12 +202,20 @@ export default function Edit( {
 
 	const modulePagesForDisplay = []
 
+	const selectedModuleNavTitle = () => {
+		if ( isModule && ( currentPostId && selectedModuleId === currentPostId ) ) {
+			return editedModuleNavTitle
+		}
+
+		return selectedModuleObject ? selectedModuleObject.moduleNavTitle : ''
+	}
+
 	modulePagesForDisplay.push( {
 		editUrl: selectedModuleObject ? selectedModuleObject.editUrl.replace( '&amp;', '&' ) : '',
 		excerpt: selectedModuleObject ? he.decode( selectedModuleObject.excerptForPopover ) : '',
 		id: selectedModuleId,
 		url: '',
-		title: __( 'Module Home', 'openlab-modules' ),
+		title: selectedModuleNavTitle(),
 		statusCode: 'publish',
 		statusEl: <></>
 	} )
