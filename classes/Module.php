@@ -212,6 +212,30 @@ class Module {
 	}
 
 	/**
+	 * Gets the "navigation title" of the module.
+	 *
+	 * @return string
+	 */
+	public function get_nav_title() {
+		$post = $this->get_post();
+
+		if ( ! $post ) {
+			return '';
+		}
+
+		$nav_title = get_post_meta( $post->ID, 'module_nav_title', true );
+		if ( ! is_string( $nav_title ) ) {
+			$nav_title = '';
+		}
+
+		if ( empty( $nav_title ) ) {
+			$nav_title = __( 'Module Home', 'openlab-modules' );
+		}
+
+		return $nav_title;
+	}
+
+	/**
 	 * Gets the description of the module.
 	 *
 	 * @return string

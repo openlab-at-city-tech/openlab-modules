@@ -147,7 +147,7 @@ class Frontend {
 				continue;
 			}
 
-			$page_title = $neighbor_id === $module_id ? __( 'Module Home', 'openlab-modules' ) : (string) get_the_title( $neighbor_id );
+			$page_title = $neighbor_id === $module_id ? $module->get_nav_title() : (string) get_the_title( $neighbor_id );
 
 			$links[ $neighbor_type ] = [
 				'title' => $page_title,

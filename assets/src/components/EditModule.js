@@ -15,12 +15,14 @@ export default function EditModule() {
 	const {
 		moduleAcknowledgements,
 		moduleDescription,
+		moduleNavTitle,
 		postTitle,
 		postType
 	} = useSelect( ( select ) => {
 		return {
 			moduleAcknowledgements: select( 'core/editor' ).getEditedPostAttribute( 'meta' ).module_acknowledgements,
 			moduleDescription: select( 'core/editor' ).getEditedPostAttribute( 'meta' ).module_description,
+			moduleNavTitle: select( 'core/editor' ).getEditedPostAttribute( 'moduleNavTitle' ),
 			postTitle: select( 'core/editor' ).getEditedPostAttribute( 'title' ),
 			postType: select( 'core/editor' ).getCurrentPostType()
 		}
@@ -45,6 +47,17 @@ export default function EditModule() {
 					label={ __( 'Name', 'openlab-modules' ) }
 					onChange={ ( newTitle ) => editPost( { title: newTitle } ) }
 					value={ postTitle }
+				/>
+			</PanelRow>
+
+			<Divider />
+
+			<PanelRow>
+				<TextControl
+					label={ __( 'Navigation Title', 'openlab-modules' ) }
+					help={ __( 'The title of the module home page, for use in the Module Navigation block', 'openlab-modules' ) }
+					onChange={ ( newNavTitle ) => editPost( { moduleNavTitle: newNavTitle } ) }
+					value={ moduleNavTitle }
 				/>
 			</PanelRow>
 

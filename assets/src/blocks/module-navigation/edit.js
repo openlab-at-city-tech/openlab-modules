@@ -79,6 +79,8 @@ export default function Edit( {
 		allModules,
 		currentPostId,
 		currentPostTitle,
+		editedModuleNavTitle,
+		isModule,
 		isNewModule,
 		pageModuleId,
 		thisModulePageIds,
@@ -126,6 +128,8 @@ export default function Edit( {
 			allModules: _allModules,
 			currentPostId: thisPostId,
 			currentPostTitle: select( 'core/editor' ).getEditedPostAttribute( 'title' ),
+			editedModuleNavTitle: select( 'core/editor' ).getEditedPostAttribute( 'moduleNavTitle' ),
+			isModule: postType && 'openlab_module' === postType,
 			isNewModule: postStatus && 'auto-draft' === postStatus && postType && 'openlab_module' === postType,
 			pageModuleId: thisPageModuleId,
 			thisModulePageIds: select( 'openlab-modules' ).getModulePageIds( thisPageModuleId ) || [],
@@ -189,12 +193,20 @@ export default function Edit( {
 
 	const modulePagesForDisplay = []
 
+	const selectedModuleNavTitle = () => {
+		if ( isModule && ( currentPostId && selectedModuleId === currentPostId ) ) {
+			return editedModuleNavTitle
+		}
+
+		return selectedModuleObject ? selectedModuleObject.moduleNavTitle : ''
+	}
+
 	modulePagesForDisplay.push( {
 		editUrl: selectedModuleObject ? selectedModuleObject.editUrl.replace( '&amp;', '&' ) : '',
 		excerpt: selectedModuleObject ? he.decode( selectedModuleObject.excerptForPopover ) : '',
 		id: selectedModuleId,
 		url: '',
-		title: __( 'Module Home', 'openlab-modules' ),
+		title: selectedModuleNavTitle(),
 		statusCode: 'publish',
 		statusEl: <></>
 	} )
