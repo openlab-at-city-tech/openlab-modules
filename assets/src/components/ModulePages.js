@@ -2,13 +2,10 @@ import {
 	Button,
 	PanelRow,
 	TextControl,
-	TextareaControl,
-	ToggleControl,
-	__experimentalDivider as Divider
 } from '@wordpress/components'
 
 import { __ } from '@wordpress/i18n'
-import { dispatch, select, useDispatch, useSelect } from '@wordpress/data'
+import { dispatch, useDispatch, useSelect } from '@wordpress/data'
 import { PluginDocumentSettingPanel } from '@wordpress/edit-post'
 
 import { PostPicker } from './PostPicker'
@@ -21,38 +18,40 @@ import apiFetch from '@wordpress/api-fetch'
 
 import './module-pages.scss'
 
-export default function EditModule( {
-	isSelected
-} ) {
+export default function EditModule( {} ) {
 	const [ addMode, setAddMode ] = useState( '' )
 	const [ createTitle, setCreateTitle ] = useState( '' )
 	const [ createInProgress, setCreateInProgress ] = useState( false )
 
-	const postType = useSelect( ( select ) => select( 'core/editor' ).getCurrentPostType() )
+	const {
+		modulePageIds,
+		modulePages,
+		postId,
+		postStatus,
+		postType
+	} = useSelect( ( select ) => {
+		const thePostId = select( 'core/editor' ).getCurrentPostId()
+
+		const theModulePages = select( 'openlab-modules' ).getModulePages( thePostId )
+
+		const modulePageIdsRaw = select( 'core/editor' ).getEditedPostAttribute( 'meta' ).module_page_ids
+
+		const theModulePageIds = modulePageIdsRaw ? JSON.parse( modulePageIdsRaw ) : []
+
+		return {
+			modulePageIds: theModulePageIds ?? [],
+			modulePages: theModulePages ?? [],
+			postId: thePostId,
+			postStatus: select( 'core/editor' ).getEditedPostAttribute( 'status' ),
+			postType: select( 'core/editor' ).getCurrentPostType()
+		}
+	}, [] )
+
+	const { editPost } = useDispatch( 'core/editor' )
 
 	if ( ! postType || 'openlab_module' !== postType ) {
 		return null
 	}
-
-	const {
-		modulePageIds,
-		modulePages,
-		postId
-	} = useSelect( ( select ) => {
-		const postId = select( 'core/editor' ).getCurrentPostId()
-
-		const modulePages = select( 'openlab-modules' ).getModulePages( postId )
-
-		const modulePageIdsRaw = select( 'core/editor' ).getEditedPostAttribute( 'meta' ).module_page_ids
-
-		const modulePageIds = modulePageIdsRaw ? JSON.parse( modulePageIdsRaw ) : []
-
-		return {
-			modulePageIds,
-			modulePages: modulePages ?? [],
-			postId
-		}
-	}, [] )
 
 	const toggleAddMode = ( mode ) => {
 		if ( mode === addMode ) {
@@ -62,14 +61,11 @@ export default function EditModule( {
 		}
 	}
 
-	const { editPost } = useDispatch( 'core/editor' )
-
 	const editPostMeta = ( metaToUpdate ) => {
 		editPost( { meta: metaToUpdate } )
 
 		// auto-draft posts should be saved as draft as soon as any metadata is updated.
-		const status = select( 'core/editor' ).getEditedPostAttribute( 'status' )
-		if ( 'auto-draft' === status ) {
+		if ( 'auto-draft' === postStatus ) {
 			editPost( { status: 'draft' } )
 			dispatch( 'core/editor' ).savePost()
 		}
@@ -123,19 +119,13 @@ export default function EditModule( {
 			data: postData
 		})
 			.then((response) => {
-				// Handle successful response
-				const { id, title, link } = response
-
 				addPage( response )
 
 				setCreateTitle( '' )
 				setCreateInProgress( false )
 				setAddMode( '' )
 			})
-			.catch((error) => {
-				// Handle error
-				console.error('Failed to create post:', error)
-
+			.catch(() => {
 				setCreateInProgress( false )
 			})
 	}
