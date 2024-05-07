@@ -80,10 +80,11 @@ export default function Edit( {
 		currentPostId,
 		currentPostTitle,
 		isNewModule,
+		pageModuleId,
 		thisModulePageIds,
 		thisModulePages
 	} = useSelect( ( select ) => {
-		const allModules = select( 'core' ).getEntityRecords(
+		const _allModules = select( 'core' ).getEntityRecords(
 			'postType',
 			'openlab_module',
 			{
@@ -95,36 +96,46 @@ export default function Edit( {
 			}
 		)
 
-		const thisModulePages = select( 'openlab-modules' ).getModulePages( moduleId )
-
-		const thisModulePageIds = select( 'openlab-modules' ).getModulePageIds( moduleId ) || []
-
-		const currentPostId = select( 'core/editor' ).getCurrentPostId()
-
-		const editedPostId = select( 'core/editor' ).getEditedPostAttribute( 'id' )
-
 		const postStatus = select( 'core/editor' ).getEditedPostAttribute( 'status' )
 		const postType = select( 'core/editor' ).getCurrentPostType()
-		const isNewModule = postStatus && 'auto-draft' === postStatus && postType && 'openlab_module' === postType
 
-		const currentPostTitle = select( 'core/editor' ).getEditedPostAttribute( 'title' )
+		// get moduleIds property of the current post
+		const thisPostModuleIds = select( 'core/editor' ).getEditedPostAttribute( 'moduleIds' )
+
+		const thisPostId = select( 'core/editor' ).getCurrentPostId()
+
+		const thisPageModuleIdCb = () => {
+			if ( moduleId > 0 ) {
+				return moduleId
+			}
+
+			if ( 'openlab_module' === postType ) {
+				return thisPostId
+			}
+
+			if ( thisPostModuleIds ) {
+				return thisPostModuleIds[ 0 ]
+			}
+
+			return 0
+		}
+
+		const thisPageModuleId = thisPageModuleIdCb()
 
 		return {
-			allModules,
-			currentPostId,
-			currentPostTitle,
-			isNewModule,
-			thisModulePageIds,
-			thisModulePages
+			allModules: _allModules,
+			currentPostId: thisPostId,
+			currentPostTitle: select( 'core/editor' ).getEditedPostAttribute( 'title' ),
+			isNewModule: postStatus && 'auto-draft' === postStatus && postType && 'openlab_module' === postType,
+			pageModuleId: thisPageModuleId,
+			thisModulePageIds: select( 'openlab-modules' ).getModulePageIds( thisPageModuleId ) || [],
+			thisModulePages: select( 'openlab-modules' ).getModulePages( thisPageModuleId ) || []
 		}
 	}, [ moduleId ] )
 
-	// When inserting into a new module, this block should be associated with the new module.
-	useEffect( () => {
-		if ( ! moduleId && isNewModule && currentPostId ) {
-			setAttributes({ moduleId: currentPostId });
-		}
-	}, [ currentPostId ] );
+	// If a moduleId is passed as an attribute, trust it. Otherwise, fall back
+	// on the contextually correct module ID.
+	const selectedModuleId = moduleId > 0 ? moduleId : pageModuleId
 
 	const optionLabel = ( title, status ) => {
 			switch ( status ) {
@@ -132,9 +143,11 @@ export default function Edit( {
 					return title
 
 				case 'trash' :
+					// translators: %s: module title
 					return sprintf( __( '%s (Trash)', 'openlab-modules' ), title )
 
 				case 'draft' :
+					// translators: %s: module title
 					return sprintf( __( '%s (Draft)', 'openlab-modules' ), title )
 			}
 	}
@@ -163,11 +176,11 @@ export default function Edit( {
 		}
 	)
 
-	const selectedModuleObject = allModules ? allModules.find( ( module ) => module.id === moduleId ) : null
+	const selectedModuleObject = allModules ? allModules.find( ( module ) => module.id === selectedModuleId ) : null
 
 	// When this block appears in the context of the associated module, the title should live-update.
 	const selectedModuleTitle = () => {
-		if ( isNewModule || ( currentPostId && moduleId === currentPostId ) ) {
+		if ( isNewModule || ( currentPostId && selectedModuleId === currentPostId ) ) {
 			return currentPostTitle
 		}
 
@@ -179,7 +192,7 @@ export default function Edit( {
 	modulePagesForDisplay.push( {
 		editUrl: selectedModuleObject ? selectedModuleObject.editUrl.replace( '&amp;', '&' ) : '',
 		excerpt: selectedModuleObject ? he.decode( selectedModuleObject.excerptForPopover ) : '',
-		id: moduleId,
+		id: selectedModuleId,
 		url: '',
 		title: __( 'Module Home', 'openlab-modules' ),
 		statusCode: 'publish',
@@ -227,8 +240,6 @@ export default function Edit( {
 		}
 	}
 
-	const dispatch = useDispatch()
-
 	const onAddClick = () => {
 		wp.data.dispatch( 'core/edit-post' ).openGeneralSidebar( 'edit-post/document' )
 
@@ -252,9 +263,9 @@ export default function Edit( {
 						<SelectControl
 							help={ __( 'Select the Module whose navigation should be displayed.', 'openlab-modules' ) }
 							label={ __( 'Module', 'openlab-modules' ) }
-							onChange={ ( moduleId ) => setAttributes( { moduleId: parseInt( moduleId, 10 ) } ) }
+							onChange={ ( newModuleId ) => setAttributes( { moduleId: parseInt( newModuleId, 10 ) } ) }
 							options={ moduleOptions }
-							value={ moduleId.toString() }
+							value={ selectedModuleId.toString() }
 						/>
 					</PanelBody>
 				</Panel>

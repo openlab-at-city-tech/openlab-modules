@@ -291,7 +291,13 @@ class Schema {
 						return null;
 					}
 
-					return get_edit_post_link( $data_object['id'], '' );
+					$edit_url = add_query_arg(
+						'classic-editor__forget',
+						'true',
+						get_edit_post_link( $data_object['id'], '' )
+					);
+
+					return $edit_url;
 				},
 				'update_callback' => null,
 				'schema'          => null,
@@ -309,6 +315,18 @@ class Schema {
 					}
 
 					return wp_trim_words( $excerpt, 20, '...' );
+				},
+				'update_callback' => null,
+				'schema'          => null,
+			]
+		);
+
+		register_rest_field(
+			[ 'page' ],
+			'moduleIds',
+			[
+				'get_callback'    => function ( $data_object ) {
+					return Module::get_module_ids_of_page( $data_object['id'] );
 				},
 				'update_callback' => null,
 				'schema'          => null,

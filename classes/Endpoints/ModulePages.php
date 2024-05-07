@@ -82,10 +82,16 @@ class ModulePages extends WP_REST_Controller {
 
 				$excerpt = wp_trim_words( $excerpt, 20, '...' );
 
+				$edit_url = add_query_arg(
+					'classic-editor__forget',
+					'true',
+					get_edit_post_link( $page_id )
+				);
+
 				$pages[ $page_id ] = [
 					'id'                => $page_id,
 					'title'             => $page->post_title,
-					'editUrl'           => get_edit_post_link( $page_id ),
+					'editUrl'           => $edit_url,
 					'excerptForPopover' => $excerpt,
 					'url'               => get_permalink( $page_id ),
 					'status'            => $page->post_status,
