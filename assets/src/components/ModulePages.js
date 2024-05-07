@@ -8,6 +8,8 @@ import { __ } from '@wordpress/i18n'
 import { dispatch, useDispatch, useSelect } from '@wordpress/data'
 import { PluginDocumentSettingPanel } from '@wordpress/edit-post'
 
+import he from 'he'
+
 import { PostPicker } from './PostPicker'
 
 import SortableMultiSelect from './SortableMultiSelect'
@@ -139,8 +141,9 @@ export default function EditModule( {} ) {
 		dispatch( 'openlab-modules' ).setModulePageIds( postId, newModulePageIds )
 
 		const newModulePage = {
-			editUrl: newPage.editUrl,
 			id: newPage.id,
+			editUrl: newPage.editUrl,
+			excerptForPopover: he.decode( newPage.excerptForPopover ),
 			title: newPage.title.rendered,
 			url: newPage.link,
 			status: 'publish'
@@ -192,6 +195,11 @@ export default function EditModule( {} ) {
 											label={ __( 'Add page title and press enter.', 'openlab-modules' ) }
 											placeholder={ __( 'Add page title and press enter.', 'openlab-modules' ) }
 											value={ createTitle }
+											onKeyUp={ ( event ) => {
+												if ( 13 === event.keyCode ) {
+													onCreateClick()
+												}
+											} }
 										/>
 
 										<Button
