@@ -1,9 +1,7 @@
 import {
-	Button,
 	PanelRow,
 	TextControl,
 	TextareaControl,
-	ToggleControl,
 	__experimentalDivider as Divider
 } from '@wordpress/components'
 
@@ -11,30 +9,26 @@ import { __ } from '@wordpress/i18n'
 import { useDispatch, useSelect } from '@wordpress/data'
 import { PluginDocumentSettingPanel } from '@wordpress/edit-post'
 
-import { select } from '@wordpress/data'
-
-export default function EditModule( {
-	isSelected
-} ) {
-	const postType = useSelect( ( select ) => select( 'core/editor' ).getCurrentPostType() )
-
-	if ( ! postType || 'openlab_module' !== postType ) {
-		return null
-	}
+export default function EditModule() {
+	const { editPost } = useDispatch( 'core/editor' )
 
 	const {
 		moduleAcknowledgements,
 		moduleDescription,
-		postTitle
+		postTitle,
+		postType
 	} = useSelect( ( select ) => {
 		return {
 			moduleAcknowledgements: select( 'core/editor' ).getEditedPostAttribute( 'meta' ).module_acknowledgements,
 			moduleDescription: select( 'core/editor' ).getEditedPostAttribute( 'meta' ).module_description,
-			postTitle: select( 'core/editor' ).getEditedPostAttribute( 'title' )
+			postTitle: select( 'core/editor' ).getEditedPostAttribute( 'title' ),
+			postType: select( 'core/editor' ).getCurrentPostType()
 		}
 	}, [] )
 
-	const { editPost } = useDispatch( 'core/editor' )
+	if ( ! postType || 'openlab_module' !== postType ) {
+		return null
+	}
 
 	const editPostMeta = ( metaToUpdate ) => {
 		editPost( { meta: metaToUpdate } )
