@@ -67,6 +67,9 @@ class Schema {
 
 		add_action( 'save_post_' . self::get_module_post_type(), [ $this, 'maybe_create_all_modules_page' ] );
 		add_action( 'before_delete_post', [ $this, 'remove_page_from_modules' ] );
+
+		// OpenLab Attributions support for Module post type.
+		add_filter( 'ol_image_attribution_supported_post_types', [ $this, 'add_openlab_attribution_support' ] );
 	}
 
 	/**
@@ -455,5 +458,17 @@ class Schema {
 
 		flush_rewrite_rules( false );
 		update_option( 'openlab_modules_rewrite_rules_flushed', '1' );
+	}
+
+	/**
+	 * Adds support for OpenLab Attributions to the Module post type.
+	 *
+	 * @param string[] $post_types Post types.
+	 * @return string[]
+	 */
+	public function add_openlab_attribution_support( $post_types ) {
+		$post_types[] = self::get_module_post_type();
+
+		return $post_types;
 	}
 }
