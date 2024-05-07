@@ -36,6 +36,9 @@ class Admin {
 		add_filter( 'manage_' . Schema::get_module_post_type() . '_posts_columns', [ $this, 'module_custom_columns' ] );
 		add_action( 'manage_' . Schema::get_module_post_type() . '_posts_custom_column', [ $this, 'module_custom_column_contents' ], 10, 2 );
 
+		add_filter( 'manage_page_posts_columns', [ $this, 'page_custom_columns' ] );
+		add_action( 'manage_page_posts_custom_column', [ $this, 'page_custom_column_contents' ], 10, 2 );
+
 		add_action( 'restrict_manage_posts', [ $this, 'module_filter_for_page_table_markup' ] );
 		add_action( 'pre_get_posts', [ $this, 'module_filter_for_page_table' ] );
 	}
@@ -57,6 +60,32 @@ class Admin {
 		}
 
 		return $new_columns;
+	}
+
+	/**
+	 * Generates content for PAges edit.php custom columns.
+	 *
+	 * @param string $column_name String defining the column.
+	 * @param int    $post_id     ID of the current post in the loop.
+	 * @return void
+	 */
+	public function page_custom_column_contents( $column_name, $post_id ) {
+		if ( 'module' === $column_name ) {
+			$module_ids = Module::get_module_ids_of_page( $post_id );
+			if ( $module_ids ) {
+				$module_links = [];
+				foreach ( $module_ids as $module_id ) {
+					$module_edit_link = get_edit_post_link( $module_id ) ?? '';
+
+					$module_links[] = sprintf(
+						'<a href="%s">%s</a>',
+						esc_url( $module_edit_link ),
+						esc_html( get_the_title( $module_id ) )
+					);
+				}
+				echo implode( ', ', $module_links ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			}
+		}
 	}
 
 	/**
@@ -86,6 +115,25 @@ class Admin {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Adds custom columns to Pages edit.php screen.
+	 *
+	 * @param string[] $columns Column keys and header text.
+	 * @return string[]
+	 */
+	public function page_custom_columns( $columns ) {
+		$new_columns = [];
+		foreach ( $columns as $key => $column_name ) {
+			$new_columns[ $key ] = $column_name;
+
+			if ( 'title' === $key ) {
+				$new_columns['module'] = __( 'Module', 'openlab-modules' );
+			}
+		}
+
+		return $new_columns;
 	}
 
 	/**
