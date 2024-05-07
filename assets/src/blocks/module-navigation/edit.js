@@ -16,7 +16,7 @@ import {
 } from '@wordpress/components'
 
 import { useSelect } from '@wordpress/data'
-import { useState } from '@wordpress/element'
+import { useEffect, useState } from '@wordpress/element'
 
 /**
  * Editor styles.
@@ -140,6 +140,15 @@ export default function Edit( {
 	// If a moduleId is passed as an attribute, trust it. Otherwise, fall back
 	// on the contextually correct module ID.
 	const selectedModuleId = moduleId > 0 ? moduleId : pageModuleId
+
+	// If a nonzero selectedModuleId has been calculated, set the corresponding
+	// block attribute. This ensures that newly created blocks will have their
+	// moduleId attribute set to the correct value.
+	useEffect( () => {
+		if ( selectedModuleId > 0 && 0 === moduleId ) {
+			setAttributes( { moduleId: selectedModuleId } )
+		}
+	}, [ selectedModuleId, moduleId, setAttributes ] )
 
 	const optionLabel = ( title, status ) => {
 			switch ( status ) {
