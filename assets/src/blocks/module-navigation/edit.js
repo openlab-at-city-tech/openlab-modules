@@ -80,6 +80,7 @@ export default function Edit( {
 		currentPostId,
 		currentPostTitle,
 		isNewModule,
+		pageModuleId,
 		thisModulePageIds,
 		thisModulePages
 	} = useSelect( ( select ) => {
@@ -98,22 +99,43 @@ export default function Edit( {
 		const postStatus = select( 'core/editor' ).getEditedPostAttribute( 'status' )
 		const postType = select( 'core/editor' ).getCurrentPostType()
 
+		// get moduleIds property of the current post
+		const thisPostModuleIds = select( 'core/editor' ).getEditedPostAttribute( 'moduleIds' )
+
+		const thisPostId = select( 'core/editor' ).getCurrentPostId()
+
+		const thisPageModuleIdCb = () => {
+			if ( moduleId > 0 ) {
+				return moduleId
+			}
+
+			if ( 'openlab_module' === postType ) {
+				return thisPostId
+			}
+
+			if ( thisPostModuleIds ) {
+				return thisPostModuleIds[ 0 ]
+			}
+
+			return 0
+		}
+
+		const thisPageModuleId = thisPageModuleIdCb()
+
 		return {
 			allModules: _allModules,
-			currentPostId: select( 'core/editor' ).getCurrentPostId(),
+			currentPostId: thisPostId,
 			currentPostTitle: select( 'core/editor' ).getEditedPostAttribute( 'title' ),
 			isNewModule: postStatus && 'auto-draft' === postStatus && postType && 'openlab_module' === postType,
-			thisModulePageIds: select( 'openlab-modules' ).getModulePageIds( moduleId ) || [],
-			thisModulePages: select( 'openlab-modules' ).getModulePages( moduleId ) || []
+			pageModuleId: thisPageModuleId,
+			thisModulePageIds: select( 'openlab-modules' ).getModulePageIds( thisPageModuleId ) || [],
+			thisModulePages: select( 'openlab-modules' ).getModulePages( thisPageModuleId ) || []
 		}
 	}, [ moduleId ] )
 
-	// When inserting into a new module, this block should be associated with the new module.
-	useEffect( () => {
-		if ( ! moduleId && isNewModule && currentPostId ) {
-			setAttributes({ moduleId: currentPostId });
-		}
-	}, [ currentPostId, isNewModule, moduleId, setAttributes ] );
+	// If a moduleId is passed as an attribute, trust it. Otherwise, fall back
+	// on the contextually correct module ID.
+	const selectedModuleId = moduleId > 0 ? moduleId : pageModuleId
 
 	const optionLabel = ( title, status ) => {
 			switch ( status ) {
@@ -154,11 +176,11 @@ export default function Edit( {
 		}
 	)
 
-	const selectedModuleObject = allModules ? allModules.find( ( module ) => module.id === moduleId ) : null
+	const selectedModuleObject = allModules ? allModules.find( ( module ) => module.id === selectedModuleId ) : null
 
 	// When this block appears in the context of the associated module, the title should live-update.
 	const selectedModuleTitle = () => {
-		if ( isNewModule || ( currentPostId && moduleId === currentPostId ) ) {
+		if ( isNewModule || ( currentPostId && selectedModuleId === currentPostId ) ) {
 			return currentPostTitle
 		}
 
@@ -170,7 +192,7 @@ export default function Edit( {
 	modulePagesForDisplay.push( {
 		editUrl: selectedModuleObject ? selectedModuleObject.editUrl.replace( '&amp;', '&' ) : '',
 		excerpt: selectedModuleObject ? he.decode( selectedModuleObject.excerptForPopover ) : '',
-		id: moduleId,
+		id: selectedModuleId,
 		url: '',
 		title: __( 'Module Home', 'openlab-modules' ),
 		statusCode: 'publish',
@@ -218,8 +240,6 @@ export default function Edit( {
 		}
 	}
 
-	const dispatch = useDispatch()
-
 	const onAddClick = () => {
 		wp.data.dispatch( 'core/edit-post' ).openGeneralSidebar( 'edit-post/document' )
 
@@ -243,9 +263,9 @@ export default function Edit( {
 						<SelectControl
 							help={ __( 'Select the Module whose navigation should be displayed.', 'openlab-modules' ) }
 							label={ __( 'Module', 'openlab-modules' ) }
-							onChange={ ( moduleId ) => setAttributes( { moduleId: parseInt( moduleId, 10 ) } ) }
+							onChange={ ( newModuleId ) => setAttributes( { moduleId: parseInt( newModuleId, 10 ) } ) }
 							options={ moduleOptions }
-							value={ moduleId.toString() }
+							value={ selectedModuleId.toString() }
 						/>
 					</PanelBody>
 				</Panel>

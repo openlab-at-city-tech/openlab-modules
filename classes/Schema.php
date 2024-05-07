@@ -320,6 +320,18 @@ class Schema {
 				'schema'          => null,
 			]
 		);
+
+		register_rest_field(
+			[ 'page' ],
+			'moduleIds',
+			[
+				'get_callback'    => function ( $data_object ) {
+					return Module::get_module_ids_of_page( $data_object['id'] );
+				},
+				'update_callback' => null,
+				'schema'          => null,
+			]
+		);
 	}
 
 	/**
