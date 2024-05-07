@@ -41,6 +41,8 @@ class Admin {
 
 		add_action( 'restrict_manage_posts', [ $this, 'module_filter_for_page_table_markup' ] );
 		add_action( 'pre_get_posts', [ $this, 'module_filter_for_page_table' ] );
+
+		add_filter( 'wp_dropdown_pages', [ $this, 'add_modules_to_page_on_front_dropdown' ], 10, 2 );
 	}
 
 	/**
@@ -209,5 +211,41 @@ class Admin {
 		];
 
 		$query->set( 'tax_query', $tax_query );
+	}
+
+	/**
+	 * Adds modules to the 'Page on Front' dropdown.
+	 *
+	 * @param string $output Dropdown HTML.
+	 * @param array  $r      Dropdown arguments.
+	 * @return string
+	 */
+	public function add_modules_to_page_on_front_dropdown( $output, $r ) {
+		if ( 'page_on_front' !== $r['name'] ) {
+			return $output;
+		}
+
+		// Get a list of modules.
+		$modules = Module::get();
+
+		// Build <optgroup> for modules.
+		$module_optgroup = '';
+		if ( $modules ) {
+			$module_optgroup = '<optgroup label="' . esc_attr__( 'Modules', 'openlab-modules' ) . '">';
+			foreach ( $modules as $module ) {
+				$module_optgroup .= sprintf(
+					'<option value="%d"%s>%s</option>',
+					$module->get_id(),
+					selected( get_option( 'page_on_front' ), $module->get_id(), false ),
+					esc_html( $module->get_title() )
+				);
+			}
+			$module_optgroup .= '</optgroup>';
+		}
+
+		// Append the module <optgroup> to the dropdown.
+		$output = str_replace( '</select>', $module_optgroup . '</select>', $output );
+
+		return $output;
 	}
 }
