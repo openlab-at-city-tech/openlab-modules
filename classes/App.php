@@ -26,6 +26,9 @@ class App {
 		$api = API::get_instance();
 		$api->init();
 
+		$admin = Admin::get_instance();
+		$admin->init();
+
 		$frontend = Frontend::get_instance();
 		$frontend->init();
 
