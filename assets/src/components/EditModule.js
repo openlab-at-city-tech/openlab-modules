@@ -2,7 +2,7 @@ import {
 	PanelRow,
 	TextControl,
 	TextareaControl,
-	__experimentalDivider as Divider
+	__experimentalDivider as Divider // eslint-disable-line
 } from '@wordpress/components'
 
 import { __ } from '@wordpress/i18n'
