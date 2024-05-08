@@ -9,9 +9,23 @@
 }
 
 .edit-post-visual-editor .wp-block-openlab-modules-module-list ul:not(.wp-block-gallery) li {
-	margin-bottom: 2em;
+	margin-bottom: 0;
 }
 
 .editor-styles-wrapper .wp-block-openlab-modules-module-list h2 {
 	margin-bottom: .5em;
+	margin-top: .5em;
+}
+
+.editor-styles-wrapper {
+	.wp-block-openlab-modules-module-list {
+		button {
+			cursor: grab;
+			margin-top: 9px;
+
+			&:active {
+				cursor: grabbing;
+			}
+		}
+	}
 }
