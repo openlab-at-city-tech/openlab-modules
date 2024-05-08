@@ -21,6 +21,7 @@ const SortableItem = ({ id, title, link, description }) => {
   } = useSortable({ id });
 
   const style = {
+		alignItems: 'center',
 		display: 'flex',
 		marginLeft: '0',
     transform: CSS.Transform.toString(transform),
