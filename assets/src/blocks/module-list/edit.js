@@ -73,11 +73,16 @@ export default function Edit({ attributes, isSelected, setAttributes }) {
     );
 
     return {
-      allModules: rawModules ? rawModules.filter(module => module.title.rendered.length > 0) : []
+      allModules: rawModules ? rawModules.filter(module => module.title.rendered.length > 0) : null
     };
   }, []);
+	console.log(allModules);
 
 	const orderModulesAccordingToId = () => {
+		if ( null === allModules ) {
+			return []
+		}
+
 		if ( ! orderedIds ) {
 			return allModules;
 		}
@@ -124,7 +129,7 @@ export default function Edit({ attributes, isSelected, setAttributes }) {
 
   return (
     <div { ...useBlockProps() }>
-      { allModules && allModules.length > 0 && (
+      { null !== allModules && allModules.length > 0 && (
         <ul className="openlab-modules-module-list">
 					{ isSelected && (
 						<DndContext
@@ -162,11 +167,11 @@ export default function Edit({ attributes, isSelected, setAttributes }) {
         </ul>
       ) }
 
-			{ allModules && allModules.length === 0 && (
+			{ null !== allModules && allModules.length === 0 && (
         <p>{ __( 'This site has no modules to display.', 'openlab-modules' ) }</p>
       ) }
 
-			{ ! allModules && (
+			{ null === allModules && (
         <Spinner />
       ) }
     </div>
