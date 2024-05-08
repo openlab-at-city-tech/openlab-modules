@@ -84,6 +84,12 @@ class Editor {
 			'openlab-modules/module-list',
 			[
 				'api_version'     => '2',
+				'attributes'      => [
+					'orderedIds' => [
+						'type'    => 'array',
+						'default' => [],
+					],
+				],
 				'render_callback' => function ( $attributes, $content ) {
 					return $this->render_block( 'module-list', $attributes, $content );
 				},

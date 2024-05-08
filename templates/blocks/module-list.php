@@ -5,16 +5,28 @@
  * @package openlab-modules
  */
 
-$modules = \OpenLab\Modules\Module::get();
+$ordered_ids = isset( $args['orderedIds'] ) ? $args['orderedIds'] : [];
+
+if ( ! empty( $ordered_ids ) ) {
+	$ordered_modules = [];
+	foreach ( $ordered_ids as $module_id ) {
+		$module = \OpenLab\Modules\Module::get_instance( $module_id );
+		if ( $module ) {
+			$ordered_modules[] = $module;
+		}
+	}
+} else {
+	$ordered_modules = \OpenLab\Modules\Module::get();
+}
 
 wp_enqueue_style( 'openlab-modules-frontend' );
 
 ?>
 
 <div class="wp-block-openlab-modules-module-list">
-	<?php if ( $modules ) : ?>
+	<?php if ( $ordered_modules ) : ?>
 	<ul class="openlab-modules-module-list">
-		<?php foreach ( $modules as $module ) : ?>
+		<?php foreach ( $ordered_modules as $module ) : ?>
 			<li>
 				<h2><a href="<?php echo esc_url( $module->get_url() ); ?>"><?php echo esc_html( $module->get_title() ); ?></a></h2>
 

@@ -6,5 +6,6 @@ import metadata from './block.json';
 registerBlockType( metadata.name, {
 	title: 'Module List',
 	icon: 'editor-ul',
-	edit: Edit
+	edit: Edit,
+	save: ({attributes}) => null,
 } );
