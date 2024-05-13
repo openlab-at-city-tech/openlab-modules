@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 
+import he from 'he'
+
 import {
 	closestCenter,
 	DndContext,
@@ -114,7 +116,7 @@ const SortableMultiSelect = (props) => {
 									id={'sortable-' + id}
 									key={'sortable-' + id}
 									value={id}
-									label={title}
+									label={he.decode(title)}
 									url={url}
 									postStatus={status}
 									editUrl={editUrl}
