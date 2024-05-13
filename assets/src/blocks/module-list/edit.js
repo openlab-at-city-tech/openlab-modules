@@ -76,7 +76,6 @@ export default function Edit({ attributes, isSelected, setAttributes }) {
       allModules: rawModules ? rawModules.filter(module => module.title.rendered.length > 0) : null
     };
   }, []);
-	console.log(allModules);
 
 	const orderModulesAccordingToId = () => {
 		if ( null === allModules ) {
