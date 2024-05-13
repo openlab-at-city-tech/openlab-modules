@@ -29,11 +29,9 @@ const SortableMultiSelect = (props) => {
 	const [ activeId, setActiveId ] = useState( null )
 
 	const findSelectedOptionIndexById = (id) => {
-		for ( var k in options ) {
+		for ( const k in options ) {
 			if ( id === options[k].id ) {
 				return k
-			} else {
-				continue
 			}
 		}
 
@@ -82,11 +80,6 @@ const SortableMultiSelect = (props) => {
 		return clone;
 	};
 
-	const onSelect = (newSelectedOption) => {
-		const newSelectedOptions = [...options, newSelectedOption ]
-		onChange( newSelectedOptions )
-	}
-
 	const handleRemoveClick = (itemHandle) => {
 		const itemId = Number( itemHandle.substr( 9 ) )
 		const itemIndex = findSelectedOptionIndexById( itemId )
@@ -110,7 +103,7 @@ const SortableMultiSelect = (props) => {
 						items={items}
 						strategy={verticalListSortingStrategy}
 					>
-						{ options.map( ( { editUrl, id, order, title, url, status } ) => {
+						{ options.map( ( { editUrl, id, title, url, status } ) => {
 							return (
 								<SortableItem
 									id={'sortable-' + id}
