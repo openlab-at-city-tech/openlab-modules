@@ -15,7 +15,7 @@ export default function Edit( { attributes } ) {
 	return (
 		<div { ...useBlockProps() }>
 			<button
-				className="clone-module-button"
+				className="clone-module-button clone-module-button-reset"
 			>{ __( 'Clone Module', 'openlab-modules' ) }</button>
 		</div>
 	)
