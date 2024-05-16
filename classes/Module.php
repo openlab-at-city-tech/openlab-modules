@@ -257,6 +257,24 @@ class Module {
 	}
 
 	/**
+	 * Is sharing enable for this module?
+	 *
+	 * @return bool
+	 */
+	public function is_sharing_enabled() {
+		$saved = get_post_meta( $this->id, 'enable_sharing', true );
+
+		if ( '' === $saved && function_exists( 'openlab_group_can_be_cloned' ) && function_exists( 'openlab_get_group_id_by_blog_id' ) ) {
+			$group_id = openlab_get_group_id_by_blog_id( get_current_blog_id() );
+			if ( $group_id ) {
+				return openlab_group_can_be_cloned( $group_id );
+			}
+		}
+
+		return (bool) $saved;
+	}
+
+	/**
 	 * Gets a list of modules.
 	 *
 	 * @return \OpenLab\Modules\Module[]

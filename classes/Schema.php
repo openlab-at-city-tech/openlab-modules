@@ -346,6 +346,30 @@ class Schema {
 		);
 
 		register_rest_field(
+			[ 'openlab_module' ],
+			'enableSharing',
+			[
+				'get_callback'    => function ( $data_object ) {
+					$module = Module::get_instance( $data_object['id'] );
+					if ( ! $module ) {
+						return false;
+					}
+
+					return $module->is_sharing_enabled();
+				},
+				'update_callback' => function ( $value, $data_object ) {
+					$module = Module::get_instance( $data_object->ID );
+					if ( ! $module ) {
+						return;
+					}
+
+					$to_save = ! empty( $value ) ? '1' : '0';
+					update_post_meta( $data_object->ID, 'enable_sharing', $to_save );
+				},
+			]
+		);
+
+		register_rest_field(
 			[ 'page' ],
 			'moduleIds',
 			[

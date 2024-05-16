@@ -125,6 +125,17 @@ class Editor {
 				'render_callback' => '__return_empty_string',
 			]
 		);
+
+		register_block_type(
+			'openlab-modules/sharing',
+			[
+				'api_version'     => '2',
+				'attributes'      => [],
+				'render_callback' => function ( $attributes, $content ) {
+					return $this->render_block( 'sharing', $attributes, $content );
+				},
+			]
+		);
 	}
 
 	/**

@@ -1,0 +1,21 @@
+button.clone-module-button {
+	border: none;
+	background: none;
+	display: flex;
+	align-items: center;
+	font-size: .9rem;
+	font-weight: 700;
+	text-decoration: underline;
+	cursor: pointer;
+
+	&:before {
+		background-image: url( './icon.png' );
+		background-size: 16px 16px;
+		background-repeat: no-repeat;
+		content: '';
+		display: inline-block;
+		width: 16px;
+		height: 16px;
+		margin-right: 8px;
+	}
+}

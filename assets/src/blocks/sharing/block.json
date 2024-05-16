@@ -1,0 +1,22 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 2,
+    "name": "openlab-modules/sharing",
+    "title": "Module Sharing",
+    "category": "openlab-modules",
+    "icon": "menu",
+    "description": "Sharing tools for modules",
+    "supports": {
+      "inserter": true
+    },
+    "attributes": {
+      "textContent": {
+        "type": "string",
+        "default": ""
+      }
+    },
+    "textdomain": "openlab-modules",
+    "editorScript": "file:./index.js",
+    "editorStyle": "file:./index.css",
+    "style": "file:./style-index.css"
+}

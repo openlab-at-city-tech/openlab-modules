@@ -2,6 +2,7 @@ import {
 	PanelRow,
 	TextControl,
 	TextareaControl,
+	ToggleControl,
 	__experimentalDivider as Divider // eslint-disable-line
 } from '@wordpress/components'
 
@@ -13,6 +14,7 @@ export default function EditModule() {
 	const { editPost } = useDispatch( 'core/editor' )
 
 	const {
+		isSharingEnabled,
 		moduleAcknowledgements,
 		moduleDescription,
 		moduleNavTitle,
@@ -20,6 +22,7 @@ export default function EditModule() {
 		postType
 	} = useSelect( ( select ) => {
 		return {
+			isSharingEnabled: select( 'core/editor' ).getEditedPostAttribute( 'enableSharing' ),
 			moduleAcknowledgements: select( 'core/editor' ).getEditedPostAttribute( 'meta' ).module_acknowledgements,
 			moduleDescription: select( 'core/editor' ).getEditedPostAttribute( 'meta' ).module_description,
 			moduleNavTitle: select( 'core/editor' ).getEditedPostAttribute( 'moduleNavTitle' ),
@@ -34,6 +37,28 @@ export default function EditModule() {
 
 	const editPostMeta = ( metaToUpdate ) => {
 		editPost( { meta: metaToUpdate } )
+	}
+
+	const handleEnableSharingToggle = ( newIsSharingEnabled ) => {
+		editPost( { enableSharing: newIsSharingEnabled } )
+
+		if ( newIsSharingEnabled ) {
+			// Is there already an openlab-modules/sharing block in the post content?
+			const sharingBlock = wp.data.select( 'core/block-editor' ).getBlocks().find( block => block.name === 'openlab-modules/sharing' )
+
+			if ( ! sharingBlock ) {
+				// If not, add one. Ideally after openlab-modules/module-navigation, if it exists.
+				const moduleNavigationBlock = wp.data.select( 'core/block-editor' ).getBlocks().find( block => block.name === 'openlab-modules/module-navigation' )
+				const moduleNavigationClientId = moduleNavigationBlock ? moduleNavigationBlock.clientId : null
+
+				const insertIndex = moduleNavigationClientId ? wp.data.select( 'core/block-editor' ).getBlockIndex( moduleNavigationClientId ) + 1 : null
+
+				const newBlock = wp.blocks.createBlock( 'openlab-modules/sharing', {} )
+
+				// Insert a test paragraph block after the module navigation block
+				wp.data.dispatch( 'core/block-editor' ).insertBlocks( wp.blocks.createBlock( 'openlab-modules/sharing' ), insertIndex )
+			}
+		}
 	}
 
 	return (
@@ -78,6 +103,17 @@ export default function EditModule() {
 					label={ __( 'Acknowledgements', 'openlab-modules' ) }
 					onChange={ ( newAcknowledgements ) => editPostMeta( { module_acknowledgements: newAcknowledgements } ) }
 					value={ moduleAcknowledgements }
+				/>
+			</PanelRow>
+
+			<Divider />
+
+			<PanelRow>
+				<ToggleControl
+					label={ __( 'Share', 'openlab-modules' ) }
+					help={ __( 'Enable shared cloning for this Module.', 'openlab-modules' ) }
+					checked={ isSharingEnabled }
+					onChange={ ( newIsSharingEnabled ) => handleEnableSharingToggle( newIsSharingEnabled ) }
 				/>
 			</PanelRow>
 		</PluginDocumentSettingPanel>
