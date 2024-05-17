@@ -275,6 +275,44 @@ class Module {
 	}
 
 	/**
+	 * Gets a ModuleData object representing this module.
+	 *
+	 * @return \OpenLab\Modules\ModuleData
+	 */
+	public function get_module_data() {
+		$module_data = new ModuleData();
+
+		$module_data->set_id( $this->id );
+		$module_data->set_title( $this->get_title() );
+		$module_data->set_content( get_post_field( 'post_content', $this->id ) );
+		$module_data->set_description( $this->get_description() );
+		$module_data->set_nav_title( $this->get_nav_title() );
+		$module_data->set_slug( get_post_field( 'post_name', $this->id ) );
+		$module_data->set_url( $this->get_url() );
+		$module_data->set_enable_sharing( $this->is_sharing_enabled() );
+
+		$page_ids = $this->get_page_ids( 'all' );
+		foreach ( $page_ids as $page_id ) {
+			$post = get_post( $page_id );
+			if ( ! $post ) {
+				continue;
+			}
+
+			$module_data->add_page(
+				[
+					'id'      => $page_id,
+					'title'   => $post->post_title,
+					'slug'    => $post->post_name,
+					'url'     => get_permalink( $post ),
+					'content' => $post->post_content,
+				]
+			);
+		}
+
+		return $module_data;
+	}
+
+	/**
 	 * Gets a list of modules.
 	 *
 	 * @return \OpenLab\Modules\Module[]

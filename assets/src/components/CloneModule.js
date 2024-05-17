@@ -4,11 +4,12 @@ import { __ } from '@wordpress/i18n';
 import he from 'he';
 
 const CloneModule = ( props ) => {
-  const { uniqid } = props;
+  const { moduleId, nonce, uniqid } = props;
 
   const [ userSites, setUserSites ] = useState( [] );
   const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ selectedSite, setSelectedSite ] = useState( null );
+	const [ cloneInProgress, setCloneInProgress ] = useState( false );
 
   const handleCloneButtonClick = () => {
     setIsModalOpen( true );
@@ -44,6 +45,27 @@ const CloneModule = ( props ) => {
   const closeModal = () => {
     setIsModalOpen( false );
   };
+
+	const handleContinueClick = async () => {
+		setCloneInProgress( true );
+
+		try {
+			const response = await apiFetch(
+				{
+					path: `/openlab-modules/v1/clone-module/${moduleId}`,
+					method: 'POST',
+					data: {
+						nonce,
+						destinationSiteId: selectedSite,
+					},
+				}
+			);
+
+			setCloneInProgress( false );
+
+			console.log( response );
+		} catch ( error ) {}
+	}
 
   return (
     <>
@@ -107,9 +129,10 @@ const CloneModule = ( props ) => {
 
 							<button
 								className="clone-module-button-submit"
-								disabled={ ! selectedSite }
+								disabled={ ! selectedSite || cloneInProgress}
+								onClick={ handleContinueClick }
 							>
-								{ __( 'Clone Module', 'openlab-modules' ) }
+								{ cloneInProgress ? __( 'Cloning', 'openlab-modules' ) : __( 'Continue', 'openlab-modules' ) }
 							</button>
 						</div>
           </div>

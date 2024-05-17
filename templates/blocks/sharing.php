@@ -10,6 +10,19 @@ wp_enqueue_script( 'openlab-modules-frontend' );
 
 $block_unique_id = 'clone-module-' . uniqid();
 
+// @todo This should be an attribute of the block.
+$module_id = 0;
+if ( \OpenLab\Modules\Schema::get_module_post_type() === get_post_type() ) {
+	$is_module = true;
+	$module_id = get_queried_object_id();
+} else {
+	$is_module  = false;
+	$module_ids = \OpenLab\Modules\Module::get_module_ids_of_page( get_queried_object_id() );
+	if ( $module_ids ) {
+		$module_id = $module_ids[0];
+	}
+}
+
 ?>
 
-<div id="clone-module-container-<?php echo esc_attr( $block_unique_id ); ?>" class="clone-module-container" data-uniqid="<?php echo esc_attr( $block_unique_id ); ?>"></div>
+<div id="clone-module-container-<?php echo esc_attr( $block_unique_id ); ?>" class="clone-module-container" data-uniqid="<?php echo esc_attr( $block_unique_id ); ?>" data-module-id="<?php echo esc_attr( (string) $module_id ); ?>" data-nonce="<?php echo esc_attr( wp_create_nonce( 'openlab-module-clone' ) ); ?>"></div>
