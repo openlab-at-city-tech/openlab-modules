@@ -27,7 +27,7 @@ const CloneModule = ( props ) => {
       let hasMore = true;
       let allSites = [];
       while ( hasMore ) {
-        const response = await apiFetch( { path: `/cboxol/v1/sites?page=${page}` } );
+        const response = await apiFetch( { path: `/openlab-modules/v1/my-sites?page=${page}` } );
 
         const { results, pagination } = response;
         const { more } = pagination;
@@ -38,9 +38,7 @@ const CloneModule = ( props ) => {
         allSites = [ ...allSites, ...results ];
 				setUserSites( allSites );
       }
-    } catch ( error ) {
-      console.error( 'Error fetching sites:', error );
-    }
+    } catch ( error ) {}
   };
 
   const closeModal = () => {
@@ -83,7 +81,9 @@ const CloneModule = ( props ) => {
 							onChange={ ( e ) => setSelectedSite( e.target.value ) }
             >
               <option value="">
-                { userSites.length === 0 ? __( 'Loading&hellip;', 'openlab-modules' ) : __( 'Select a site', 'openlab-modules' ) }
+                {
+									userSites.length === 0 ? __( 'Loading...', 'openlab-modules' ) : __( '- Select a site -', 'openlab-modules' ) // eslint-disable-line
+								}
               </option>
 
               { userSites.map( ( site ) => (
@@ -92,6 +92,10 @@ const CloneModule = ( props ) => {
                 </option>
               )) }
             </select>
+
+						<p>
+							{ __( 'A site will only appear in this dropdown if the OpenLab Modules plugin is active on that site, and if you have the ability to create new modules on that site.', 'openlab-modules' ) }
+						</p>
 
 						<div className="clone-module-actions">
 							<button
