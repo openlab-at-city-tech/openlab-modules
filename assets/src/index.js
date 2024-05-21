@@ -9,6 +9,7 @@ import './store'
 import './blocks/module-list'
 import './blocks/module-navigation'
 import './blocks/placeholder-text'
+import './blocks/sharing'
 
 /**
  * Components.

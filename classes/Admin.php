@@ -43,6 +43,8 @@ class Admin {
 		add_action( 'pre_get_posts', [ $this, 'module_filter_for_page_table' ] );
 
 		add_filter( 'wp_dropdown_pages', [ $this, 'add_modules_to_page_on_front_dropdown' ], 10, 2 );
+
+		add_action( 'admin_init', [ $this, 'set_blogmeta_flag' ] );
 	}
 
 	/**
@@ -250,5 +252,22 @@ class Admin {
 		$output = str_replace( '</select>', $module_optgroup . '</select>', $output );
 
 		return $output;
+	}
+
+	/**
+	 * Sets a flag in blogmeta to indicate that the OpenLab Modules plugin is active.
+	 *
+	 * @return void
+	 */
+	public function set_blogmeta_flag() {
+		if ( ! is_site_meta_supported() ) {
+			return;
+		}
+
+		if ( get_site_meta( get_current_blog_id(), 'openlab_modules_active' ) ) {
+			return;
+		}
+
+		update_site_meta( get_current_blog_id(), 'openlab_modules_active', '1' );
 	}
 }

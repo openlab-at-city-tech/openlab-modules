@@ -57,7 +57,7 @@ class Frontend {
 		wp_register_script(
 			'openlab-modules-frontend',
 			OPENLAB_MODULES_PLUGIN_URL . '/build/frontend.js',
-			[],
+			[ 'wp-api-fetch', 'wp-element', 'wp-i18n' ],
 			$blocks_asset_file['version'],
 			true
 		);
