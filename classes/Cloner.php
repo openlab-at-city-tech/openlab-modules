@@ -32,7 +32,7 @@ class Cloner {
 	 *
 	 * @param ModuleData $module_data Module data object.
 	 * @param int        $destination_site_id Destination site ID.
-	 * @return bool|\WP_Error
+	 * @return array{clone_url: string}|\WP_Error
 	 */
 	public static function import_module_to_site( $module_data, $destination_site_id ) {
 		$id_map  = [];
@@ -167,9 +167,13 @@ class Cloner {
 			}
 		}
 
+		$module_url = get_permalink( $module_id );
+
 		restore_current_blog();
 
-		return true;
+		return [
+			'clone_url' => (string) $module_url,
+		];
 	}
 
 	/**

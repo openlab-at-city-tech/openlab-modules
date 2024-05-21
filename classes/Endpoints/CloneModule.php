@@ -113,14 +113,27 @@ class CloneModule extends WP_REST_Controller {
 		$destination_site_id = $this->sanitize_integer( $request->get_param( 'destinationSiteId' ) );
 		$module_id           = $this->sanitize_integer( $request->get_param( 'module_id' ) );
 
-		$response = [ 'message' => 'ok' ];
+		$response = [
+			'clone_url' => '',
+			'message'   => '',
+			'success'   => false,
+		];
 
 		$module_data = Cloner::get_module_data( $module_id );
 		if ( is_wp_error( $module_data ) ) {
-			return $module_data;
+			$response['message'] = $module_data->get_error_message();
+			return rest_ensure_response( $response );
 		}
 
-		$cloned = Cloner::import_module_to_site( $module_data, $destination_site_id );
+		$clone_results = Cloner::import_module_to_site( $module_data, $destination_site_id );
+
+		if ( is_wp_error( $clone_results ) ) {
+			$response['message'] = $clone_results->get_error_message();
+			return rest_ensure_response( $response );
+		}
+
+		$response['success']   = true;
+		$response['clone_url'] = $clone_results['clone_url'];
 
 		return rest_ensure_response( $response );
 	}

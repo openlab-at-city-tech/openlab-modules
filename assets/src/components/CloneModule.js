@@ -10,6 +10,7 @@ const CloneModule = ( props ) => {
   const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ selectedSite, setSelectedSite ] = useState( null );
 	const [ cloneInProgress, setCloneInProgress ] = useState( false );
+	const [ cloneResult, setCloneResult ] = useState( null );
 
   const handleCloneButtonClick = () => {
     setIsModalOpen( true );
@@ -42,9 +43,11 @@ const CloneModule = ( props ) => {
     } catch ( error ) {}
   };
 
-  const closeModal = () => {
-    setIsModalOpen( false );
-  };
+	const closeModal = () => {
+		setCloneResult( null );
+		setSelectedSite( null );
+		setIsModalOpen( false );
+	};
 
 	const handleContinueClick = async () => {
 		setCloneInProgress( true );
@@ -62,8 +65,7 @@ const CloneModule = ( props ) => {
 			);
 
 			setCloneInProgress( false );
-
-			console.log( response );
+			setCloneResult( response );
 		} catch ( error ) {}
 	}
 
@@ -92,49 +94,80 @@ const CloneModule = ( props ) => {
 
             <h2>{ __( 'Clone Module', 'openlab-modules' ) }</h2>
 
-            <label htmlFor={ `clone-module-destination-select-${uniqid}` }>
-              { __( 'Select a site to clone this module to:', 'openlab-modules' ) }
-            </label>
+						{ ! cloneResult && ( <div className="clone-module-form">
+							<label htmlFor={ `clone-module-destination-select-${uniqid}` }>
+								{ __( 'Select a site to clone this module to:', 'openlab-modules' ) }
+							</label>
 
-            <select
-              className="clone-module-destination-select"
-              id={ `clone-module-destination-select-${uniqid}` }
-							value={ selectedSite ? selectedSite : '' }
-							onChange={ ( e ) => setSelectedSite( e.target.value ) }
-            >
-              <option value="">
-                {
-									userSites.length === 0 ? __( 'Loading...', 'openlab-modules' ) : __( '- Select a site -', 'openlab-modules' ) // eslint-disable-line
-								}
-              </option>
-
-              { userSites.map( ( site ) => (
-                <option key={ site.id } value={ site.id }>
-                  { he.decode( site.text ) }
-                </option>
-              )) }
-            </select>
-
-						<p>
-							{ __( 'A site will only appear in this dropdown if the OpenLab Modules plugin is active on that site, and if you have the ability to create new modules on that site.', 'openlab-modules' ) }
-						</p>
-
-						<div className="clone-module-actions">
-							<button
-								className="clone-module-button-cancel clone-module-button-reset"
-								onClick={ closeModal }
+							<select
+								className="clone-module-destination-select"
+								id={ `clone-module-destination-select-${uniqid}` }
+								value={ selectedSite ? selectedSite : '' }
+								onChange={ ( e ) => setSelectedSite( e.target.value ) }
 							>
-								{ __( 'Cancel', 'openlab-modules' ) }
-							</button>
+								<option value="">
+									{
+										userSites.length === 0 ? __( 'Loading...', 'openlab-modules' ) : __( '- Select a site -', 'openlab-modules' ) // eslint-disable-line
+									}
+								</option>
 
-							<button
-								className="clone-module-button-submit"
-								disabled={ ! selectedSite || cloneInProgress}
-								onClick={ handleContinueClick }
-							>
-								{ cloneInProgress ? __( 'Cloning', 'openlab-modules' ) : __( 'Continue', 'openlab-modules' ) }
-							</button>
-						</div>
+								{ userSites.map( ( site ) => (
+									<option key={ site.id } value={ site.id }>
+										{ he.decode( site.text ) }
+									</option>
+								)) }
+							</select>
+
+							<p>
+								{ __( 'A site will only appear in this dropdown if the OpenLab Modules plugin is active on that site, and if you have the ability to create new modules on that site.', 'openlab-modules' ) }
+							</p>
+
+							<div className="clone-module-actions">
+								<button
+									className="clone-module-button-cancel clone-module-button-reset"
+									onClick={ closeModal }
+								>
+									{ __( 'Cancel', 'openlab-modules' ) }
+								</button>
+
+								<button
+									className="clone-module-button-submit"
+									disabled={ ! selectedSite || cloneInProgress}
+									onClick={ handleContinueClick }
+								>
+									{ cloneInProgress ? __( 'Cloning', 'openlab-modules' ) : __( 'Continue', 'openlab-modules' ) }
+								</button>
+							</div>
+						</div> ) }
+
+						{ cloneResult && (
+							<div className="clone-module-result">
+								{ cloneResult.success ? (
+									<>
+										<p>
+											{ __( 'The module was successfully cloned.', 'openlab-modules' ) }
+										</p>
+
+										<p>
+											<a
+												href={ cloneResult.clone_url }
+											>{ __( 'Visit the cloned module', 'openlab-modules' ) }</a>
+										</p>
+									</>
+								) : (
+									<p>
+										{ __( 'There was a problem cloning the module.', 'openlab-modules' ) }
+									</p>
+								) }
+
+								<button
+									className="clone-module-button-reset"
+									onClick={ closeModal }
+								>
+									{ __( 'Close', 'openlab-modules' ) }
+								</button>
+							</div>
+						) }
           </div>
         </div>
       )}
