@@ -5,6 +5,11 @@
  * @package openlab-modules
  */
 
+// Only show to users who are logged in.
+if ( ! is_user_logged_in() ) {
+	return;
+}
+
 wp_enqueue_style( 'openlab-modules-frontend' );
 wp_enqueue_script( 'openlab-modules-frontend' );
 
