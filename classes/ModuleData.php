@@ -25,7 +25,7 @@ class ModuleData {
 	 *     slug: string,
 	 *     url: string,
 	 *     enable_sharing: bool,
-	 *     pages: array<array{id: int, title: string, slug: string, url: string, content: string}>
+	 *     pages: array<array{id: int, title: string, slug: string, url: string, content: string}>,
 	 *     attachments: array<array{id: int, url: string, path: string, alt: string, title: string, content: string, excerpt: string, item_id: int}>
 	 * }
 	 */
@@ -216,7 +216,7 @@ class ModuleData {
 	/**
 	 * Add an attachment.
 	 *
-	 * @param array{id: int, url: string, path: string, alt: string, title: string, content: string, excerpt: string} $attachment Array of attachment data.
+	 * @param array{id: int, url: string, path: string, alt: string, title: string, content: string, excerpt: string, item_id: int} $attachment Array of attachment data.
 	 * @return void
 	 */
 	public function add_attachment( $attachment ) {
