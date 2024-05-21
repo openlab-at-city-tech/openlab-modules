@@ -35,7 +35,8 @@ class Cloner {
 	 * @return bool|\WP_Error
 	 */
 	public static function import_module_to_site( $module_data, $destination_site_id ) {
-		$id_map = [];
+		$id_map  = [];
+		$url_map = [];
 
 		// Create the module first, so we have the new module ID.
 		$module_post_data = [
@@ -55,21 +56,12 @@ class Cloner {
 		}
 
 		$id_map[ $module_data->get_module_id() ] = $module_id;
+		$url_map[ $module_data->get_url() ]      = (string) get_permalink( $module_id );
 
 		$module_post = get_post( $module_id );
 		if ( ! $module_post ) {
 			return new \WP_Error( 'module_not_found', __( 'Module not found.', 'openlab-modules' ), [ 'status' => 404 ] );
 		}
-
-		$module_post_content = self::swap_urls( $module_post->post_content, $module_data->get_url(), (string) get_permalink( $module_id ) );
-		$module_post_content = self::swap_module_navigation_module_ids( $module_post_content, $module_data->get_module_id(), $module_id );
-
-		wp_update_post(
-			[
-				'ID'           => $module_id,
-				'post_content' => $module_post_content,
-			]
-		);
 
 		$module = Module::get_instance( $module_id );
 		if ( ! $module ) {
@@ -93,16 +85,6 @@ class Cloner {
 				return $page_id;
 			}
 
-			$page_post_content = self::swap_urls( $page_data['content'], $module_data->get_url(), (string) get_permalink( $page_id ) );
-			$page_post_content = self::swap_module_navigation_module_ids( $page_post_content, $module_data->get_module_id(), $module_id );
-
-			wp_update_post(
-				[
-					'ID'           => $page_id,
-					'post_content' => $page_post_content,
-				]
-			);
-
 			$id_map[ $page_data['id'] ] = $page_id;
 
 			// Before linking linking, set the postmeta indicating that navigation has been inserted.
@@ -111,27 +93,83 @@ class Cloner {
 			$module->link_page_to_module( $page_id );
 		}
 
-		_b( $module_id );
-		_b( $id_map );
+		foreach ( $module_data->get_attachments() as $attachment ) {
+			$source_path = $attachment['path'];
+			$temp_file   = download_url( $attachment['url'] );
+
+			if ( is_wp_error( $temp_file ) ) {
+				continue; // Handle the error or skip the attachment.
+			}
+
+			$file_array = [
+				'name'     => basename( $source_path ),
+				'tmp_name' => $temp_file,
+			];
+
+			$attachment_id = media_handle_sideload( $file_array, 0 );
+
+			if ( is_wp_error( $attachment_id ) ) {
+				wp_delete_file( $file_array['tmp_name'] );
+				continue; // Handle the error or skip the attachment.
+			}
+
+			$id_map[ $attachment['id'] ]   = $attachment_id;
+			$url_map[ $attachment['url'] ] = (string) wp_get_attachment_url( $attachment_id );
+
+			// Update attachment metadata.
+			update_post_meta( $attachment_id, '_wp_attachment_image_alt', $attachment['alt'] );
+
+			wp_update_post(
+				[
+					'ID'           => $attachment_id,
+					'post_title'   => $attachment['title'],
+					'post_content' => $attachment['content'],
+					'post_excerpt' => $attachment['excerpt'],
+				]
+			);
+
+			// Link the attachment to the correct item.
+			if ( isset( $id_map[ $attachment['item_id'] ] ) ) {
+				$item_id = $id_map[ $attachment['item_id'] ];
+				wp_update_post(
+					[
+						'ID'          => $attachment_id,
+						'post_parent' => $item_id,
+					]
+				);
+			}
+		}
+
+		// Update URLs and IDs in the module and pages content.
+		$module_post_content = self::swap_urls_and_ids_in_content( $module_post->post_content, $url_map, $id_map );
+		$module_post_content = self::swap_module_navigation_module_ids( $module_post_content, $module_data->get_module_id(), $module_id );
+
+		wp_update_post(
+			[
+				'ID'           => $module_id,
+				'post_content' => $module_post_content,
+			]
+		);
+
+		foreach ( $module_pages as $page_data ) {
+			$page_id   = $id_map[ $page_data['id'] ];
+			$page_post = get_post( $page_id );
+
+			if ( $page_post ) {
+				$page_post_content = self::swap_urls_and_ids_in_content( $page_post->post_content, $url_map, $id_map );
+				$page_post_content = self::swap_module_navigation_module_ids( $page_post_content, $module_data->get_module_id(), $module_id );
+				wp_update_post(
+					[
+						'ID'           => $page_id,
+						'post_content' => $page_post_content,
+					]
+				);
+			}
+		}
 
 		restore_current_blog();
-	}
 
-	/**
-	 * Swaps URLs in content.
-	 *
-	 * @param string $content         Content.
-	 * @param string $source_url      Source URL.
-	 * @param string $destination_url Destination URL.
-	 * @return string
-	 */
-	protected static function swap_urls( $content, $source_url, $destination_url ) {
-		$source_url      = trailingslashit( $source_url );
-		$destination_url = trailingslashit( $destination_url );
-
-		$content = str_replace( $source_url, $destination_url, $content );
-
-		return $content;
+		return true;
 	}
 
 	/**
@@ -142,7 +180,7 @@ class Cloner {
 	 * @param int    $destination_module_id Destination module ID.
 	 * @return string
 	 */
-	protected static function swap_module_navigation_module_ids( $content, $source_module_id, $destination_module_id ) {
+	public static function swap_module_navigation_module_ids( $content, $source_module_id, $destination_module_id ) {
 		$source_module_id      = (string) $source_module_id;
 		$destination_module_id = (string) $destination_module_id;
 
@@ -153,5 +191,42 @@ class Cloner {
 		);
 
 		return (string) $content;
+	}
+
+	/**
+	 * Swaps attachment URLs and IDs in content.
+	 *
+	 * @param string   $post_content Post content.
+	 * @param string[] $url_map      URL map.
+	 * @param int[]    $id_map       ID map.
+	 * @return string
+	 */
+	public static function swap_urls_and_ids_in_content( $post_content, $url_map, $id_map ) {
+		// Replace all URLs in the content.
+		$post_content = str_replace( array_keys( $url_map ), array_values( $url_map ), $post_content );
+
+		// Replace IDs in wp:image blocks.
+		$post_content = preg_replace_callback(
+			'/<!-- wp:image \{.*?"id":(\d+).*?\} -->/i',
+			function ( $matches ) use ( $id_map ) {
+				$old_id = $matches[1];
+				$new_id = isset( $id_map[ $old_id ] ) ? $id_map[ $old_id ] : $old_id;
+				return str_replace( '"id":' . $old_id, '"id":' . $new_id, $matches[0] );
+			},
+			$post_content
+		);
+
+		// Replace wp-image- classes in img tags.
+		$post_content = preg_replace_callback(
+			'/class=["\']([^"\']*wp-image-)(\d+)([^"\']*)["\']/i',
+			function ( $matches ) use ( $id_map ) {
+				$old_id = $matches[2];
+				$new_id = isset( $id_map[ $old_id ] ) ? $id_map[ $old_id ] : $old_id;
+				return 'class="' . $matches[1] . $new_id . $matches[3] . '"';
+			},
+			(string) $post_content
+		);
+
+		return (string) $post_content;
 	}
 }

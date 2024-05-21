@@ -116,6 +116,9 @@ class CloneModule extends WP_REST_Controller {
 		$response = [ 'message' => 'ok' ];
 
 		$module_data = Cloner::get_module_data( $module_id );
+		if ( is_wp_error( $module_data ) ) {
+			return $module_data;
+		}
 
 		$cloned = Cloner::import_module_to_site( $module_data, $destination_site_id );
 

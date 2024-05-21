@@ -26,6 +26,7 @@ class ModuleData {
 	 *     url: string,
 	 *     enable_sharing: bool,
 	 *     pages: array<array{id: int, title: string, slug: string, url: string, content: string}>
+	 *     attachments: array<array{id: int, url: string, path: string, alt: string, title: string, content: string, excerpt: string, item_id: int}>
 	 * }
 	 */
 	protected $data = [
@@ -38,6 +39,7 @@ class ModuleData {
 		'url'            => '',
 		'enable_sharing' => false,
 		'pages'          => [],
+		'attachments'    => [],
 	];
 
 	/**
@@ -209,5 +211,24 @@ class ModuleData {
 	 */
 	public function get_pages() {
 		return $this->data['pages'];
+	}
+
+	/**
+	 * Add an attachment.
+	 *
+	 * @param array{id: int, url: string, path: string, alt: string, title: string, content: string, excerpt: string} $attachment Array of attachment data.
+	 * @return void
+	 */
+	public function add_attachment( $attachment ) {
+		$this->data['attachments'][] = $attachment;
+	}
+
+	/**
+	 * Get attachments.
+	 *
+	 * @return array{id: int, url: string, path: string, alt: string, title: string, content: string, excerpt: string, item_id: int}[] $attachments Array of attachment data.
+	 */
+	public function get_attachments() {
+		return $this->data['attachments'];
 	}
 }

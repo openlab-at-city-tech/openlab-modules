@@ -309,6 +309,76 @@ class Module {
 			);
 		}
 
+		$attachment_ids = [];
+		$all_item_ids   = array_merge( $page_ids, [ $this->id ] );
+		foreach ( $all_item_ids as $item_id ) {
+			// First, get those items that are attached to the post.
+			$item_attachment_ids = get_posts(
+				[
+					'post_type'      => 'attachment',
+					'posts_per_page' => -1,
+					'post_parent'    => $item_id,
+					'fields'         => 'ids',
+				]
+			);
+
+			// Next, parse post_content for attachment URLs, which may not have the current post as parent.
+			$post = get_post( $item_id );
+			if ( $post ) {
+				$attachment_urls = [];
+				preg_match_all( '/<img[^>]+src=[\'"]([^\'"]+)[\'"][^>]*>/i', $post->post_content, $matches );
+				if ( isset( $matches[1] ) ) {
+					$attachment_urls = $matches[1];
+				}
+
+				foreach ( $attachment_urls as $attachment_url ) {
+					$attachment_id = attachment_url_to_postid( $attachment_url );
+					if ( ! $attachment_id ) {
+						continue;
+					}
+
+					if ( in_array( $attachment_id, $item_attachment_ids, true ) ) {
+						continue;
+					}
+
+					$item_attachment_ids[] = $attachment_id;
+				}
+			}
+
+			$attachment_ids[ $item_id ] = $item_attachment_ids;
+		}
+
+		$processed_attachment_ids = [];
+		foreach ( $attachment_ids as $item_id => $item_attachment_ids ) {
+			foreach ( $item_attachment_ids as $attachment_id ) {
+				if ( in_array( $attachment_id, $processed_attachment_ids, true ) ) {
+					continue;
+				}
+
+				$processed_attachment_ids[] = $attachment_id;
+
+				$attachment_post = get_post( $attachment_id );
+
+				$alt = get_post_meta( $attachment_id, '_wp_attachment_image_alt', true );
+				if ( ! is_string( $alt ) ) {
+					$alt = '';
+				}
+
+				$attachment_data = [
+					'id'      => $attachment_id,
+					'url'     => (string) wp_get_attachment_url( $attachment_id ),
+					'path'    => (string) get_attached_file( $attachment_id ),
+					'alt'     => $alt,
+					'title'   => $attachment_post ? $attachment_post->post_title : '',
+					'content' => $attachment_post ? $attachment_post->post_content : '',
+					'excerpt' => $attachment_post ? $attachment_post->post_excerpt : '',
+					'item_id' => $item_id,
+				];
+
+				$module_data->add_attachment( $attachment_data );
+			}
+		}
+
 		return $module_data;
 	}
 
