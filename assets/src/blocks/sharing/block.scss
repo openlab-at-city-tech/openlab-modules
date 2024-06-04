@@ -5,8 +5,10 @@ button.clone-module-button-reset {
 }
 
 button.clone-module-button {
-	display: flex;
 	align-items: center;
+	background: transparent;
+	color: #222;
+	display: flex;
 	font-size: .9rem;
 	font-weight: 700;
 	text-decoration: underline;
