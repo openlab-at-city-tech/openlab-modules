@@ -57,6 +57,11 @@ export default function EditModule() {
 
 				// Insert a test paragraph block after the module navigation block
 				wp.data.dispatch( 'core/block-editor' ).insertBlocks( wp.blocks.createBlock( 'openlab-modules/sharing' ), insertIndex )
+
+				// Return focus to the Module tab.
+				setTimeout( () => {
+					wp.data.dispatch( 'core/edit-post' ).openGeneralSidebar( 'edit-post/document' )
+				}, 100 )
 			}
 		}
 	}
