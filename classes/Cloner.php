@@ -93,6 +93,18 @@ class Cloner {
 			$module->link_page_to_module( $page_id );
 		}
 
+		if ( ! function_exists( 'download_url' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+
+		if ( ! function_exists( 'media_handle_sideload' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/media.php';
+		}
+
+		if ( ! function_exists( 'wp_read_image_metadata' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/image.php';
+		}
+
 		foreach ( $module_data->get_attachments() as $attachment ) {
 			$source_path = $attachment['path'];
 			$temp_file   = download_url( $attachment['url'] );
