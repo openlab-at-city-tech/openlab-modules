@@ -21,4 +21,4 @@ parameters:
       path: templates/blocks/*
 
     - # Can't easily scan BP
-      message: '#Function (bp_loggedin_user_id) not found.#'
+      message: '#Function (bp_loggedin_user_id|bp_core_get_user_displayname|bp_core_get_user_domain) not found.#'

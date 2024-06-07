@@ -34,7 +34,7 @@ class Cloner {
 	 * @param int        $destination_site_id Destination site ID.
 	 * @return array{clone_url: string}|\WP_Error
 	 */
-	public static function import_module_to_site( $module_data, $destination_site_id ) {
+	public static function import_module_to_site( ModuleData $module_data, $destination_site_id ) {
 		$id_map  = [];
 		$url_map = [];
 
@@ -62,6 +62,8 @@ class Cloner {
 		if ( ! $module_post ) {
 			return new \WP_Error( 'module_not_found', __( 'Module not found.', 'openlab-modules' ), [ 'status' => 404 ] );
 		}
+
+		update_post_meta( $module_id, 'module_attribution', $module_data->get_attribution() );
 
 		$module = Module::get_instance( $module_id );
 		if ( ! $module ) {

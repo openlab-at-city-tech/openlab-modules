@@ -26,7 +26,8 @@ class ModuleData {
 	 *     url: string,
 	 *     enable_sharing: bool,
 	 *     pages: array<array{id: int, title: string, slug: string, url: string, content: string}>,
-	 *     attachments: array<array{id: int, url: string, path: string, alt: string, title: string, content: string, excerpt: string, item_id: int}>
+	 *     attachments: array<array{id: int, url: string, path: string, alt: string, title: string, content: string, excerpt: string, item_id: int}>,
+	 *     attribution: array{user_id: int, post_id: int, site_id: int, text: string}
 	 * }
 	 */
 	protected $data = [
@@ -40,6 +41,12 @@ class ModuleData {
 		'enable_sharing' => false,
 		'pages'          => [],
 		'attachments'    => [],
+		'attribution'    => [
+			'user_id' => 0,
+			'post_id' => 0,
+			'site_id' => 0,
+			'text'    => '',
+		],
 	];
 
 	/**
@@ -230,5 +237,24 @@ class ModuleData {
 	 */
 	public function get_attachments() {
 		return $this->data['attachments'];
+	}
+
+	/**
+	 * Set attribution.
+	 *
+	 * @param array{user_id: int, post_id: int, site_id: int, text: string} $attribution Array of attribution data.
+	 * @return void
+	 */
+	public function set_attribution( $attribution ) {
+		$this->data['attribution'] = $attribution;
+	}
+
+	/**
+	 * Get attribution.
+	 *
+	 * @return array{user_id: int, post_id: int, site_id: int, text: string} $attribution Array of attribution data.
+	 */
+	public function get_attribution() {
+		return $this->data['attribution'];
 	}
 }

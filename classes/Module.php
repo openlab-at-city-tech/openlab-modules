@@ -257,6 +257,52 @@ class Module {
 	}
 
 	/**
+	 * Gets the attribution data for the module.
+	 *
+	 * @return array{user_id: int, post_id: int, site_id: int, text: string} $attribution Array of attribution data.
+	 */
+	protected function get_attribution_data() {
+		$default = [
+			'user_id' => 0,
+			'post_id' => 0,
+			'site_id' => 0,
+			'text'    => '',
+		];
+
+		$post = $this->get_post();
+
+		if ( ! $post ) {
+			return $default;
+		}
+
+		$attribution = get_post_meta( $post->ID, 'module_attribution', true );
+
+		if ( ! is_array( $attribution ) ) {
+			return $default;
+		}
+
+		$retval = [
+			'user_id' => isset( $attribution['user_id'] ) ? (int) $attribution['user_id'] : $default['user_id'],
+			'post_id' => isset( $attribution['post_id'] ) ? (int) $attribution['post_id'] : $default['post_id'],
+			'site_id' => isset( $attribution['site_id'] ) ? (int) $attribution['site_id'] : $default['site_id'],
+			'text'    => isset( $attribution['text'] ) ? (string) $attribution['text'] : $default['text'],
+		];
+
+		return $retval;
+	}
+
+	/**
+	 * Gets the attribution text for the module.
+	 *
+	 * @return string
+	 */
+	public function get_attribution_text() {
+		$attribution = $this->get_attribution_data();
+
+		return $attribution['text'];
+	}
+
+	/**
 	 * Is sharing enable for this module?
 	 *
 	 * @return bool
@@ -377,6 +423,24 @@ class Module {
 
 				$module_data->add_attachment( $attachment_data );
 			}
+		}
+
+		$module_post = $this->get_post();
+		if ( $module_post ) {
+			$attribution_data = [
+				'user_id' => (int) $module_post->post_author,
+				'post_id' => $this->id,
+				'site_id' => get_current_blog_id(),
+			];
+
+			$attribution_data['text'] = sprintf(
+				// translators: 1. Link to source module, 2. Link to source module author.
+				__( 'This module is based on %1$s by %2$s.', 'openlab-modules' ),
+				'<a href="' . get_permalink( $this->id ) . '">' . $this->get_title() . '</a>',
+				'<a href="' . bp_core_get_user_domain( $module_post->post_author ) . '">' . bp_core_get_user_displayname( $module_post->post_author ) . '</a>'
+			);
+
+			$module_data->set_attribution( $attribution_data );
 		}
 
 		return $module_data;
