@@ -95,6 +95,10 @@ const CloneModule = ( props ) => {
 
 						<div className="dialog__body">
 							{ ! cloneResult && ( <div className="clone-module-form">
+								<p>
+									{ __( 'Before you clone this module, make sure the OpenLab Modules plugin is activated on the site you are cloning the module to. You will also need to have an Administrator or Editor role on the site. The site will then appear in the dropdown below', 'openlab-modules' ) }
+								</p>
+
 								<label htmlFor={ `clone-module-destination-select-${uniqid}` }>
 									{ __( 'Select a site to clone this module to:', 'openlab-modules' ) }
 								</label>
@@ -117,10 +121,6 @@ const CloneModule = ( props ) => {
 										</option>
 									)) }
 								</select>
-
-								<p>
-									{ __( 'A site will only appear in this dropdown if the OpenLab Modules plugin is active on that site, and if you have the ability to create new modules on that site.', 'openlab-modules' ) }
-								</p>
 
 								<div className="clone-module-actions">
 									<button
