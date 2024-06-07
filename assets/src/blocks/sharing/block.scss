@@ -85,6 +85,13 @@ button.clone-module-button {
 		padding: var( --padding );
 	}
 
+	.clone-module-error {
+		padding: 8px 16px;
+		background: #f8d7da;
+		border: 1px solid #f5c6cb;
+		margin-top: 16px;
+	}
+
 	.clone-module-actions {
 		display: flex;
 		justify-content: space-between;

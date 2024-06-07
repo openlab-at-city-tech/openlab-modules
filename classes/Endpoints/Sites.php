@@ -94,6 +94,7 @@ class Sites extends WP_REST_Controller {
 			);
 
 			$retval['results'][] = [
+				'url'  => get_home_url( $site->blog_id ),
 				'text' => $label,
 				'id'   => $site->blog_id,
 			];

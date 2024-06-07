@@ -11,6 +11,7 @@ const CloneModule = ( props ) => {
 	const [ selectedSite, setSelectedSite ] = useState( null );
 	const [ cloneInProgress, setCloneInProgress ] = useState( false );
 	const [ cloneResult, setCloneResult ] = useState( null );
+	const [ moduleWithSameNameExistsOnTargetSite, setModuleWithSameNameExistsOnTargetSite ] = useState( false );
 
   const handleCloneButtonClick = () => {
     setIsModalOpen( true );
@@ -42,6 +43,33 @@ const CloneModule = ( props ) => {
       }
     } catch ( error ) {}
   };
+
+	const checkForExistingModuleBySameName = async ( siteId ) => {
+		setModuleWithSameNameExistsOnTargetSite( false );
+
+		// Get out of userSites
+		const targetSite = userSites.find( ( site ) => site.id === siteId );
+
+		if ( ! targetSite ) {
+			return;
+		}
+
+		// Get the current module name.
+		const response = await apiFetch( { path: `/wp/v2/openlab-module/${moduleId}` } );
+
+		const title = response.title.rendered;
+
+		// Look for a matching module on the target site.
+		const searchTerm = encodeURIComponent( title );
+		const endpoint = targetSite.url + '/wp-json/wp/v2/openlab-module/?search=' + searchTerm;
+		const response2 = await apiFetch( { url: endpoint } );
+
+		if ( response2.length === 0 ) {
+			return;
+		}
+
+		setModuleWithSameNameExistsOnTargetSite( true );
+	};
 
 	const closeModal = () => {
 		setCloneResult( null );
@@ -107,7 +135,10 @@ const CloneModule = ( props ) => {
 									className="clone-module-destination-select"
 									id={ `clone-module-destination-select-${uniqid}` }
 									value={ selectedSite ? selectedSite : '' }
-									onChange={ ( e ) => setSelectedSite( e.target.value ) }
+									onChange={ ( e ) => {
+										setSelectedSite( e.target.value )
+										checkForExistingModuleBySameName( e.target.value )
+									} }
 								>
 									<option value="">
 										{
@@ -121,6 +152,12 @@ const CloneModule = ( props ) => {
 										</option>
 									)) }
 								</select>
+
+								{ moduleWithSameNameExistsOnTargetSite && (
+									<p className="clone-module-error">
+										{ __( 'Warning: A module with the same name already exists on the target site.', 'openlab-modules' ) }
+									</p>
+								) }
 
 								<div className="clone-module-actions">
 									<button
