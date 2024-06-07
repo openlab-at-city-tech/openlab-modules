@@ -135,7 +135,8 @@ const CloneModule = ( props ) => {
 										disabled={ ! selectedSite || cloneInProgress}
 										onClick={ handleContinueClick }
 									>
-										{ cloneInProgress ? __( 'Cloning', 'openlab-modules' ) : __( 'Continue', 'openlab-modules' ) }
+										{ /* eslint-disable-next-line */ }
+										{ cloneInProgress ? __( 'Cloning...', 'openlab-modules' ) : __( 'Continue', 'openlab-modules' ) }
 									</button>
 								</div>
 							</div> ) }
