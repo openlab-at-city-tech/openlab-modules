@@ -80,6 +80,11 @@ class Sites extends WP_REST_Controller {
 		];
 
 		foreach ( $query->sites as $site ) {
+			// Only show for users with edit_others_posts capability.
+			if ( ! current_user_can_for_blog( $site->blog_id, 'edit_others_posts' ) ) {
+				continue;
+			}
+
 			$label = sprintf(
 				// translators: 1. Numeric ID of site, 2. Name of site, 3. URL of site.
 				__( '#%1$s %2$s (%3$s)', 'openlab-modules' ),
