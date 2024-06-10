@@ -44,7 +44,7 @@ class Editor {
 
 		add_action( 'save_post', [ $this, 'link_to_module_on_post_creation' ] );
 
-		add_filter( 'use_block_editor_for_post', [ $this, 'use_block_editor_for_module' ], 10, 2 );
+		add_filter( 'use_block_editor_for_post', [ $this, 'use_block_editor_for_module' ], 200, 2 );
 	}
 
 	/**
@@ -262,8 +262,8 @@ class Editor {
 	/**
 	 * Determines whether the block editor should be used for a given post type.
 	 *
-	 * @param bool    $use_block_editor Whether to use the block editor.
-	 * @param WP_Post $post             Post object.
+	 * @param bool     $use_block_editor Whether to use the block editor.
+	 * @param \WP_Post $post             Post object.
 	 * @return bool
 	 */
 	public function use_block_editor_for_module( $use_block_editor, $post ) {
