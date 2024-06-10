@@ -12,6 +12,7 @@ const CloneModule = ( props ) => {
 	const [ cloneInProgress, setCloneInProgress ] = useState( false );
 	const [ cloneResult, setCloneResult ] = useState( null );
 	const [ moduleWithSameNameExistsOnTargetSite, setModuleWithSameNameExistsOnTargetSite ] = useState( false );
+	const [ requiredPluginsMissing, setRequiredPluginsMissing ] = useState( [] );
 
   const handleCloneButtonClick = () => {
     setIsModalOpen( true );
@@ -85,6 +86,25 @@ const CloneModule = ( props ) => {
 		setModuleWithSameNameExistsOnTargetSite( true );
 	};
 
+	const checkForRequiredPlugins = async ( siteId ) => {
+		setRequiredPluginsMissing( [] );
+
+		// Get out of userSites
+		const targetSite = userSites.find( ( site ) => site.id === siteId );
+
+		if ( ! targetSite ) {
+			return;
+		}
+
+		const response = await apiFetch( { path: `/openlab-modules/v1/check-module-requirements/${moduleId}?destinationSiteId=${targetSite.id}` } );
+
+		if ( response.success ) {
+			return;
+		}
+
+		setRequiredPluginsMissing( response.requirements.plugins );
+	}
+
 	const closeModal = () => {
 		setCloneResult( null );
 		setSelectedSite( null );
@@ -153,6 +173,7 @@ const CloneModule = ( props ) => {
 									onChange={ ( e ) => {
 										setSelectedSite( e.target.value )
 										checkForExistingModuleBySameName( e.target.value )
+										checkForRequiredPlugins( e.target.value )
 									} }
 								>
 									<option value="">
@@ -172,6 +193,22 @@ const CloneModule = ( props ) => {
 									<p className="clone-module-error">
 										{ __( 'Warning: A module with the same name already exists on the target site.', 'openlab-modules' ) }
 									</p>
+								) }
+
+								{ requiredPluginsMissing.length > 0 && (
+									<div className="clone-module-notice">
+										<p>
+											{ __( 'This module requires a number of plugins that are not currently active on the target site. Make sure to activate these plugins to maintain full functionality in the cloned module.', 'openlab-modules' ) }
+										</p>
+
+										<ul>
+											{ requiredPluginsMissing.map( ( plugin ) => (
+												<li key={ plugin }>
+													{ plugin }
+												</li>
+											) ) }
+										</ul>
+									</div>
 								) }
 
 								<div className="clone-module-actions">

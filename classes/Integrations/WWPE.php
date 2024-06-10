@@ -44,6 +44,7 @@ class WWPE {
 	 */
 	public function init() {
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_assets' ], 100 );
+		add_filter( 'openlab_modules_module_requirements', [ $this, 'add_wwpe_requirement' ], 10, 2 );
 	}
 
 	/**
@@ -102,6 +103,72 @@ class WWPE {
 			[],
 			$blocks_asset_file['version']
 		);
+	}
+
+	/**
+	 * Detects and adds the WWPE requirement for a module.
+	 *
+	 * @param string[] $plugin_requirements Array of plugin requirements.
+	 * @param int      $module_id           Module ID.
+	 * @return string[]
+	 */
+	public function add_wwpe_requirement( $plugin_requirements, $module_id ) {
+		// Look for the 'webwork_problem' shortcode in the content of the module and its pages.
+		$contains_wwpe = false;
+
+		$module = Module::get_instance( $module_id );
+		if ( ! $module ) {
+			return $plugin_requirements;
+		}
+
+		$contains_wwpe = $this->post_contains_wwpe( $module_id );
+
+		if ( ! $contains_wwpe ) {
+			$module_page_ids = $module->get_page_ids( 'all' );
+			foreach ( $module_page_ids as $page_id ) {
+				if ( $this->post_contains_wwpe( $page_id ) ) {
+					$contains_wwpe = true;
+					break;
+				}
+			}
+		}
+
+		if ( ! $contains_wwpe ) {
+			return $plugin_requirements;
+		}
+
+		$plugin_requirements['webwork-problem-embed/webwork-problem-embed.php'] = __( 'WebWoRK Problem Embed', 'openlab-modules' );
+
+		return $plugin_requirements;
+	}
+
+	/**
+	 * Determine whether a post contains WWPE content.
+	 *
+	 * We look for the 'webwork_problem' shortcode or the wwpe/problem-embed block in the
+	 * post content.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return bool
+	 */
+	private function post_contains_wwpe( $post_id ) {
+		$post = get_post( $post_id );
+		if ( ! $post ) {
+			return false;
+		}
+
+		if ( has_shortcode( $post->post_content, 'webwork_problem' ) ) {
+			return true;
+		}
+
+		$blocks = parse_blocks( $post->post_content );
+		foreach ( $blocks as $block ) {
+			if ( 'wwpe/problem-embed' === $block['blockName'] ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
