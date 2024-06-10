@@ -69,13 +69,13 @@ const CloneModule = ( props ) => {
 		}
 
 		// Get the current module name.
-		const response = await apiFetch( { path: `/wp/v2/openlab-module/${moduleId}` } );
+		const response = await apiFetch( { path: `/wp/v2/openlab_module/${moduleId}` } );
 
 		const title = response.title.rendered;
 
 		// Look for a matching module on the target site.
 		const searchTerm = encodeURIComponent( title );
-		const endpoint = targetSite.url + '/wp-json/wp/v2/openlab-module/?search=' + searchTerm;
+		const endpoint = targetSite.url + '/wp-json/wp/v2/openlab_module/?search=' + searchTerm;
 		const response2 = await apiFetch( { url: endpoint } );
 
 		if ( response2.length === 0 ) {
