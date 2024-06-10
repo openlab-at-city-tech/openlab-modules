@@ -89,6 +89,7 @@ const CloneModule = ( props ) => {
 		setCloneResult( null );
 		setSelectedSite( null );
 		setIsModalOpen( false );
+		setModuleWithSameNameExistsOnTargetSite( false );
 	};
 
 	const handleContinueClick = async () => {
