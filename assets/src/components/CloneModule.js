@@ -21,6 +21,20 @@ const CloneModule = ( props ) => {
     if ( isModalOpen && uniqid ) {
       fetchSites();
     }
+
+		const handleKeydown = ( event ) => {
+			if ( event.key === 'Escape' ) {
+				closeModal();
+			}
+		}
+
+		if ( isModalOpen ) {
+			document.addEventListener( 'keydown', handleKeydown );
+		}
+
+		return () => {
+			document.removeEventListener( 'keydown', handleKeydown );
+		}
   }, [ isModalOpen, uniqid ] );
 
   const fetchSites = async () => {
@@ -55,13 +69,13 @@ const CloneModule = ( props ) => {
 		}
 
 		// Get the current module name.
-		const response = await apiFetch( { path: `/wp/v2/openlab-module/${moduleId}` } );
+		const response = await apiFetch( { path: `/wp/v2/openlab_module/${moduleId}` } );
 
 		const title = response.title.rendered;
 
 		// Look for a matching module on the target site.
 		const searchTerm = encodeURIComponent( title );
-		const endpoint = targetSite.url + '/wp-json/wp/v2/openlab-module/?search=' + searchTerm;
+		const endpoint = targetSite.url + '/wp-json/wp/v2/openlab_module/?search=' + searchTerm;
 		const response2 = await apiFetch( { url: endpoint } );
 
 		if ( response2.length === 0 ) {
@@ -75,6 +89,7 @@ const CloneModule = ( props ) => {
 		setCloneResult( null );
 		setSelectedSite( null );
 		setIsModalOpen( false );
+		setModuleWithSameNameExistsOnTargetSite( false );
 	};
 
 	const handleContinueClick = async () => {
@@ -104,7 +119,7 @@ const CloneModule = ( props ) => {
           className="clone-module-button clone-module-button-reset"
           onClick={ handleCloneButtonClick }
         >
-          { __( 'Clone Module', 'openlab-modules' ) }
+          { __( 'Clone this Module', 'openlab-modules' ) }
         </button>
       </div>
 
@@ -112,7 +127,7 @@ const CloneModule = ( props ) => {
         <div id={`clone-module-modal-${uniqid}`} className="clone-module-modal">
           <dialog className="clone-module-modal-content">
 						<div className="dialog__header" aria-labelledby="dialog-title">
-							<h1 id="dialog-title">{ __( 'Clone Module', 'openlab-modules' ) }</h1>
+							<h1 id="dialog-title">{ __( 'Clone this Module', 'openlab-modules' ) }</h1>
 
 							<button
 								className="close-clone-module-modal clone-module-button-reset"

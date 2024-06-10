@@ -1,0 +1,14 @@
+@use './block';
+
+.wp-block-openlab-modules-sharing {
+	pointer-events: none;
+
+	&.sharing-is-disabled {
+		.sharing-notice {
+			padding-left: 20px;
+			font-style: italic;
+			font-size: .8em;
+			opacity: .7;
+		}
+	}
+}

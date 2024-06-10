@@ -25,8 +25,9 @@ class ModuleData {
 	 *     slug: string,
 	 *     url: string,
 	 *     enable_sharing: bool,
-	 *     pages: array<array{id: int, title: string, slug: string, url: string, content: string}>,
-	 *     attachments: array<array{id: int, url: string, path: string, alt: string, title: string, content: string, excerpt: string, item_id: int}>
+	 *     pages: array<array{id: int, title: string, slug: string, url: string, status: string, content: string}>,
+	 *     attachments: array<array{id: int, url: string, path: string, alt: string, title: string, content: string, excerpt: string, item_id: int}>,
+	 *     attribution: array{user_id: int, post_id: int, site_id: int, text: string}
 	 * }
 	 */
 	protected $data = [
@@ -40,6 +41,12 @@ class ModuleData {
 		'enable_sharing' => false,
 		'pages'          => [],
 		'attachments'    => [],
+		'attribution'    => [
+			'user_id' => 0,
+			'post_id' => 0,
+			'site_id' => 0,
+			'text'    => '',
+		],
 	];
 
 	/**
@@ -197,7 +204,7 @@ class ModuleData {
 	/**
 	 * Add a page.
 	 *
-	 * @param array{id: int, title: string, slug: string, url: string, content: string} $page Array of page data.
+	 * @param array{id: int, title: string, slug: string, url: string, status: string, content: string} $page Array of page data.
 	 * @return void
 	 */
 	public function add_page( $page ) {
@@ -207,7 +214,7 @@ class ModuleData {
 	/**
 	 * Get pages.
 	 *
-	 * @return array{id: int, title: string, slug: string, url: string, content: string}[] $pages Array of page data.
+	 * @return array{id: int, title: string, slug: string, url: string, status: string, content: string}[] $pages Array of page data.
 	 */
 	public function get_pages() {
 		return $this->data['pages'];
@@ -230,5 +237,24 @@ class ModuleData {
 	 */
 	public function get_attachments() {
 		return $this->data['attachments'];
+	}
+
+	/**
+	 * Set attribution.
+	 *
+	 * @param array{user_id: int, post_id: int, site_id: int, text: string} $attribution Array of attribution data.
+	 * @return void
+	 */
+	public function set_attribution( $attribution ) {
+		$this->data['attribution'] = $attribution;
+	}
+
+	/**
+	 * Get attribution.
+	 *
+	 * @return array{user_id: int, post_id: int, site_id: int, text: string} $attribution Array of attribution data.
+	 */
+	public function get_attribution() {
+		return $this->data['attribution'];
 	}
 }

@@ -139,7 +139,7 @@ class Schema {
 				'menu_position'     => 10,
 				'menu_icon'         => 'dashicons-excerpt-view',
 				'show_in_rest'      => true,
-				'rest_base'         => 'openlab-module',
+				'rest_base'         => 'openlab_module',
 				'template'          => [
 					[ 'openlab-modules/module-navigation' ],
 					[
@@ -365,6 +365,36 @@ class Schema {
 
 					$to_save = ! empty( $value ) ? '1' : '0';
 					update_post_meta( $data_object->ID, 'enable_sharing', $to_save );
+				},
+			]
+		);
+
+		register_rest_field(
+			[ 'openlab_module' ],
+			'attributionText',
+			[
+				'get_callback' => function ( $data_object ) {
+					$module = Module::get_instance( $data_object['id'] );
+					if ( ! $module ) {
+						return '';
+					}
+
+					return $module->get_attribution_text();
+				},
+			]
+		);
+
+		register_rest_field(
+			[ 'openlab_module' ],
+			'attributionData',
+			[
+				'get_callback' => function ( $data_object ) {
+					$module = Module::get_instance( $data_object['id'] );
+					if ( ! $module ) {
+						return '';
+					}
+
+					return $module->get_attribution_data();
 				},
 			]
 		);

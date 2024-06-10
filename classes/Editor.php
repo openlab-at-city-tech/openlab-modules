@@ -81,6 +81,22 @@ class Editor {
 	 */
 	public function register_dynamic_blocks() {
 		register_block_type(
+			'openlab-modules/module-attribution',
+			[
+				'api_version'     => '2',
+				'attributes'      => [
+					'moduleId' => [
+						'type'    => 'integer',
+						'default' => 0,
+					],
+				],
+				'render_callback' => function ( $attributes, $content ) {
+					return $this->render_block( 'module-attribution', $attributes, $content );
+				},
+			]
+		);
+
+		register_block_type(
 			'openlab-modules/module-list',
 			[
 				'api_version'     => '2',

@@ -34,7 +34,7 @@ class Cloner {
 	 * @param int        $destination_site_id Destination site ID.
 	 * @return array{clone_url: string}|\WP_Error
 	 */
-	public static function import_module_to_site( $module_data, $destination_site_id ) {
+	public static function import_module_to_site( ModuleData $module_data, $destination_site_id ) {
 		$id_map  = [];
 		$url_map = [];
 
@@ -63,6 +63,9 @@ class Cloner {
 			return new \WP_Error( 'module_not_found', __( 'Module not found.', 'openlab-modules' ), [ 'status' => 404 ] );
 		}
 
+		$attribution_data = $module_data->get_attribution();
+		update_post_meta( $module_id, 'module_attribution', $attribution_data );
+
 		$module = Module::get_instance( $module_id );
 		if ( ! $module ) {
 			return new \WP_Error( 'module_not_found', __( 'Module not found.', 'openlab-modules' ), [ 'status' => 404 ] );
@@ -75,7 +78,7 @@ class Cloner {
 				'post_title'   => $page_data['title'],
 				'post_content' => $page_data['content'],
 				'post_name'    => $page_data['slug'],
-				'post_status'  => 'publish',
+				'post_status'  => $page_data['status'],
 				'post_type'    => 'page',
 			];
 
@@ -155,6 +158,7 @@ class Cloner {
 		// Update URLs and IDs in the module and pages content.
 		$module_post_content = self::swap_urls_and_ids_in_content( $module_post->post_content, $url_map, $id_map );
 		$module_post_content = self::swap_module_navigation_module_ids( $module_post_content, $module_data->get_module_id(), $module_id );
+		$module_post_content = self::swap_module_attribution_block( $module_post_content, $module_id );
 
 		wp_update_post(
 			[
@@ -242,6 +246,70 @@ class Cloner {
 			},
 			(string) $post_content
 		);
+
+		return (string) $post_content;
+	}
+
+	/**
+	 * Add an attribution block, deleting existing ones if necessary.
+	 *
+	 * @param string $post_content Post content.
+	 * @param int    $module_id    ID of the newly created module on the clone destination site.
+	 * @return string
+	 */
+	public static function swap_module_attribution_block( $post_content, $module_id ) {
+		// First build the inner openlab-modules/module-attribution block.
+		$inner_block = [
+			'blockName'    => 'openlab-modules/module-attribution',
+			'attrs'        => [
+				'moduleId' => $module_id,
+			],
+			'innerBlocks'  => [],
+			'innerHTML'    => '',
+			'innerContent' => [],
+		];
+
+		$inner_block_serialized = serialize_block( $inner_block );
+
+		$outer_block = [
+			'blockName'    => 'core/group',
+			'attrs'        => [
+				'style'     => [
+					'color'   => [
+						'background' => '#efefef',
+					],
+					'spacing' => [
+						'padding' => '20px',
+					],
+				],
+				'className' => 'openlab-modules-module-attribution-wrapper',
+				'layout'    => [
+					'type' => 'constrained',
+				],
+			],
+			'innerBlocks'  => array( $inner_block ),
+			'innerHTML'    => '<div class="wp-block-group openlab-modules-module-attribution-wrapper has-background" style="background-color:#efefef;padding:20px"></div>',
+			'innerContent' => array(
+				'<div class="wp-block-group openlab-modules-module-attribution-wrapper has-background" style="background-color:#efefef;padding:20px">',
+				$inner_block_serialized,
+				'</div>',
+			),
+		];
+
+		// Serialize the new block.
+		$block_markup = serialize_block( $outer_block );
+
+		// Look for existing attribution wrapper group blocks.
+		$regex = '/<!-- wp:group[^>]+className:"openlab-modules-module-attribution-wrapper".*?<!-- \/wp:group -->/s';
+
+		if ( preg_match( $regex, $post_content, $matches ) ) {
+			// Replace existing block with new block.
+			$post_content = preg_replace( $regex, $block_markup, $post_content );
+		} else {
+			// Look for a openlab-modules/sharing block, and put it before that.
+			$sharing_regex = '/<!-- wp:openlab-modules\/sharing[^>]*-->/s';
+			$post_content  = preg_replace( $sharing_regex, $block_markup . '$0', $post_content );
+		}
 
 		return (string) $post_content;
 	}
