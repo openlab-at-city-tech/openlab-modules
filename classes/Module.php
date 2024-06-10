@@ -363,6 +363,7 @@ class Module {
 					'title'   => $post->post_title,
 					'slug'    => $post->post_name,
 					'url'     => get_permalink( $post ),
+					'status'  => $post->post_status,
 					'content' => $post->post_content,
 				]
 			);

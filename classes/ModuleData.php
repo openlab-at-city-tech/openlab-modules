@@ -25,7 +25,7 @@ class ModuleData {
 	 *     slug: string,
 	 *     url: string,
 	 *     enable_sharing: bool,
-	 *     pages: array<array{id: int, title: string, slug: string, url: string, content: string}>,
+	 *     pages: array<array{id: int, title: string, slug: string, url: string, status: string, content: string}>,
 	 *     attachments: array<array{id: int, url: string, path: string, alt: string, title: string, content: string, excerpt: string, item_id: int}>,
 	 *     attribution: array{user_id: int, post_id: int, site_id: int, text: string}
 	 * }
@@ -204,7 +204,7 @@ class ModuleData {
 	/**
 	 * Add a page.
 	 *
-	 * @param array{id: int, title: string, slug: string, url: string, content: string} $page Array of page data.
+	 * @param array{id: int, title: string, slug: string, url: string, status: string, content: string} $page Array of page data.
 	 * @return void
 	 */
 	public function add_page( $page ) {
@@ -214,7 +214,7 @@ class ModuleData {
 	/**
 	 * Get pages.
 	 *
-	 * @return array{id: int, title: string, slug: string, url: string, content: string}[] $pages Array of page data.
+	 * @return array{id: int, title: string, slug: string, url: string, status: string, content: string}[] $pages Array of page data.
 	 */
 	public function get_pages() {
 		return $this->data['pages'];

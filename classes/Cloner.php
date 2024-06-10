@@ -78,7 +78,7 @@ class Cloner {
 				'post_title'   => $page_data['title'],
 				'post_content' => $page_data['content'],
 				'post_name'    => $page_data['slug'],
-				'post_status'  => 'publish',
+				'post_status'  => $page_data['status'],
 				'post_type'    => 'page',
 			];
 
