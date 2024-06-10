@@ -279,15 +279,15 @@ class Cloner {
 						'background' => '#efefef',
 					],
 				],
-				'className' => 'openlab-modules-module-navigation-wrapper',
+				'className' => 'openlab-modules-module-attribution-wrapper',
 				'layout'    => [
 					'type' => 'constrained',
 				],
 			],
 			'innerBlocks'  => array( $inner_block ),
-			'innerHTML'    => '<div class="wp-block-group openlab-modules-module-navigation-wrapper has-background" style="background-color:#efefef"></div>',
+			'innerHTML'    => '<div class="wp-block-group openlab-modules-module-attribution-wrapper has-background" style="background-color:#efefef"></div>',
 			'innerContent' => array(
-				'<div class="wp-block-group openlab-modules-module-navigation-wrapper has-background" style="background-color:#efefef">',
+				'<div class="wp-block-group openlab-modules-module-attribution-wrapper has-background" style="background-color:#efefef">',
 				$inner_block_serialized,
 				'</div>',
 			),
