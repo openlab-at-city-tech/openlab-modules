@@ -28,6 +28,16 @@ if ( \OpenLab\Modules\Schema::get_module_post_type() === get_post_type() ) {
 	}
 }
 
+if ( ! $module_id ) {
+	return;
+}
+
+// Don't show if sharing is disabled.
+$module = \OpenLab\Modules\Module::get_instance( $module_id );
+if ( ! $module || ! $module->is_sharing_enabled() ) {
+	return;
+}
+
 ?>
 
 <div id="clone-module-container-<?php echo esc_attr( $block_unique_id ); ?>" class="clone-module-container" data-uniqid="<?php echo esc_attr( $block_unique_id ); ?>" data-module-id="<?php echo esc_attr( (string) $module_id ); ?>" data-nonce="<?php echo esc_attr( wp_create_nonce( 'openlab-module-clone' ) ); ?>"></div>
