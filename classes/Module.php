@@ -259,14 +259,18 @@ class Module {
 	/**
 	 * Gets the attribution data for the module.
 	 *
-	 * @return array{user_id: int, post_id: int, site_id: int, text: string} $attribution Array of attribution data.
+	 * @return array{user_id: int, post_id: int, site_id: int, user_url: string, user_name: string, post_url: string, post_title: string, text: string}
 	 */
-	protected function get_attribution_data() {
+	public function get_attribution_data() {
 		$default = [
-			'user_id' => 0,
-			'post_id' => 0,
-			'site_id' => 0,
-			'text'    => '',
+			'user_id'    => 0,
+			'post_id'    => 0,
+			'site_id'    => 0,
+			'user_url'   => '',
+			'user_name'  => '',
+			'post_url'   => '',
+			'post_title' => '',
+			'text'       => '',
 		];
 
 		$post = $this->get_post();
@@ -282,10 +286,14 @@ class Module {
 		}
 
 		$retval = [
-			'user_id' => isset( $attribution['user_id'] ) ? (int) $attribution['user_id'] : $default['user_id'],
-			'post_id' => isset( $attribution['post_id'] ) ? (int) $attribution['post_id'] : $default['post_id'],
-			'site_id' => isset( $attribution['site_id'] ) ? (int) $attribution['site_id'] : $default['site_id'],
-			'text'    => isset( $attribution['text'] ) ? (string) $attribution['text'] : $default['text'],
+			'user_id'    => isset( $attribution['user_id'] ) ? (int) $attribution['user_id'] : $default['user_id'],
+			'post_id'    => isset( $attribution['post_id'] ) ? (int) $attribution['post_id'] : $default['post_id'],
+			'site_id'    => isset( $attribution['site_id'] ) ? (int) $attribution['site_id'] : $default['site_id'],
+			'user_url'   => isset( $attribution['user_url'] ) ? (string) $attribution['user_url'] : '',
+			'user_name'  => isset( $attribution['user_name'] ) ? (string) $attribution['user_name'] : '',
+			'post_url'   => isset( $attribution['post_url'] ) ? (string) $attribution['post_url'] : '',
+			'post_title' => isset( $attribution['post_title'] ) ? (string) $attribution['post_title'] : '',
+			'text'       => isset( $attribution['text'] ) ? (string) $attribution['text'] : $default['text'],
 		];
 
 		return $retval;
@@ -297,9 +305,14 @@ class Module {
 	 * @return string
 	 */
 	public function get_attribution_text() {
-		$attribution = $this->get_attribution_data();
+		$attribution_data = $this->get_attribution_data();
 
-		return $attribution['text'];
+		return sprintf(
+			// translators: 1. Link to source module, 2. Link to source module author.
+			__( '<span class="openlab-module-attribution-prefix">Attribution:</span> This module is based on %1$s by %2$s.', 'openlab-modules' ),
+			'<a href="' . esc_url( $attribution_data['post_url'] ) . '">' . esc_html( $attribution_data['post_title'] ) . '</a>',
+			'<a href="' . esc_url( $attribution_data['user_url'] ) . '">' . esc_html( $attribution_data['user_name'] ) . '</a>'
+		);
 	}
 
 	/**
@@ -428,16 +441,20 @@ class Module {
 		$module_post = $this->get_post();
 		if ( $module_post ) {
 			$attribution_data = [
-				'user_id' => (int) $module_post->post_author,
-				'post_id' => $this->id,
-				'site_id' => get_current_blog_id(),
+				'user_id'    => (int) $module_post->post_author,
+				'user_url'   => bp_core_get_user_domain( $module_post->post_author ),
+				'user_name'  => bp_core_get_user_displayname( $module_post->post_author ),
+				'post_id'    => $this->id,
+				'post_url'   => get_permalink( $this->id ),
+				'post_title' => $this->get_title(),
+				'site_id'    => get_current_blog_id(),
 			];
 
 			$attribution_data['text'] = sprintf(
 				// translators: 1. Link to source module, 2. Link to source module author.
-				__( 'This module is based on %1$s by %2$s.', 'openlab-modules' ),
-				'<a href="' . get_permalink( $this->id ) . '">' . $this->get_title() . '</a>',
-				'<a href="' . bp_core_get_user_domain( $module_post->post_author ) . '">' . bp_core_get_user_displayname( $module_post->post_author ) . '</a>'
+				__( '<span class="openlab-module-attribution-prefix">Attribution:</span> This module is based on %1$s by %2$s.', 'openlab-modules' ),
+				'<a href="' . $attribution_data['post_url'] . '">' . $attribution_data['post_title'] . '</a>',
+				'<a href="' . $attribution_data['user_url'] . '">' . $attribution_data['user_name'] . '</a>'
 			);
 
 			$module_data->set_attribution( $attribution_data );

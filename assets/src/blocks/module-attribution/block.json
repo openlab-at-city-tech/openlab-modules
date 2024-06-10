@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 2,
+    "name": "openlab-modules/module-attribution",
+    "title": "Module Attribution",
+    "category": "openlab-modules",
+    "icon": "menu",
+    "description": "Shows the attribution for a Module.",
+    "supports": {
+      "anchor": true
+    },
+    "attributes": {
+      "attributes": {
+        "moduleId": {
+          "type": "integer",
+          "default": 0
+        }
+      }
+    },
+    "textdomain": "openlab-modules",
+    "editorScript": "file:./index.js",
+    "editorStyle": "file:./index.css",
+    "style": "file:./style-index.css"
+}

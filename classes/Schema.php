@@ -370,6 +370,36 @@ class Schema {
 		);
 
 		register_rest_field(
+			[ 'openlab_module' ],
+			'attributionText',
+			[
+				'get_callback' => function ( $data_object ) {
+					$module = Module::get_instance( $data_object['id'] );
+					if ( ! $module ) {
+						return '';
+					}
+
+					return $module->get_attribution_text();
+				},
+			]
+		);
+
+		register_rest_field(
+			[ 'openlab_module' ],
+			'attributionData',
+			[
+				'get_callback' => function ( $data_object ) {
+					$module = Module::get_instance( $data_object['id'] );
+					if ( ! $module ) {
+						return '';
+					}
+
+					return $module->get_attribution_data();
+				},
+			]
+		);
+
+		register_rest_field(
 			[ 'page' ],
 			'moduleIds',
 			[
