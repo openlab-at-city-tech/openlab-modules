@@ -118,7 +118,7 @@ const CloneModule = ( props ) => {
           className="clone-module-button clone-module-button-reset"
           onClick={ handleCloneButtonClick }
         >
-          { __( 'Clone Module', 'openlab-modules' ) }
+          { __( 'Clone this Module', 'openlab-modules' ) }
         </button>
       </div>
 
@@ -126,7 +126,7 @@ const CloneModule = ( props ) => {
         <div id={`clone-module-modal-${uniqid}`} className="clone-module-modal">
           <dialog className="clone-module-modal-content">
 						<div className="dialog__header" aria-labelledby="dialog-title">
-							<h1 id="dialog-title">{ __( 'Clone Module', 'openlab-modules' ) }</h1>
+							<h1 id="dialog-title">{ __( 'Clone this Module', 'openlab-modules' ) }</h1>
 
 							<button
 								className="close-clone-module-modal clone-module-button-reset"
