@@ -6,12 +6,13 @@ button.clone-module-button-reset {
 
 button.clone-module-button {
 	align-items: center;
-	background: transparent;
-	color: #222;
+	background: transparent !important;
+	color: #222 !important;
 	display: flex;
-	font-size: .9rem;
+	font-size: .8em;
 	font-weight: 700;
 	text-decoration: underline;
+	text-transform: none;
 
 	&:before {
 		background-image: url( './icon.png' );
