@@ -262,8 +262,8 @@ class Editor {
 	/**
 	 * Determines whether the block editor should be used for a given post type.
 	 *
-	 * @param bool    $use_block_editor Whether to use the block editor.
-	 * @param WP_Post $post             Post object.
+	 * @param bool     $use_block_editor Whether to use the block editor.
+	 * @param \WP_Post $post             Post object.
 	 * @return bool
 	 */
 	public function use_block_editor_for_module( $use_block_editor, $post ) {
