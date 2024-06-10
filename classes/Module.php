@@ -334,6 +334,21 @@ class Module {
 	}
 
 	/**
+	 * Gets a list of requirements for this module.
+	 *
+	 * Currently limited to plugin requirements.
+	 *
+	 * @return array{plugins: array<string>} List of requirements.
+	 */
+	public function get_requirements() {
+		$plugin_requirements = apply_filters( 'openlab_modules_module_requirements', [], $this->id );
+
+		return [
+			'plugins' => $plugin_requirements,
+		];
+	}
+
+	/**
 	 * Gets a ModuleData object representing this module.
 	 *
 	 * @return \OpenLab\Modules\ModuleData
