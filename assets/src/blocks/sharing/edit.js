@@ -58,7 +58,7 @@ export default function Edit( { attributes } ) {
 			>{ __( 'Clone this Module', 'openlab-modules' ) }</button>
 
 			<p className="sharing-notice">
-				{ __( 'Sharing is disabled for this module, and the "Clone this Module" button will not show on the front end. Remove this block, or enable sharing under the "Edit Module" settings in the Module toolbar.', 'openlab-modules' ) }
+				{ __( 'Sharing is disabled for this module, so the "Clone this Module" button will not show on the front end. Remove this block, or enable sharing under the "Edit Module" settings in the Module toolbar.', 'openlab-modules' ) }
 			</p>
 		</div>
 	)

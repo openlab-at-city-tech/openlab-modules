@@ -4,10 +4,8 @@
 	pointer-events: none;
 
 	&.sharing-is-disabled {
-		background: #efefef;
-		padding: 20px;
-
 		.sharing-notice {
+			padding-left: 20px;
 			font-style: italic;
 			font-size: .8em;
 			opacity: .7;
