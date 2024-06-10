@@ -275,8 +275,11 @@ class Cloner {
 			'blockName'    => 'core/group',
 			'attrs'        => [
 				'style'     => [
-					'color' => [
+					'color'   => [
 						'background' => '#efefef',
+					],
+					'spacing' => [
+						'padding' => '20px',
 					],
 				],
 				'className' => 'openlab-modules-module-attribution-wrapper',
@@ -285,9 +288,9 @@ class Cloner {
 				],
 			],
 			'innerBlocks'  => array( $inner_block ),
-			'innerHTML'    => '<div class="wp-block-group openlab-modules-module-attribution-wrapper has-background" style="background-color:#efefef"></div>',
+			'innerHTML'    => '<div class="wp-block-group openlab-modules-module-attribution-wrapper has-background" style="background-color:#efefef;padding:20px"></div>',
 			'innerContent' => array(
-				'<div class="wp-block-group openlab-modules-module-attribution-wrapper has-background" style="background-color:#efefef">',
+				'<div class="wp-block-group openlab-modules-module-attribution-wrapper has-background" style="background-color:#efefef;padding:20px">',
 				$inner_block_serialized,
 				'</div>',
 			),
