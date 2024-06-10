@@ -43,6 +43,8 @@ class Editor {
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_assets' ] );
 
 		add_action( 'save_post', [ $this, 'link_to_module_on_post_creation' ] );
+
+		add_filter( 'use_block_editor_for_post_type', [ $this, 'use_block_editor_for_module' ], 10, 2 );
 	}
 
 	/**
@@ -255,5 +257,20 @@ class Editor {
 		$block['innerContent'] = $inner_content;
 
 		return serialize_block( $block );
+	}
+
+	/**
+	 * Determines whether the block editor should be used for a given post type.
+	 *
+	 * @param bool   $use_block_editor Whether to use the block editor.
+	 * @param string $post_type        Post type.
+	 * @return bool
+	 */
+	public function use_block_editor_for_module( $use_block_editor, $post_type ) {
+		if ( Schema::get_module_post_type() === $post_type ) {
+			return true;
+		}
+
+		return $use_block_editor;
 	}
 }
