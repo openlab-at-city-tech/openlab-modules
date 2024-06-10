@@ -21,6 +21,20 @@ const CloneModule = ( props ) => {
     if ( isModalOpen && uniqid ) {
       fetchSites();
     }
+
+		const handleKeydown = ( event ) => {
+			if ( event.key === 'Escape' ) {
+				closeModal();
+			}
+		}
+
+		if ( isModalOpen ) {
+			document.addEventListener( 'keydown', handleKeydown );
+		}
+
+		return () => {
+			document.removeEventListener( 'keydown', handleKeydown );
+		}
   }, [ isModalOpen, uniqid ] );
 
   const fetchSites = async () => {
