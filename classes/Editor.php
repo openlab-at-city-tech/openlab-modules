@@ -44,7 +44,7 @@ class Editor {
 
 		add_action( 'save_post', [ $this, 'link_to_module_on_post_creation' ] );
 
-		add_filter( 'use_block_editor_for_post', [ $this, 'use_block_editor_for_module' ], 10, 2 );
+		add_filter( 'use_block_editor_for_post', [ $this, 'use_block_editor_for_module' ], 200, 2 );
 	}
 
 	/**
