@@ -159,6 +159,7 @@ class Cloner {
 		$module_post_content = self::swap_urls_and_ids_in_content( $module_post->post_content, $url_map, $id_map );
 		$module_post_content = self::swap_module_navigation_module_ids( $module_post_content, $module_data->get_module_id(), $module_id );
 		$module_post_content = self::swap_module_attribution_block( $module_post_content, $module_id );
+		$module_post_content = self::delete_sharing_blocks( $module_post_content );
 
 		wp_update_post(
 			[
@@ -310,6 +311,19 @@ class Cloner {
 			$sharing_regex = '/<!-- wp:openlab-modules\/sharing[^>]*-->/s';
 			$post_content  = preg_replace( $sharing_regex, $block_markup . '$0', $post_content );
 		}
+
+		return (string) $post_content;
+	}
+
+	/**
+	 * Delete sharing blocks.
+	 *
+	 * @param string $post_content Post content.
+	 * @return string
+	 */
+	public static function delete_sharing_blocks( $post_content ) {
+		$sharing_regex = '/<!-- wp:openlab-modules\/sharing[^>]*-->/s';
+		$post_content  = preg_replace( $sharing_regex, '', $post_content );
 
 		return (string) $post_content;
 	}
