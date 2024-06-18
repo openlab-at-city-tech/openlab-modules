@@ -10,11 +10,9 @@
       "anchor": true
     },
     "attributes": {
-      "attributes": {
-        "moduleId": {
-          "type": "integer",
-          "default": 0
-        }
+      "moduleId": {
+        "type": "integer",
+        "default": 0
       }
     },
     "textdomain": "openlab-modules",
