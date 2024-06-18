@@ -159,6 +159,7 @@ class Cloner {
 		$module_post_content = self::swap_urls_and_ids_in_content( $module_post->post_content, $url_map, $id_map );
 		$module_post_content = self::swap_module_navigation_module_ids( $module_post_content, $module_data->get_module_id(), $module_id );
 		$module_post_content = self::swap_module_attribution_block( $module_post_content, $module_id );
+		$module_post_content = self::delete_sharing_blocks( $module_post_content );
 
 		wp_update_post(
 			[
@@ -302,14 +303,31 @@ class Cloner {
 		// Look for existing attribution wrapper group blocks.
 		$regex = '/<!-- wp:group[^>]+className:"openlab-modules-module-attribution-wrapper".*?<!-- \/wp:group -->/s';
 
+		$sharing_regex = '/<!-- wp:openlab-modules\/sharing[^>]*-->/s';
+
 		if ( preg_match( $regex, $post_content, $matches ) ) {
 			// Replace existing block with new block.
 			$post_content = preg_replace( $regex, $block_markup, $post_content );
-		} else {
+		} elseif ( preg_match( $sharing_regex, $post_content ) ) {
 			// Look for a openlab-modules/sharing block, and put it before that.
-			$sharing_regex = '/<!-- wp:openlab-modules\/sharing[^>]*-->/s';
-			$post_content  = preg_replace( $sharing_regex, $block_markup . '$0', $post_content );
+			$post_content = preg_replace( $sharing_regex, $block_markup . '$0', $post_content );
+		} else {
+			// Prepends the new block to the content.
+			$post_content = $block_markup . $post_content;
 		}
+
+		return (string) $post_content;
+	}
+
+	/**
+	 * Delete sharing blocks.
+	 *
+	 * @param string $post_content Post content.
+	 * @return string
+	 */
+	public static function delete_sharing_blocks( $post_content ) {
+		$sharing_regex = '/<!-- wp:openlab-modules\/sharing[^>]*-->/s';
+		$post_content  = preg_replace( $sharing_regex, '', $post_content );
 
 		return (string) $post_content;
 	}

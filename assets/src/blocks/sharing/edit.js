@@ -71,7 +71,7 @@ export default function Edit( { attributes } ) {
 
 			{ ! isSharingEnabled && (
 				<p className="sharing-notice">
-					{ __( 'Sharing is disabled for this module, so the "Clone this Module" button will not show on the front end. Remove this block, or enable sharing under the "Edit Module" settings in the Module toolbar.', 'openlab-modules' ) }
+					{ __( 'Shared cloning is disabled for this module, so the "Clone this Module" button will not be visible to others when viewing the module. To enable shared cloning go to the "Edit Module" section of the module settings sidebar and click the "Share" button. You can remove this block if you don\'t want to enable shared cloning.', 'openlab-modules' ) }
 				</p>
 			) }
 		</div>
