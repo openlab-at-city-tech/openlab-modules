@@ -303,13 +303,17 @@ class Cloner {
 		// Look for existing attribution wrapper group blocks.
 		$regex = '/<!-- wp:group[^>]+className:"openlab-modules-module-attribution-wrapper".*?<!-- \/wp:group -->/s';
 
+		$sharing_regex = '/<!-- wp:openlab-modules\/sharing[^>]*-->/s';
+
 		if ( preg_match( $regex, $post_content, $matches ) ) {
 			// Replace existing block with new block.
 			$post_content = preg_replace( $regex, $block_markup, $post_content );
-		} else {
+		} elseif ( preg_match( $sharing_regex, $post_content ) ) {
 			// Look for a openlab-modules/sharing block, and put it before that.
-			$sharing_regex = '/<!-- wp:openlab-modules\/sharing[^>]*-->/s';
-			$post_content  = preg_replace( $sharing_regex, $block_markup . '$0', $post_content );
+			$post_content = preg_replace( $sharing_regex, $block_markup . '$0', $post_content );
+		} else {
+			// Prepends the new block to the content.
+			$post_content = $block_markup . $post_content;
 		}
 
 		return (string) $post_content;
