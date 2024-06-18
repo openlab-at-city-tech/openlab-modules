@@ -66,7 +66,7 @@ class CheckModuleRequirements extends WP_REST_Controller {
 
 		switch_to_blog( $destination_site_id );
 
-		if ( ! current_user_can( 'manage_plugins' ) ) {
+		if ( ! current_user_can( 'activate_plugins' ) ) {
 			$error = new WP_Error( 'rest_forbidden', __( 'Sorry, you are not allowed to manage plugins on this site.', 'openlab-modules' ), [ 'status' => 403 ] );
 		}
 
