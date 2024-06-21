@@ -326,7 +326,7 @@ class Cloner {
 	 * @return string
 	 */
 	public static function delete_sharing_blocks( $post_content ) {
-		$sharing_regex = '/<!-- wp:openlab-modules\/sharing[^>]*-->/s';
+		$sharing_regex = '/<!-- wp:openlab-modules\/sharing[^>]*-->.*?<!-- \/wp:openlab-modules\/sharing -->/s';
 		$post_content  = preg_replace( $sharing_regex, '', $post_content );
 
 		return (string) $post_content;
