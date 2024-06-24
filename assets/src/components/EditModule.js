@@ -115,8 +115,8 @@ export default function EditModule() {
 
 			<PanelRow>
 				<ToggleControl
-					label={ __( 'Share', 'openlab-modules' ) }
-					help={ __( 'Enable shared cloning for this Module.', 'openlab-modules' ) }
+					label={ __( 'Enable shared cloning', 'openlab-modules' ) }
+					help={ __( 'Allow others to clone this Module.', 'openlab-modules' ) }
 					checked={ isSharingEnabled }
 					onChange={ ( newIsSharingEnabled ) => handleEnableSharingToggle( newIsSharingEnabled ) }
 				/>
