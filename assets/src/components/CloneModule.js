@@ -6,8 +6,9 @@ import he from 'he';
 const CloneModule = ( props ) => {
   const { moduleId, nonce, uniqid } = props;
 
-  const [ userSites, setUserSites ] = useState( [] );
-  const [ isModalOpen, setIsModalOpen ] = useState( false );
+	const [ userSites, setUserSites ] = useState( [] );
+	const [ hasFetchedSites, setHasFetchedSites ] = useState( false );
+	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ selectedSite, setSelectedSite ] = useState( null );
 	const [ cloneInProgress, setCloneInProgress ] = useState( false );
 	const [ cloneResult, setCloneResult ] = useState( null );
@@ -55,6 +56,7 @@ const CloneModule = ( props ) => {
 
         allSites = [ ...allSites, ...results ];
 				setUserSites( allSites );
+				setHasFetchedSites( true );
       }
     } catch ( error ) {}
   };
@@ -133,6 +135,14 @@ const CloneModule = ( props ) => {
 		} catch ( error ) {}
 	}
 
+	const getDefaultSiteOptionText = () => {
+		if ( userSites.length === 0 ) {
+			return hasFetchedSites ? __( 'No compatible sites found', 'openlab-modules' ) : __( 'Loading...', 'openlab-modules' );
+		}
+
+		return __( '- Select a site -', 'openlab-modules' );
+	}
+
   return (
     <>
       <div className="wp-block-openlab-modules-sharing">
@@ -178,9 +188,7 @@ const CloneModule = ( props ) => {
 									} }
 								>
 									<option value="">
-										{
-											userSites.length === 0 ? __( 'Loading...', 'openlab-modules' ) : __( '- Select a site -', 'openlab-modules' ) // eslint-disable-line
-										}
+										{ getDefaultSiteOptionText() }
 									</option>
 
 									{ userSites.map( ( site ) => (
