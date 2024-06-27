@@ -1,3 +1,30 @@
+.module-problem-wrapper {
+	min-height: 300px;
+	position: relative;
+}
+
+.module-problem-overlay {
+	padding: 20px 50px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(255,255,255,0.9);
+	text-align: center;
+	z-index: 100;
+
+	.overlay-button {
+		background-color: #333;
+		color: #fff;
+		padding: 10px;
+	}
+
+	p {
+		margin-bottom: 1em;
+	}
+}
+
 .module-section-complete-notice-overlay {
 	position: fixed;
 	top: 0;
@@ -10,7 +37,7 @@
 }
 
 .module-section-complete-notice {
-	padding: 20px 50px;
+	padding: 40px 50px;
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -25,13 +52,13 @@
 	}
 }
 
-.module-section-complete-notice-dismiss {
+button.module-section-complete-notice-dismiss {
 	position: absolute;
 	top: 0;
 	right: 0;
 	padding: 10px;
 	cursor: pointer;
-	color: #666;
-	background-color: #fff;
+	color: #666 !important;
+	background-color: #fff !important;
 	border-radius: 5px;
 }
