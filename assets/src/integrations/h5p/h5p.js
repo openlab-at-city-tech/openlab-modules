@@ -12,8 +12,6 @@
 			return;
 		}
 
-		console.log( 'h5p integration', verb, objectId, data );
-
 		switch ( verb ) {
 			case 'attempted' :
 				window.moduleProblemCompletionBus.addProblem( objectId );

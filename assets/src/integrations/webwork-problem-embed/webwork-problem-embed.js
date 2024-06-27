@@ -3,9 +3,7 @@
 import './webwork-problem-embed.scss';
 
 (() => {
-	const problemFrames = {};
 	let problemFramesInitialized = false;
-	let sectionCompleteRequestSent = false;
 
 	if ( 'undefined' === typeof wwpe ) {
 		return;
@@ -31,112 +29,25 @@ import './webwork-problem-embed.scss';
 			return;
 		}
 
-		// We late-evaluate the list of problemFrames because iframe-resizer takes a while to load.
+		window.moduleProblemCompletionBus.setProblemComplete( frame );
+	}
+
+	/**
+	 * Identifies all Renderer problems and adds them to the moduleProblemCompletionBus.
+	 *
+	 * We run this on a timeout, to give iFrameResizer a chance to finish.
+	 */
+	const identifyRendererProblems = () => {
 		if ( ! problemFramesInitialized ) {
 			const rendererProblems = document.querySelectorAll( '.renderer-problem' );
+			console.log( 'rendererProblems', rendererProblems );
 			const rendererProblemsArray = [...rendererProblems];
 			rendererProblemsArray.forEach( ( problem ) => {
-				problemFrames[ problem.id ] = false;
+				window.moduleProblemCompletionBus.addProblem( problem.id );
 			} )
 
 			problemFramesInitialized = true;
 		}
-
-		if ( problemFrames.length === 0 ) {
-			return;
-		}
-
-		if ( ! problemFrames.hasOwnProperty( frame ) ) {
-			return;
-		}
-
-		problemFrames[ frame ] = true;
-	}
-
-	/**
-	 * Checks whether all problems on the current page are complete.
-	 *
-	 * @return {boolean} Whether all problems are complete.
-	 */
-	const allProblemsComplete = () => {
-		if ( problemFrames.length === 0 ) {
-			return false;
-		}
-
-		const problemFramesArray = Object.values( problemFrames );
-		return problemFramesArray.every( ( problem ) => problem );
-	}
-
-	/**
-	 * Marks the current section as 'complete'.
-	 *
-	 * @return {void}
-	 */
-	const markSectionComplete = () => {
-		if ( sectionCompleteRequestSent ) {
-			return;
-		}
-
-		const { nonce, postId } = openlabModulesWwpe;
-
-		sendCompleteStatus( nonce, postId ).then( () => {
-			sectionCompleteRequestSent = true;
-			console.log( 'Successfully marked section as complete.' ); // eslint-disable-line no-console
-		} )
-
-		createSectionCompleteNotice();
-	}
-
-	/**
-	 * Creates a notice to display when the section is complete.
-	 *
-	 * @return {void}
-	 */
-	const createSectionCompleteNotice = () => {
-		const notice = document.createElement( 'div' );
-
-		const dismissButton = document.createElement( 'button' );
-		dismissButton.classList.add( 'wwpe-section-complete-notice-dismiss' );
-		dismissButton.innerHTML = '&times; <span class="screen-reader-text">' + openlabModulesWwpeStrings.dismiss + '</span>';
-		dismissButton.addEventListener( 'click', () => {
-			overlay.remove();
-		} )
-
-		notice.classList.add( 'wwpe-section-complete-notice' );
-		notice.innerHTML = '<p>' + openlabModulesWwpeStrings.sectionComplete + '</p>';
-		notice.appendChild( dismissButton );
-
-		const overlay = document.createElement( 'div' );
-		overlay.classList.add( 'wwpe-section-complete-notice-overlay' );
-		overlay.appendChild( notice );
-
-		document.body.appendChild( overlay );
-	}
-
-	/**
-	 * Async callback for sending 'complete' status to the server.
-	 *
-	 * @param {string} nonce  The nonce for the request.
-	 * @param {number} postId The post ID for the request.
-	 * @return {Promise} The fetch promise.
-	 */
-	async function sendCompleteStatus( nonce, postId ) {
-		const { ajaxUrl } = openlabModulesWwpe;
-		const endpointUrl = `${ajaxUrl}?action=mark_module_section_complete`;
-
-		const body = new URLSearchParams();
-		body.append( 'nonce', nonce );
-		body.append( 'postId', postId );
-
-		const response = await fetch( endpointUrl, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded',
-			},
-			body: body.toString(),
-		} );
-
-		return response.json();
 	}
 
 	/**
@@ -171,16 +82,17 @@ import './webwork-problem-embed.scss';
 
 			if ( 1 === tryStatus ) {
 				markProblemComplete( frame );
-
-				if ( allProblemsComplete() ) {
-					markSectionComplete();
-				}
 			}
 		}
 	} )
 
 	// Add overlays to Renderer problems for non-authenticated users.
 	window.addEventListener( 'load', () => {
+		// Run this on a timeout, to give iFrameResizer a chance to finish.
+		setTimeout( () => {
+			identifyRendererProblems();
+		}, 3000 );
+
 		const { isUserLoggedIn } = openlabModulesWwpe;
 		if ( isUserLoggedIn ) {
 			return;

@@ -41,7 +41,6 @@ const moduleProblemCompletionBus = {
 
 		this.sendCompleteStatus( nonce, postId ).then( () => {
 			this.completeRequestSent = true;
-			console.log( 'Successfully marked section as complete.' );
 		})
 
 		this.createSectionCompleteNotice();
