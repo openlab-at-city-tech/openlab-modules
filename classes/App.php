@@ -36,5 +36,9 @@ class App {
 			$wwpe_integration = Integrations\WWPE::get_instance();
 			$wwpe_integration->init();
 		}
+
+		// We don't do a plugin check because H5P content may be embedded from elsewhere.
+		$h5p_integration = Integrations\H5P::get_instance();
+		$h5p_integration->init();
 	}
 }
