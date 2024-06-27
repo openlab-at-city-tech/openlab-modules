@@ -40,6 +40,7 @@ class Frontend {
 	 */
 	public function init() {
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_assets' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_assets' ], 20 );
 
 		add_filter( 'the_content', [ __CLASS__, 'append_pagination' ] );
 
@@ -62,12 +63,57 @@ class Frontend {
 			true
 		);
 
+		$current_page_permalink = get_permalink();
+
+		wp_localize_script(
+			'openlab-modules-frontend',
+			'openlabModulesStrings',
+			[
+				'continueWithout'   => __( 'Continue without logging in', 'openlab-modules' ),
+				'dismiss'           => __( 'Dismiss', 'openlab-modules' ),
+				'logIn'             => __( 'Log In', 'openlab-modules' ),
+				'sectionComplete'   => __( 'You have completed this page. You will receive a private message confirming the completion.', 'openlab-modules' ),
+				'toReceiveCredit'   => __( 'To receive an official confirmation when you complete this page, please sign in now.', 'openlab-modules' ),
+				'youAreNotLoggedIn' => __( 'You are not logged in.', 'openlab-modules' ),
+			]
+		);
+
+		wp_add_inline_script(
+			'openlab-modules-frontend',
+			'const openlabModules = ' . wp_json_encode(
+				[
+					'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
+					'isUserLoggedIn' => is_user_logged_in(),
+					'loginUrl'       => wp_login_url( (string) $current_page_permalink ),
+					'nonce'          => wp_create_nonce( 'openlab-modules' ),
+					'postId'         => get_queried_object_id(),
+				]
+			),
+			'before'
+		);
+
 		wp_register_style(
 			'openlab-modules-frontend',
 			OPENLAB_MODULES_PLUGIN_URL . '/build/frontend.css',
 			[],
 			$blocks_asset_file['version']
 		);
+	}
+
+	/**
+	 * Enqueues assets.
+	 *
+	 * For the time being, our frontend is loaded on every module or module page,
+	 * since it's hard to detect whether they're needed based on the presence
+	 * of integration embeds.
+	 *
+	 * @return void
+	 */
+	public function enqueue_assets() {
+		if ( self::get_module_id_for_post() ) {
+			wp_enqueue_script( 'openlab-modules-frontend' );
+			wp_enqueue_style( 'openlab-modules-frontend' );
+		}
 	}
 
 	/**
@@ -88,17 +134,7 @@ class Frontend {
 			return $content;
 		}
 
-		$module_id = null;
-		if ( Schema::get_module_post_type() === get_post_type() ) {
-			$is_module = true;
-			$module_id = get_queried_object_id();
-		} else {
-			$is_module  = false;
-			$module_ids = Module::get_module_ids_of_page( get_queried_object_id() );
-			if ( $module_ids ) {
-				$module_id = $module_ids[0];
-			}
-		}
+		$module_id = self::get_module_id_for_post();
 
 		if ( ! $module_id ) {
 			return $content;
@@ -108,6 +144,8 @@ class Frontend {
 		if ( ! $module ) {
 			return $content;
 		}
+
+		$is_module = Schema::get_module_post_type() === get_post_type( $module_id );
 
 		// Offset keys so that the module page is 0.
 		$module_page_ids = $module->get_page_ids();
@@ -219,21 +257,13 @@ class Frontend {
 			return;
 		}
 
-		$module_id = null;
-		if ( Schema::get_module_post_type() === get_post_type( $post ) ) {
-			$is_module = true;
-			$module_id = $post_id;
-		} else {
-			$is_module  = false;
-			$module_ids = Module::get_module_ids_of_page( $post_id );
-			if ( $module_ids ) {
-				$module_id = $module_ids[0];
-			}
-		}
+		$module_id = self::get_module_id_for_post( $post_id );
 
 		if ( ! $module_id ) {
 			return;
 		}
+
+		$is_module = Schema::get_module_post_type() === get_post_type( $post );
 
 		if ( function_exists( 'messages_new_message' ) ) {
 			// translators: 1. Module title, 2. Module URL.
@@ -265,5 +295,41 @@ class Frontend {
 				]
 			);
 		}
+	}
+
+	/**
+	 * Get module ID for a post ID.
+	 *
+	 * For modules, this returns the post ID itself. For module pages,
+	 * this returns the module ID.
+	 *
+	 * @param int $post_id Optional. Post ID. Default is the current post.
+	 * @return int|null
+	 */
+	public static function get_module_id_for_post( $post_id = 0 ) {
+		if ( ! $post_id ) {
+			$post_id = get_the_ID();
+		}
+
+		if ( ! $post_id ) {
+			return null;
+		}
+
+		$post = get_post( $post_id );
+
+		if ( ! $post ) {
+			return null;
+		}
+
+		if ( Schema::get_module_post_type() === get_post_type( $post ) ) {
+			return $post_id;
+		}
+
+		$module_ids = Module::get_module_ids_of_page( $post_id );
+		if ( $module_ids ) {
+			return $module_ids[0];
+		}
+
+		return null;
 	}
 }
