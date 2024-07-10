@@ -9,6 +9,7 @@ import {
 import { __ } from '@wordpress/i18n'
 import { useDispatch, useSelect } from '@wordpress/data'
 import { PluginDocumentSettingPanel } from '@wordpress/edit-post'
+import { useCallback, useEffect } from '@wordpress/element'
 
 export default function EditModule() {
 	const { editPost } = useDispatch( 'core/editor' )
@@ -18,6 +19,8 @@ export default function EditModule() {
 		moduleAcknowledgements,
 		moduleDescription,
 		moduleNavTitle,
+		postId,
+		postStatus,
 		postTitle,
 		postType
 	} = useSelect( ( select ) => {
@@ -26,20 +29,14 @@ export default function EditModule() {
 			moduleAcknowledgements: select( 'core/editor' ).getEditedPostAttribute( 'meta' ).module_acknowledgements,
 			moduleDescription: select( 'core/editor' ).getEditedPostAttribute( 'meta' ).module_description,
 			moduleNavTitle: select( 'core/editor' ).getEditedPostAttribute( 'moduleNavTitle' ),
+			postId: select( 'core/editor' ).getCurrentPostId(),
+			postStatus: select( 'core/editor' ).getEditedPostAttribute( 'status' ),
 			postTitle: select( 'core/editor' ).getEditedPostAttribute( 'title' ),
 			postType: select( 'core/editor' ).getCurrentPostType()
 		}
 	}, [] )
 
-	if ( ! postType || 'openlab_module' !== postType ) {
-		return null
-	}
-
-	const editPostMeta = ( metaToUpdate ) => {
-		editPost( { meta: metaToUpdate } )
-	}
-
-	const handleEnableSharingToggle = ( newIsSharingEnabled ) => {
+	const handleEnableSharingToggle = useCallback( ( newIsSharingEnabled ) => {
 		editPost( { enableSharing: newIsSharingEnabled } )
 
 		if ( newIsSharingEnabled ) {
@@ -51,9 +48,7 @@ export default function EditModule() {
 				const moduleNavigationBlock = wp.data.select( 'core/block-editor' ).getBlocks().find( block => block.name === 'openlab-modules/module-navigation' )
 				const moduleNavigationClientId = moduleNavigationBlock ? moduleNavigationBlock.clientId : null
 
-				const insertIndex = moduleNavigationClientId ? wp.data.select( 'core/block-editor' ).getBlockIndex( moduleNavigationClientId ) + 1 : null
-
-				const newBlock = wp.blocks.createBlock( 'openlab-modules/sharing', {} )
+				const insertIndex = moduleNavigationClientId ? wp.data.select( 'core/block-editor' ).getBlockIndex( moduleNavigationClientId ) + 1 : 0
 
 				// Insert a test paragraph block after the module navigation block
 				wp.data.dispatch( 'core/block-editor' ).insertBlocks( wp.blocks.createBlock( 'openlab-modules/sharing' ), insertIndex )
@@ -64,6 +59,23 @@ export default function EditModule() {
 				}, 100 )
 			}
 		}
+	}, [ editPost ] )
+
+	// Check if this is a new post and toggle sharing if so.
+	useEffect(() => {
+		setTimeout(	() => {
+			if ( postId === null || postId === 0 || 'auto-draft' === postStatus ) {
+				handleEnableSharingToggle( isSharingEnabled );
+			}
+		}, 1000 )
+	}, [ isSharingEnabled, postId, postStatus, handleEnableSharingToggle ] );
+
+	if ( ! postType || 'openlab_module' !== postType ) {
+		return null
+	}
+
+	const editPostMeta = ( metaToUpdate ) => {
+		editPost( { meta: metaToUpdate } )
 	}
 
 	return (
