@@ -16,45 +16,40 @@ import './blocks/sharing'
  * Components.
  */
 import { registerPlugin } from '@wordpress/plugins';
-import { select } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
+import { Fragment } from '@wordpress/element';
 
-const isSinglePost = () => {
-	const post = select( 'core/editor' ).getCurrentPost();
-	return !! post;
-}
+import EditModule from './components/EditModule';
+import ModulePages from './components/ModulePages';
+import PageModules from './components/PageModules';
 
-// Add Edit Module controls.
-import EditModule from './components/EditModule'
-if ( isSinglePost() ) {
-	registerPlugin(
-		'openlab-module-edit-module-component',
-		{
-			icon: 'users',
-			render: EditModule
-		}
-	)
-}
+// Create a component that conditionally renders plugins based on the editor context
+const OpenlabModulesRegisterPlugins = () => {
+  const isSinglePost = useSelect( ( select ) => {
+    const post = select( 'core/editor' ).getCurrentPost();
+    return post && post.id;
+  }, [] );
 
-// Add Module Pages controls.
-import ModulePages from './components/ModulePages'
-if ( isSinglePost() ) {
-	registerPlugin(
-		'openlab-module-module-pages-component',
-		{
-			icon: 'users',
-			render: ModulePages
-		}
-	)
-}
+  return (
+    <Fragment>
+      { isSinglePost && (
+        <>
+          <EditModule />
+          <ModulePages />
+          <PageModules />
+        </>
+      ) }
+    </Fragment>
+  );
+};
 
-// Add Module controls to pages.
-import PageModules from './components/PageModules'
-if ( isSinglePost() ) {
-	registerPlugin(
-		'openlab-module-pages-modules-component',
-		{
-			icon: 'users',
-			render: PageModules
-		}
-	)
-}
+// Register the component as a plugin
+registerPlugin( 'openlab-modules', {
+  render: OpenlabModulesRegisterPlugins,
+  icon: 'users',
+} );
+
+// Ensure the editor is ready before registering the plugin
+wp.domReady( () => {
+  wp.data.dispatch( 'core/editor' ).editPost(); // Ensure editor is initialized
+} );
