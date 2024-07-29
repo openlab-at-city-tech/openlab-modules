@@ -25,14 +25,14 @@ import PageModules from './components/PageModules';
 
 // Create a component that conditionally renders plugins based on the editor context
 const OpenlabModulesRegisterPlugins = () => {
-  const isSinglePost = useSelect( ( select ) => {
-    const post = select( 'core/editor' ).getCurrentPost();
-    return post && post.id;
+  const isSiteEditor = useSelect( ( select ) => {
+    const editSite = select( 'core/edit-site' )
+		return !! editSite;
   }, [] );
 
   return (
     <Fragment>
-      { isSinglePost && (
+      { ! isSiteEditor && (
         <>
           <EditModule />
           <ModulePages />
