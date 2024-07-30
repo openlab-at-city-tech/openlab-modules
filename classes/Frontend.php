@@ -145,7 +145,7 @@ class Frontend {
 			return $content;
 		}
 
-		$is_module = Schema::get_module_post_type() === get_post_type( $module_id );
+		$is_module = Schema::get_module_post_type() === get_post_type( get_queried_object_id() );
 
 		// Offset keys so that the module page is 0.
 		$module_page_ids = $module->get_page_ids();
