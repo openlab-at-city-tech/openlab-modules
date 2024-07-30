@@ -42,7 +42,7 @@ class Frontend {
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_assets' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_assets' ], 20 );
 
-		add_filter( 'the_content', [ __CLASS__, 'append_pagination' ] );
+		add_filter( 'the_content', [ __CLASS__, 'append_pagination' ], 15 );
 
 		add_action( 'wp_ajax_mark_module_section_complete', [ __CLASS__, 'ajax_mark_module_section_complete' ] );
 	}
