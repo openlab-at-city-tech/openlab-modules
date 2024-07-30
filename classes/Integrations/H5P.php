@@ -76,37 +76,8 @@ class H5P {
 	 * @param int      $module_id           Module ID.
 	 * @return string[]
 	 */
-	public function add_h5p_requirement( $plugin_requirements, $module_id ) {
+	public function add_h5p_requirement( $plugin_requirements, $module_id ) { // phpcs:ignore
 		// @todo
-		return $plugin_requirements;
-
-
-		// Look for the 'webwork_problem' shortcode in the content of the module and its pages.
-		$contains_wwpe = false;
-
-		$module = Module::get_instance( $module_id );
-		if ( ! $module ) {
-			return $plugin_requirements;
-		}
-
-		$contains_wwpe = $this->post_contains_wwpe( $module_id );
-
-		if ( ! $contains_wwpe ) {
-			$module_page_ids = $module->get_page_ids( 'all' );
-			foreach ( $module_page_ids as $page_id ) {
-				if ( $this->post_contains_wwpe( $page_id ) ) {
-					$contains_wwpe = true;
-					break;
-				}
-			}
-		}
-
-		if ( ! $contains_wwpe ) {
-			return $plugin_requirements;
-		}
-
-		$plugin_requirements['webwork-problem-embed/webwork-problem-embed.php'] = __( 'WebWoRK Problem Embed', 'openlab-modules' );
-
 		return $plugin_requirements;
 	}
 
@@ -128,5 +99,3 @@ class H5P {
 		return $is_module_page;
 	}
 }
-
-
