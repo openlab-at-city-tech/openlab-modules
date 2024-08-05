@@ -70,15 +70,56 @@ class H5P {
 	}
 
 	/**
-	 * Detects and adds the WWPE requirement for a module.
+	 * Detects and adds the H5P requirement for a module.
+	 *
+	 * Looks for the presence of the [h5p] shortcode in the module content.
 	 *
 	 * @param string[] $plugin_requirements Array of plugin requirements.
 	 * @param int      $module_id           Module ID.
 	 * @return string[]
 	 */
 	public function add_h5p_requirement( $plugin_requirements, $module_id ) { // phpcs:ignore
-		// @todo
+		$contains_h5p = false;
+
+		$module = Module::get_module( $module_id );
+		if ( ! $module ) {
+			return $plugin_requirements;
+		}
+
+		$contains_h5p = $this->post_contains_h5p( $module_id );
+
+		if ( ! $contains_h5p ) {
+			$module_page_ids = $module->get_module_page_ids( 'all' );
+			foreach ( $module_page_ids as $module_page_id ) {
+				if ( $this->post_contains_h5p( $module_page_id ) ) {
+					$contains_h5p = true;
+					break;
+				}
+			}
+		}
+
+		if ( ! $contains_h5p ) {
+			return $plugin_requirements;
+		}
+
+		$plugin_requirements['h5p/h5p.php'] = __( 'H5P', 'openlab-modules' );
+
 		return $plugin_requirements;
+	}
+
+	/**
+	 * Determine whether a post contains an H5P shortcode.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return bool
+	 */
+	private function post_contains_h5p( $post_id ) {
+		$post = get_post( $post_id );
+		if ( ! $post ) {
+			return false;
+		}
+
+		return has_shortcode( $post->post_content, 'h5p' );
 	}
 
 	/**
