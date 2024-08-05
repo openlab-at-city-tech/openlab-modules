@@ -89,7 +89,7 @@ class H5P {
 		$contains_h5p = $this->post_contains_h5p( $module_id );
 
 		if ( ! $contains_h5p ) {
-			$module_page_ids = $module->get_module_page_ids( 'all' );
+			$module_page_ids = $module->get_page_ids( 'all' );
 			foreach ( $module_page_ids as $module_page_id ) {
 				if ( $this->post_contains_h5p( $module_page_id ) ) {
 					$contains_h5p = true;
