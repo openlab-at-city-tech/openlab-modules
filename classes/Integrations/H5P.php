@@ -81,7 +81,7 @@ class H5P {
 	public function add_h5p_requirement( $plugin_requirements, $module_id ) { // phpcs:ignore
 		$contains_h5p = false;
 
-		$module = Module::get_module( $module_id );
+		$module = Module::get_instance( $module_id );
 		if ( ! $module ) {
 			return $plugin_requirements;
 		}
