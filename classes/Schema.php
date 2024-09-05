@@ -68,6 +68,8 @@ class Schema {
 		add_action( 'save_post_' . self::get_module_post_type(), [ $this, 'maybe_create_all_modules_page' ] );
 		add_action( 'before_delete_post', [ $this, 'remove_page_from_modules' ] );
 
+		add_filter( 'is_protected_meta', [ $this, 'is_protected_meta' ], 10, 3 );
+
 		// OpenLab Attributions support for Module post type.
 		add_filter( 'ol_image_attribution_supported_post_types', [ $this, 'add_openlab_attribution_support' ] );
 	}
@@ -235,6 +237,7 @@ class Schema {
 				'single'         => true,
 				'show_in_rest'   => true,
 				'description'    => __( 'Description', 'openlab-modules' ),
+				'auth_callback'  => '__return_true',
 			]
 		);
 
@@ -247,6 +250,7 @@ class Schema {
 				'single'         => true,
 				'show_in_rest'   => true,
 				'description'    => __( 'Acknowledgements', 'openlab-modules' ),
+				'auth_callback'  => '__return_true',
 			]
 		);
 
@@ -259,6 +263,7 @@ class Schema {
 				'single'         => true,
 				'show_in_rest'   => true,
 				'description'    => __( 'Module Page IDs', 'openlab-modules' ),
+				'auth_callback'  => '__return_true',
 			]
 		);
 
@@ -272,6 +277,7 @@ class Schema {
 				'single'         => true,
 				'show_in_rest'   => true,
 				'description'    => __( 'Link to Module', 'openlab-modules' ),
+				'auth_callback'  => '__return_true',
 			]
 		);
 	}
@@ -566,5 +572,36 @@ class Schema {
 		$post_types[] = self::get_module_post_type();
 
 		return $post_types;
+	}
+
+	/**
+	 * Determines if a meta key is protected.
+	 *
+	 * We mark our custom meta as protected so that it doesn't appear in the Custom Fields
+	 * metabox, where `edit_post()` uses empty values to overwrite what's provided in
+	 * the block editor.
+	 *
+	 * @param bool   $is_protected Whether the meta key is protected.
+	 * @param string $meta_key     Meta key.
+	 * @param string $meta_type    Meta type.
+	 * @return bool
+	 */
+	public function is_protected_meta( $is_protected, $meta_key, $meta_type ) {
+		if ( 'post' !== $meta_type ) {
+			return $is_protected;
+		}
+
+		$keys = [
+			'module_description',
+			'module_acknowledgements',
+			'module_page_ids',
+			'link_to_module',
+		];
+
+		if ( in_array( $meta_key, $keys, true ) ) {
+			return true;
+		}
+
+		return $is_protected;
 	}
 }
