@@ -42,6 +42,7 @@ class Frontend {
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_assets' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_assets' ], 20 );
 
+		add_filter( 'the_content', [ __CLASS__, 'maybe_migrate_attribution_blocks' ], 5 );
 		add_filter( 'the_content', [ __CLASS__, 'append_pagination' ], 15 );
 
 		add_action( 'wp_ajax_mark_module_section_complete', [ __CLASS__, 'ajax_mark_module_section_complete' ] );
@@ -331,5 +332,137 @@ class Frontend {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Just-in-time migration for attribution blocks.
+	 *
+	 * @param string $content The post content.
+	 * @return string The filtered content.
+	 */
+	public static function maybe_migrate_attribution_blocks( $content ) {
+		// Skip if no content or no post ID.
+		if ( empty( $content ) ) {
+			return $content;
+		}
+
+		// Get the fresh post content, which cannot yet have the blocks rendered.
+		$post = get_post();
+		if ( ! $post ) {
+			return $content;
+		}
+
+		// Skip if no old attribution blocks.
+		if ( ! str_contains( $content, '<!-- wp:openlab-modules/module-attribution' ) ) {
+			return $content;
+		}
+
+		// Process and replace each attribution block.
+		$updated_content = self::migrate_attribution_blocks( $content );
+
+		// Only update if content has changed.
+		if ( $content !== $updated_content ) {
+			// Update the post in the database.
+			wp_update_post(
+				array(
+					'ID'           => $post->ID,
+					'post_content' => $updated_content,
+				)
+			);
+
+			// Return the updated content.
+			return $updated_content;
+		}
+
+		return $content;
+	}
+
+	/**
+	 * Migrate old attribution blocks to new group blocks.
+	 *
+	 * @param string $content The post content.
+	 * @return string The updated content.
+	 */
+	protected static function migrate_attribution_blocks( $content ) {
+		// Get the attribution text for the module.
+		$module = \OpenLab\Modules\Module::get_instance( get_the_ID() );
+		if ( ! $module ) {
+			return $content;
+		}
+
+		$attribution_text = $module->get_attribution_text();
+
+		$pattern = '/<!-- wp:openlab-modules\/module-attribution\s+({[^}]+})\s+\/-->/';
+
+		return preg_replace_callback(
+			$pattern,
+			function () use ( $attribution_text ) {
+				// Create a paragraph block with the attribution text.
+				$paragraph_block = array(
+					'blockName'    => 'core/paragraph',
+					'attrs'        => array(
+						'fontSize' => '14-px',
+						'style'    => array(
+							'spacing' => array(
+								'margin'  => '0',
+								'padding' => '0',
+							),
+						),
+					),
+					'innerBlocks'  => array(),
+					'innerHTML'    => sprintf(
+						'<p class="has-14-px-font-size" style="margin:0;padding:0"><strong class="openlab-module-attribution-prefix" style="font-weight:700">Attribution:</strong> %s</p>',
+						$attribution_text
+					),
+					'innerContent' => array(
+						sprintf(
+							'<p class="has-14-px-font-size" style="margin:0;padding:0"><strong class="openlab-module-attribution-prefix" style="font-weight:700">Attribution:</strong> %s</p>',
+							$attribution_text
+						),
+					),
+				);
+
+				// Create an inner group block for the attribution text.
+				$inner_group_block = array(
+					'blockName'    => 'core/group',
+					'attrs'        => array(
+						'className' => 'openlab-modules-attribution-text',
+					),
+					'innerBlocks'  => array( $paragraph_block ),
+					'innerHTML'    => '<div class="wp-block-group openlab-modules-attribution-text"></div>',
+					'innerContent' => array(
+						'<div class="wp-block-group openlab-modules-attribution-text">',
+						null,
+						'</div>',
+					),
+				);
+
+				// Create the outer group block with styling.
+				$outer_group_block = array(
+					'blockName'    => 'core/group',
+					'attrs'        => array(
+						'className' => 'openlab-modules-attribution-wrapper',
+						'style'     => array(
+							'color'   => array(
+								'background' => '#efefef',
+							),
+							'spacing' => array(
+								'padding' => '20px',
+							),
+						),
+					),
+					'innerBlocks'  => array( $inner_group_block ),
+					'innerHTML'    => '<div class="wp-block-group openlab-modules-attribution-wrapper has-background" style="background-color:#efefef;padding:20px"></div>',
+					'innerContent' => array(
+						'<div class="wp-block-group openlab-modules-attribution-wrapper has-background" style="background-color:#efefef;padding:20px">',
+						null,
+						'</div>',
+					),
+				);
+
+				return serialize_block( $outer_group_block );
+			},
+			$content
+		);
 	}
 }
