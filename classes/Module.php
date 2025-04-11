@@ -309,7 +309,7 @@ class Module {
 
 		return sprintf(
 			// translators: 1. Link to source module, 2. Link to source module author.
-			__( '<span class="openlab-module-attribution-prefix">Attribution:</span> This module is based on %1$s by %2$s.', 'openlab-modules' ),
+			__( 'This module is based on %1$s by %2$s.', 'openlab-modules' ),
 			'<a href="' . esc_url( $attribution_data['post_url'] ) . '">' . esc_html( $attribution_data['post_title'] ) . '</a>',
 			'<a href="' . esc_url( $attribution_data['user_url'] ) . '">' . esc_html( $attribution_data['user_name'] ) . '</a>'
 		);
