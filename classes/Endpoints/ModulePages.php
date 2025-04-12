@@ -59,7 +59,7 @@ class ModulePages extends WP_REST_Controller {
 	 */
 	public function get_item( $request ) {
 		// phpcs:ignore Generic.Commenting.DocComment.MissingShort
-		/** @var \WP_REST_Request $request */
+		/** @var \WP_REST_Request<array<string,mixed>> $request */
 		$module_id = $request->get_param( 'module_id' );
 		$pages     = [];
 

@@ -52,7 +52,7 @@ class CheckModuleRequirements extends WP_REST_Controller {
 	/**
 	 * Permisions callback for reading the check-module-requirements endpoint.
 	 *
-	 * @param WP_REST_Request $request Request object.
+	 * @param WP_REST_Request<array<string,mixed>> $request Request object.
 	 * @return bool|WP_Error
 	 */
 	public function get_item_permission_callback( $request ) {
@@ -82,7 +82,7 @@ class CheckModuleRequirements extends WP_REST_Controller {
 	/**
 	 * Callback for reading the check-module-requirements endpoint.
 	 *
-	 * @param WP_REST_Request $request Request object.
+	 * @param WP_REST_Request<array<string,mixed>> $request Request object.
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function get_item( $request ) {
@@ -152,9 +152,9 @@ class CheckModuleRequirements extends WP_REST_Controller {
 	/**
 	 * Validation callback for integer values.
 	 *
-	 * @param mixed           $value   The value to validate.
-	 * @param WP_REST_Request $request The request object.
-	 * @param string          $param   The parameter name.
+	 * @param mixed                                $value   The value to validate.
+	 * @param WP_REST_Request<array<string,mixed>> $request Request object.
+	 * @param string                               $param   The parameter name.
 	 * @return bool|WP_Error True if the parameter is valid, WP_Error otherwise.
 	 */
 	public function validate_integer( $value, $request, $param ) {

@@ -227,7 +227,7 @@ class Editor {
 	/**
 	 * Recursive version of serialize_block().
 	 *
-	 * @param mixed[] $block Block definition. See `serialize_block()`.
+	 * @param array<string,mixed> $block Block definition. See `serialize_block()`.
 	 * @return string
 	 */
 	public static function serialize_block_recursive( $block ) {
@@ -262,6 +262,8 @@ class Editor {
 
 	/**
 	 * Register custom font sizes for the editor.
+	 *
+	 * @return void
 	 */
 	public function register_custom_font_sizes() {
 		// Get existing font sizes if they exist.

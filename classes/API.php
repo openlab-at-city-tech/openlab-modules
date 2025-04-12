@@ -68,8 +68,8 @@ class API {
 	/**
 	 * Filters 'page' REST queries for the excludeModulePages parameter.
 	 *
-	 * @param mixed[]          $args    Query arguments.
-	 * @param \WP_REST_Request $request Request object.
+	 * @param mixed[]                               $args    Query arguments.
+	 * @param \WP_REST_Request<array<string,mixed>> $request Request object.
 	 * @return mixed[]
 	 */
 	public function filter_page_query( $args, $request ) {
