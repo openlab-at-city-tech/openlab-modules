@@ -232,19 +232,19 @@ class Editor {
 	 */
 	public static function serialize_block_recursive( $block ) {
 		if ( empty( $block['innerBlocks'] ) || ! is_array( $block['innerBlocks'] ) ) {
-			/** @phpstan-ignore-next-line */
+			/* @phpstan-ignore-next-line */
 			return serialize_block( $block );
 		}
 
 		$inner_content = [];
 		foreach ( $block['innerBlocks'] as $inner_block ) {
-			/** @phpstan-ignore-next-line */
+			/* @phpstan-ignore-next-line */
 			$inner_content[] = self::serialize_block_recursive( $inner_block );
 		}
 
 		$block['innerContent'] = $inner_content;
 
-		/** @phpstan-ignore-next-line */
+		/* @phpstan-ignore-next-line */
 		return serialize_block( $block );
 	}
 
