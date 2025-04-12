@@ -9,7 +9,7 @@ parameters:
 
   excludePaths:
     - ./vendor/
-    - ./node_modules/
+    - ./node_modules/ (?)
 
   ignoreErrors:
     - # $args is always passed
