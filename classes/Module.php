@@ -407,7 +407,7 @@ class Module {
 			if ( $post ) {
 				$attachment_urls = [];
 				preg_match_all( '/<img[^>]+src=[\'"]([^\'"]+)[\'"][^>]*>/i', $post->post_content, $matches );
-				if ( isset( $matches[1] ) ) {
+				if ( ! empty( $matches[1] ) ) {
 					$attachment_urls = $matches[1];
 				}
 
