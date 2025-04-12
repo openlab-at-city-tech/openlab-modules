@@ -1,9 +1,6 @@
 parameters:
   level: 9
 
-  # Doesn't work properly when extending WP core classes.
-  checkGenericClassInNonGenericObjectType: false
-
   paths:
     - .
 
@@ -13,7 +10,6 @@ parameters:
   excludePaths:
     - ./vendor/
     - ./node_modules/
-    - ./tests/
 
   ignoreErrors:
     - # $args is always passed
