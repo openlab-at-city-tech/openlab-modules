@@ -97,14 +97,17 @@ class Cloner {
 		}
 
 		if ( ! function_exists( 'download_url' ) ) {
+			/** @phpstan-ignore-next-line */
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
 
 		if ( ! function_exists( 'media_handle_sideload' ) ) {
+			/** @phpstan-ignore-next-line */
 			require_once ABSPATH . 'wp-admin/includes/media.php';
 		}
 
 		if ( ! function_exists( 'wp_read_image_metadata' ) ) {
+			/** @phpstan-ignore-next-line */
 			require_once ABSPATH . 'wp-admin/includes/image.php';
 		}
 
