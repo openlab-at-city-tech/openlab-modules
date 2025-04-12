@@ -243,7 +243,8 @@ class Frontend {
 	 * @return void
 	 */
 	public static function ajax_mark_module_section_complete() {
-		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'openlab-modules' ) ) {
+		$nonce = isset( $_POST['nonce'] ) ? wp_unslash( $_POST['nonce'] ) : '';
+		if ( ! $nonce || ! is_string( $nonce ) || ! wp_verify_nonce( sanitize_text_field( $nonce ), 'openlab-modules' ) ) {
 			wp_send_json_error( [ 'message' => __( 'Invalid nonce.', 'openlab-modules' ) ] );
 		}
 
@@ -251,9 +252,12 @@ class Frontend {
 			wp_send_json_error( [ 'message' => __( 'No post ID available', 'openlab-modules' ) ] );
 		}
 
-		$post_id = intval( $_POST['postId'] );
-		$post    = get_post( $post_id );
+		$post_id = is_numeric( $_POST['postId'] ) ? intval( $_POST['postId'] ) : 0;
+		if ( ! $post_id ) {
+			wp_send_json_error( [ 'message' => __( 'Invalid post ID.', 'openlab-modules' ) ] );
+		}
 
+		$post = get_post( $post_id );
 		if ( ! $post ) {
 			return;
 		}
@@ -384,8 +388,13 @@ class Frontend {
 	 * @return string The updated content.
 	 */
 	protected static function migrate_attribution_blocks( $content ) {
+		$current_page_id = get_the_id();
+		if ( ! $current_page_id ) {
+			return $content;
+		}
+
 		// Get the attribution text for the module.
-		$module = \OpenLab\Modules\Module::get_instance( get_the_ID() );
+		$module = \OpenLab\Modules\Module::get_instance( $current_page_id );
 		if ( ! $module ) {
 			return $content;
 		}

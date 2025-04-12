@@ -50,7 +50,7 @@ class Sites extends WP_REST_Controller {
 	public function get_items( $request ) {
 		$params = $request->get_params();
 
-		$page = isset( $params['page'] ) ? absint( $params['page'] ) : 1;
+		$page = isset( $params['page'] ) && is_scalar( $params['page'] ) ? (int) $params['page'] : 1;
 
 		$per_page = 25;
 

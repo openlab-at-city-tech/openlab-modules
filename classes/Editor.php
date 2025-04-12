@@ -274,10 +274,14 @@ class Editor {
 			$existing_font_sizes = $existing_support[0];
 		}
 
+		if ( ! is_array( $existing_font_sizes ) ) {
+			$existing_font_sizes = [];
+		}
+
 		// Check if our font size already exists (to avoid duplicates).
 		$has_attribution_size = false;
 		foreach ( $existing_font_sizes as $font_size ) {
-			if ( isset( $font_size['slug'] ) && '14-px' === $font_size['slug'] ) {
+			if ( is_array( $font_size ) && isset( $font_size['slug'] ) && '14-px' === $font_size['slug'] ) {
 				$has_attribution_size = true;
 				break;
 			}
