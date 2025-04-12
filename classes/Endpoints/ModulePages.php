@@ -99,6 +99,6 @@ class ModulePages extends WP_REST_Controller {
 			}
 		}
 
-		return rest_ensure_response( array_filter( $pages ) );
+		return rest_ensure_response( $pages );
 	}
 }

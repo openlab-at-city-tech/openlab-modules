@@ -403,7 +403,7 @@ class Frontend {
 
 		$pattern = '/<!-- wp:openlab-modules\/module-attribution\s+({[^}]+})\s+\/-->/';
 
-		return preg_replace_callback(
+		$swapped = preg_replace_callback(
 			$pattern,
 			function () use ( $attribution_text ) {
 				// Create a paragraph block with the attribution text.
@@ -473,5 +473,11 @@ class Frontend {
 			},
 			$content
 		);
+
+		if ( ! is_string( $swapped ) ) {
+			return $content;
+		}
+
+		return $swapped;
 	}
 }
