@@ -23,17 +23,17 @@
     </rule>
     <rule ref="WordPress.WP.DeprecatedFunctions">
         <properties>
-            <property name="minimum_supported_version" value="4.9.8" />
+            <property name="minimum_wp_version" value="4.9.8" />
         </properties>
     </rule>
     <rule ref="WordPress.WP.DeprecatedParameters">
         <properties>
-            <property name="minimum_supported_version" value="4.9.8" />
+            <property name="minimum_wp_version" value="4.9.8" />
         </properties>
     </rule>
     <rule ref="WordPress.WP.DeprecatedClasses">
         <properties>
-            <property name="minimum_supported_version" value="4.9.8" />
+            <property name="minimum_wp_version" value="4.9.8" />
         </properties>
     </rule>
 
