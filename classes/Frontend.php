@@ -265,36 +265,75 @@ class Frontend {
 
 		$is_module = Schema::get_module_post_type() === get_post_type( $post );
 
-		if ( function_exists( 'messages_new_message' ) ) {
-			// translators: 1. Module title, 2. Module URL.
-			$module_infos = '<p>' . esc_html( sprintf( __( 'Module: %1$s %2$s', 'openlab-modules' ), get_the_title( $module_id ), get_permalink( $module_id ) ) ) . '</p>';
+		/**
+		 * Filter the completion message type.
+		 *
+		 * @param string $message_type Message type. Default is 'bp_messages'.
+		 * @param int    $module_id    Module ID.
+		 */
+		$message_type = apply_filters( 'openlab_modules_completion_message_type', 'bp_messages', $module_id, $post_id );
 
-			if ( ! $is_module ) {
-				// translators: 1. section title, 2. section URL.
-				$module_infos .= '<p>' . esc_html( sprintf( __( 'Section: %1$s %2$s', 'openlab-modules' ), get_the_title( $post ), get_permalink( $post ) ) ) . '</p>';
-			}
+		switch ( $message_type ) {
+			case 'bp_messages' :
+				self::send_completion_message_bp_messages( $post_id, $module_id );
+			break;
 
-			$message_content = sprintf(
-				'<p>%s</p><p>%s</p>',
-				esc_html__( 'You have completed a module section.', 'openlab-modules' ),
-				$module_infos
-			);
-
-			$message_subject = sprintf(
-				// translators: 1. Module title.
-				__( 'Well done! You have completed a section of the module: %s', 'openlab-modules' ),
-				get_the_title( $module_id )
-			);
-
-			$messages = \messages_new_message(
-				[
-					'sender_id'  => $post->post_author,
-					'recipients' => bp_loggedin_user_id(),
-					'subject'    => $message_subject,
-					'content'    => $message_content,
-				]
-			);
+			default :
+			break;
 		}
+
+		/**
+		 * Fires after a module section is marked as complete.
+		 *
+		 * @param int    $post_id      Post ID.
+		 * @param int    $module_id    Module ID.
+		 * @param string $message_type Message type.
+		 */
+		do_action( 'openlab_modules_section_complete', $post_id, $module_id, $message_type );
+	}
+
+	/**
+	 * Sends a completion message using BuddyPress private messages.
+	 *
+	 * @param int $post_id   Post ID.
+	 * @param int $module_id Module ID.
+	 * @return void
+	 */
+	protected static function send_completion_message_bp_messages( $post_id, $module_id ) {
+		if ( ! function_exists( 'messages_new_message' ) ) {
+			return;
+		}
+
+		$post = get_post( $post_id );
+
+			// translators: 1. Module title, 2. Module URL.
+		$module_infos = '<p>' . esc_html( sprintf( __( 'Module: %1$s %2$s', 'openlab-modules' ), get_the_title( $module_id ), get_permalink( $module_id ) ) ) . '</p>';
+
+		if ( ! $is_module ) {
+			// translators: 1. section title, 2. section URL.
+			$module_infos .= '<p>' . esc_html( sprintf( __( 'Section: %1$s %2$s', 'openlab-modules' ), get_the_title( $post ), get_permalink( $post ) ) ) . '</p>';
+		}
+
+		$message_content = sprintf(
+			'<p>%s</p><p>%s</p>',
+			esc_html__( 'You have completed a module section.', 'openlab-modules' ),
+			$module_infos
+		);
+
+		$message_subject = sprintf(
+			// translators: 1. Module title.
+			__( 'Well done! You have completed a section of the module: %s', 'openlab-modules' ),
+			get_the_title( $module_id )
+		);
+
+		$messages = \messages_new_message(
+			[
+				'sender_id'  => $post->post_author,
+				'recipients' => bp_loggedin_user_id(),
+				'subject'    => $message_subject,
+				'content'    => $message_content,
+			]
+		);
 	}
 
 	/**
