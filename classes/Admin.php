@@ -158,7 +158,7 @@ class Admin {
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$selected_module_id = ! empty( $_GET['filter-by-module'] ) ? (int) $_GET['filter-by-module'] : 0;
+		$selected_module_id = ! empty( $_GET['filter-by-module'] ) && is_numeric( $_GET['filter-by-module'] ) ? (int) $_GET['filter-by-module'] : 0;
 
 		?>
 
@@ -192,7 +192,7 @@ class Admin {
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$module_id = (int) $_GET['filter-by-module'];
+		$module_id = is_numeric( $_GET['filter-by-module'] ) ? (int) $_GET['filter-by-module'] : 0;
 
 		$module = Module::get_instance( $module_id );
 		if ( ! $module ) {

@@ -58,7 +58,7 @@ class CloneModule extends WP_REST_Controller {
 	/**
 	 * Permissions callback for creating from the clone-module endpoint.
 	 *
-	 * @param WP_REST_Request $request Request object.
+	 * @param WP_REST_Request<array<string,mixed>> $request The request object.
 	 * @return bool|WP_Error
 	 */
 	public function create_item_permission_callback( $request ) {
@@ -106,7 +106,7 @@ class CloneModule extends WP_REST_Controller {
 	/**
 	 * Handles creating from the clone-module endpoint.
 	 *
-	 * @param WP_REST_Request $request Request object.
+	 * @param WP_REST_Request<array<string,mixed>> $request The request object.
 	 * @return \WP_REST_Response|\WP_Error
 	 */
 	public function create_item( $request ) {
@@ -155,9 +155,9 @@ class CloneModule extends WP_REST_Controller {
 	/**
 	 * Validation callback for integer values.
 	 *
-	 * @param mixed           $value   The value to validate.
-	 * @param WP_REST_Request $request The request object.
-	 * @param string          $param   The parameter name.
+	 * @param mixed                                $value   The value to validate.
+	 * @param WP_REST_Request<array<string,mixed>> $request The request object.
+	 * @param string                               $param   The parameter name.
 	 * @return bool|WP_Error True if the parameter is valid, WP_Error otherwise.
 	 */
 	public function validate_integer( $value, $request, $param ) {

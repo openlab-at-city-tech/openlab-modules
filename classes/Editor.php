@@ -227,21 +227,24 @@ class Editor {
 	/**
 	 * Recursive version of serialize_block().
 	 *
-	 * @param mixed[] $block Block definition. See `serialize_block()`.
+	 * @param array<string,mixed> $block Block definition. See `serialize_block()`.
 	 * @return string
 	 */
 	public static function serialize_block_recursive( $block ) {
 		if ( empty( $block['innerBlocks'] ) || ! is_array( $block['innerBlocks'] ) ) {
+			/* @phpstan-ignore-next-line */
 			return serialize_block( $block );
 		}
 
 		$inner_content = [];
 		foreach ( $block['innerBlocks'] as $inner_block ) {
+			/* @phpstan-ignore-next-line */
 			$inner_content[] = self::serialize_block_recursive( $inner_block );
 		}
 
 		$block['innerContent'] = $inner_content;
 
+		/* @phpstan-ignore-next-line */
 		return serialize_block( $block );
 	}
 
@@ -262,6 +265,8 @@ class Editor {
 
 	/**
 	 * Register custom font sizes for the editor.
+	 *
+	 * @return void
 	 */
 	public function register_custom_font_sizes() {
 		// Get existing font sizes if they exist.
@@ -272,10 +277,14 @@ class Editor {
 			$existing_font_sizes = $existing_support[0];
 		}
 
+		if ( ! is_array( $existing_font_sizes ) ) {
+			$existing_font_sizes = [];
+		}
+
 		// Check if our font size already exists (to avoid duplicates).
 		$has_attribution_size = false;
 		foreach ( $existing_font_sizes as $font_size ) {
-			if ( isset( $font_size['slug'] ) && '14-px' === $font_size['slug'] ) {
+			if ( is_array( $font_size ) && isset( $font_size['slug'] ) && '14-px' === $font_size['slug'] ) {
 				$has_attribution_size = true;
 				break;
 			}

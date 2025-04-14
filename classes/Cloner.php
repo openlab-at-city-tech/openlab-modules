@@ -97,14 +97,17 @@ class Cloner {
 		}
 
 		if ( ! function_exists( 'download_url' ) ) {
+			/* @phpstan-ignore-next-line */
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
 
 		if ( ! function_exists( 'media_handle_sideload' ) ) {
+			/* @phpstan-ignore-next-line */
 			require_once ABSPATH . 'wp-admin/includes/media.php';
 		}
 
 		if ( ! function_exists( 'wp_read_image_metadata' ) ) {
+			/* @phpstan-ignore-next-line */
 			require_once ABSPATH . 'wp-admin/includes/image.php';
 		}
 
@@ -330,6 +333,8 @@ class Cloner {
 			),
 		);
 
+		$original_post_content = $post_content;
+
 		// Serialize the block.
 		$block_markup = serialize_block( $outer_group_block );
 
@@ -349,6 +354,11 @@ class Cloner {
 		} else {
 			// Prepends the new block to the content.
 			$post_content = $block_markup . $post_content;
+		}
+
+		if ( null === $post_content ) {
+			// If the regex fails, return the original content.
+			return $original_post_content;
 		}
 
 		return $post_content;

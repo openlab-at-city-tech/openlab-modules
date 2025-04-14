@@ -44,13 +44,13 @@ class Sites extends WP_REST_Controller {
 	/**
 	 * Handles fetching from the sites endpoint.
 	 *
-	 * @param WP_REST_Request $request Request object.
+	 * @param \WP_REST_Request<array<string,mixed>> $request Request object.
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function get_items( $request ) {
 		$params = $request->get_params();
 
-		$page = isset( $params['page'] ) ? absint( $params['page'] ) : 1;
+		$page = isset( $params['page'] ) && is_scalar( $params['page'] ) ? (int) $params['page'] : 1;
 
 		$per_page = 25;
 
@@ -112,7 +112,7 @@ class Sites extends WP_REST_Controller {
 	/**
 	 * Permissions callback for fetching from the sites endpoint.
 	 *
-	 * @param WP_REST_Request $request Request object.
+	 * @param \WP_REST_Request<array<string,mixed>> $request Request object.
 	 * @return bool|WP_Error
 	 */
 	public function get_items_permissions_check( $request ) {

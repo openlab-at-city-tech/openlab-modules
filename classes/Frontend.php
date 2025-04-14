@@ -243,7 +243,9 @@ class Frontend {
 	 * @return void
 	 */
 	public static function ajax_mark_module_section_complete() {
-		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'openlab-modules' ) ) {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$nonce = isset( $_POST['nonce'] ) ? wp_unslash( $_POST['nonce'] ) : '';
+		if ( ! $nonce || ! is_string( $nonce ) || ! wp_verify_nonce( sanitize_text_field( $nonce ), 'openlab-modules' ) ) {
 			wp_send_json_error( [ 'message' => __( 'Invalid nonce.', 'openlab-modules' ) ] );
 		}
 
@@ -251,9 +253,12 @@ class Frontend {
 			wp_send_json_error( [ 'message' => __( 'No post ID available', 'openlab-modules' ) ] );
 		}
 
-		$post_id = intval( $_POST['postId'] );
-		$post    = get_post( $post_id );
+		$post_id = is_numeric( $_POST['postId'] ) ? intval( $_POST['postId'] ) : 0;
+		if ( ! $post_id ) {
+			wp_send_json_error( [ 'message' => __( 'Invalid post ID.', 'openlab-modules' ) ] );
+		}
 
+		$post = get_post( $post_id );
 		if ( ! $post ) {
 			return;
 		}
@@ -266,36 +271,75 @@ class Frontend {
 
 		$is_module = Schema::get_module_post_type() === get_post_type( $post );
 
-		if ( function_exists( 'messages_new_message' ) ) {
-			// translators: 1. Module title, 2. Module URL.
-			$module_infos = '<p>' . esc_html( sprintf( __( 'Module: %1$s %2$s', 'openlab-modules' ), get_the_title( $module_id ), get_permalink( $module_id ) ) ) . '</p>';
+		/**
+		 * Filter the completion message type.
+		 *
+		 * @param string $message_type Message type. Default is 'bp_messages'.
+		 * @param int    $module_id    Module ID.
+		 */
+		$message_type = apply_filters( 'openlab_modules_completion_message_type', 'bp_messages', $module_id, $post_id );
 
-			if ( ! $is_module ) {
-				// translators: 1. section title, 2. section URL.
-				$module_infos .= '<p>' . esc_html( sprintf( __( 'Section: %1$s %2$s', 'openlab-modules' ), get_the_title( $post ), get_permalink( $post ) ) ) . '</p>';
-			}
+		switch ( $message_type ) {
+			case 'bp_messages':
+				self::send_completion_message_bp_messages( $post_id, $module_id );
+				break;
 
-			$message_content = sprintf(
-				'<p>%s</p><p>%s</p>',
-				esc_html__( 'You have completed a module section.', 'openlab-modules' ),
-				$module_infos
-			);
-
-			$message_subject = sprintf(
-				// translators: 1. Module title.
-				__( 'Well done! You have completed a section of the module: %s', 'openlab-modules' ),
-				get_the_title( $module_id )
-			);
-
-			$messages = \messages_new_message(
-				[
-					'sender_id'  => $post->post_author,
-					'recipients' => bp_loggedin_user_id(),
-					'subject'    => $message_subject,
-					'content'    => $message_content,
-				]
-			);
+			default:
+				break;
 		}
+
+		/**
+		 * Fires after a module section is marked as complete.
+		 *
+		 * @param int    $post_id      Post ID.
+		 * @param int    $module_id    Module ID.
+		 * @param string $message_type Message type.
+		 */
+		do_action( 'openlab_modules_section_complete', $post_id, $module_id, $message_type );
+	}
+
+	/**
+	 * Sends a completion message using BuddyPress private messages.
+	 *
+	 * @param int $post_id   Post ID.
+	 * @param int $module_id Module ID.
+	 * @return void
+	 */
+	protected static function send_completion_message_bp_messages( $post_id, $module_id ) {
+		if ( ! function_exists( 'messages_new_message' ) ) {
+			return;
+		}
+
+		$post = get_post( $post_id );
+
+			// translators: 1. Module title, 2. Module URL.
+		$module_infos = '<p>' . esc_html( sprintf( __( 'Module: %1$s %2$s', 'openlab-modules' ), get_the_title( $module_id ), get_permalink( $module_id ) ) ) . '</p>';
+
+		if ( ! $is_module ) {
+			// translators: 1. section title, 2. section URL.
+			$module_infos .= '<p>' . esc_html( sprintf( __( 'Section: %1$s %2$s', 'openlab-modules' ), get_the_title( $post ), get_permalink( $post ) ) ) . '</p>';
+		}
+
+		$message_content = sprintf(
+			'<p>%s</p><p>%s</p>',
+			esc_html__( 'You have completed a module section.', 'openlab-modules' ),
+			$module_infos
+		);
+
+		$message_subject = sprintf(
+			// translators: 1. Module title.
+			__( 'Well done! You have completed a section of the module: %s', 'openlab-modules' ),
+			get_the_title( $module_id )
+		);
+
+		$messages = \messages_new_message(
+			[
+				'sender_id'  => $post->post_author,
+				'recipients' => bp_loggedin_user_id(),
+				'subject'    => $message_subject,
+				'content'    => $message_content,
+			]
+		);
 	}
 
 	/**
@@ -384,8 +428,13 @@ class Frontend {
 	 * @return string The updated content.
 	 */
 	protected static function migrate_attribution_blocks( $content ) {
+		$current_page_id = get_the_id();
+		if ( ! $current_page_id ) {
+			return $content;
+		}
+
 		// Get the attribution text for the module.
-		$module = \OpenLab\Modules\Module::get_instance( get_the_ID() );
+		$module = \OpenLab\Modules\Module::get_instance( $current_page_id );
 		if ( ! $module ) {
 			return $content;
 		}
@@ -394,7 +443,7 @@ class Frontend {
 
 		$pattern = '/<!-- wp:openlab-modules\/module-attribution\s+({[^}]+})\s+\/-->/';
 
-		return preg_replace_callback(
+		$swapped = preg_replace_callback(
 			$pattern,
 			function () use ( $attribution_text ) {
 				// Create a paragraph block with the attribution text.
@@ -464,5 +513,11 @@ class Frontend {
 			},
 			$content
 		);
+
+		if ( ! is_string( $swapped ) ) {
+			return $content;
+		}
+
+		return $swapped;
 	}
 }
