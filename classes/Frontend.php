@@ -274,12 +274,12 @@ class Frontend {
 		$message_type = apply_filters( 'openlab_modules_completion_message_type', 'bp_messages', $module_id, $post_id );
 
 		switch ( $message_type ) {
-			case 'bp_messages' :
+			case 'bp_messages':
 				self::send_completion_message_bp_messages( $post_id, $module_id );
-			break;
+				break;
 
-			default :
-			break;
+			default:
+				break;
 		}
 
 		/**
