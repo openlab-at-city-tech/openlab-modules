@@ -330,12 +330,12 @@ class Frontend {
 
 		$post = get_post( $post_id );
 
-			// translators: 1. Module title, 2. Module URL.
+		// translators: 1. Module title, 2. Module URL.
 		$module_infos = '<p>' . esc_html( sprintf( __( 'Module: %1$s %2$s', 'openlab-modules' ), get_the_title( $module_id ), get_permalink( $module_id ) ) ) . '</p>';
 
-		if ( ! $is_module ) {
+		if ( $post_id === $module_id ) {
 			// translators: 1. section title, 2. section URL.
-			$module_infos .= '<p>' . esc_html( sprintf( __( 'Section: %1$s %2$s', 'openlab-modules' ), get_the_title( $post ), get_permalink( $post ) ) ) . '</p>';
+			$module_infos .= '<p>' . esc_html( sprintf( __( 'Section: %1$s %2$s', 'openlab-modules' ), get_the_title( $post_id ), get_permalink( $post_id ) ) ) . '</p>';
 		}
 
 		$message_content = sprintf(
@@ -350,9 +350,11 @@ class Frontend {
 			get_the_title( $module_id )
 		);
 
+		$post_author = isset( $post->post_author ) ? $post->post_author : 0;
+
 		$messages = \messages_new_message(
 			[
-				'sender_id'  => $post->post_author,
+				'sender_id'  => $post_author,
 				'recipients' => bp_loggedin_user_id(),
 				'subject'    => $message_subject,
 				'content'    => $message_content,
