@@ -66,6 +66,12 @@ class Frontend {
 
 		$current_page_permalink = get_permalink();
 
+		$post_id      = get_queried_object_id();
+		$module_id    = self::get_module_id_for_post( $post_id );
+		$message_type = self::get_completion_message_type( $module_id, $post_id );
+
+		$section_complete_message = apply_filters( 'openlab_modules_section_complete_message', __( 'You have completed this page. You will receive a private message confirming the completion.', 'openlab-modules' ), $message_type, $module_id, $post_id );
+
 		wp_localize_script(
 			'openlab-modules-frontend',
 			'openlabModulesStrings',
@@ -73,7 +79,7 @@ class Frontend {
 				'continueWithout'   => __( 'Continue without logging in', 'openlab-modules' ),
 				'dismiss'           => __( 'Dismiss', 'openlab-modules' ),
 				'logIn'             => __( 'Log In', 'openlab-modules' ),
-				'sectionComplete'   => __( 'You have completed this page. You will receive a private message confirming the completion.', 'openlab-modules' ),
+				'sectionComplete'   => $section_complete_message,
 				'toReceiveCredit'   => __( 'To receive an official confirmation when you complete this page, please sign in now.', 'openlab-modules' ),
 				'youAreNotLoggedIn' => __( 'You are not logged in.', 'openlab-modules' ),
 			]
@@ -238,6 +244,24 @@ class Frontend {
 	}
 
 	/**
+	 * Gets the completion message type.
+	 *
+	 * @param int|null $post_id   Post ID.
+	 * @param int|null $module_id Module ID.
+	 * @return string
+	 */
+	public static function get_completion_message_type( $post_id = 0, $module_id = 0 ) {
+		/**
+		 * Filter the completion message type.
+		 *
+		 * @param string   $message_type Message type. Default is 'bp_messages'.
+		 * @param int|null $module_id    Module ID.
+		 * @param int|null $post_id      Post ID.
+		 */
+		return apply_filters( 'openlab_modules_completion_message_type', 'bp_messages', $module_id, $post_id );
+	}
+
+	/**
 	 * Marks a module section as complete.
 	 *
 	 * @return void
@@ -271,13 +295,7 @@ class Frontend {
 
 		$is_module = Schema::get_module_post_type() === get_post_type( $post );
 
-		/**
-		 * Filter the completion message type.
-		 *
-		 * @param string $message_type Message type. Default is 'bp_messages'.
-		 * @param int    $module_id    Module ID.
-		 */
-		$message_type = apply_filters( 'openlab_modules_completion_message_type', 'bp_messages', $module_id, $post_id );
+		$message_type = self::get_completion_message_type( $module_id, $post_id );
 
 		switch ( $message_type ) {
 			case 'bp_messages':
