@@ -39,15 +39,7 @@ class Admin {
 		add_filter( 'manage_page_posts_columns', [ $this, 'page_custom_columns' ] );
 		add_action( 'manage_page_posts_custom_column', [ $this, 'page_custom_column_contents' ], 10, 2 );
 
-		add_action( 'admin_footer-edit.php', function() {
-		  global $typenow;
-
-		  if ( 'openlab_module' !== $typenow ) {
-			return;
-		  }
-
-		  echo '<div id="clone-module-app-root"></div>';
-		} );
+		add_action( 'admin_footer-edit.php', [ $this, 'add_clone_module_app_root' ] );
 
 		add_action( 'restrict_manage_posts', [ $this, 'module_filter_for_page_table_markup' ] );
 		add_action( 'pre_get_posts', [ $this, 'module_filter_for_page_table' ] );
@@ -102,6 +94,21 @@ class Admin {
 				echo implode( ', ', $module_links ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 		}
+	}
+
+	/**
+	 * Adds the clone module app root to the footer of edit.php.
+	 *
+	 * @return void
+	 */
+	public function add_clone_module_app_root() {
+		global $typenow;
+
+		if ( 'openlab_module' !== $typenow ) {
+			return;
+		}
+
+		echo '<div id="clone-module-app-root"></div>';
 	}
 
 	/**
