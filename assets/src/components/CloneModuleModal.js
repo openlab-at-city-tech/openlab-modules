@@ -232,7 +232,7 @@ const CloneModuleModal = ( { moduleId, nonce, uniqid, isOpen, onClose } ) => {
 								) }
 
 								<button
-									className="clone-module-button-reset"
+									className="clone-module-button-submit"
 									onClick={ closeModal }
 								>
 									{ __( 'Close', 'openlab-modules' ) }
