@@ -40,10 +40,11 @@ class Cloner {
 
 		// Create the module first, so we have the new module ID.
 		$module_post_data = [
-			'post_title'   => $module_data->get_title(),
+			// translators: %s is the module title.
+			'post_title'   => sprintf( __( 'Clone of %s', 'openlab-modules' ), $module_data->get_title() ),
 			'post_content' => $module_data->get_content(),
 			'post_name'    => $module_data->get_slug(),
-			'post_status'  => 'publish',
+			'post_status'  => 'draft',
 			'post_type'    => Schema::get_module_post_type(),
 		];
 
@@ -189,10 +190,22 @@ class Cloner {
 
 		$module_url = get_permalink( $module_id );
 
+		// We have to build the edit string manually because
+		// get_edit_post_link() doesn't work properly in REST API.
+		$module_edit_url = admin_url( 'post.php' );
+		$module_edit_url = add_query_arg(
+			[
+				'action' => 'edit',
+				'post'   => $module_id,
+			],
+			$module_edit_url
+		);
+
 		restore_current_blog();
 
 		return [
-			'clone_url' => (string) $module_url,
+			'clone_url'      => (string) $module_url,
+			'clone_edit_url' => (string) $module_edit_url,
 		];
 	}
 

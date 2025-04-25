@@ -249,8 +249,8 @@ const CloneModule = ( props ) => {
 
 											<p>
 												<a
-													href={ cloneResult.clone_url }
-												>{ __( 'Visit the cloned module', 'openlab-modules' ) }</a>
+													href={ cloneResult.clone_edit_url }
+												>{ __( 'Edit the cloned module', 'openlab-modules' ) }</a>
 											</p>
 										</>
 									) : (

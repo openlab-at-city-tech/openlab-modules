@@ -114,9 +114,10 @@ class CloneModule extends WP_REST_Controller {
 		$module_id           = $this->sanitize_integer( $request->get_param( 'module_id' ) );
 
 		$response = [
-			'clone_url' => '',
-			'message'   => '',
-			'success'   => false,
+			'clone_url'      => '',
+			'clone_edit_url' => '',
+			'message'        => '',
+			'success'        => false,
 		];
 
 		$module_data = Cloner::get_module_data( $module_id );
@@ -132,8 +133,9 @@ class CloneModule extends WP_REST_Controller {
 			return rest_ensure_response( $response );
 		}
 
-		$response['success']   = true;
-		$response['clone_url'] = $clone_results['clone_url'];
+		$response['success']        = true;
+		$response['clone_url']      = $clone_results['clone_url'];
+		$response['clone_edit_url'] = $clone_results['clone_edit_url'];
 
 		return rest_ensure_response( $response );
 	}
