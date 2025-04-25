@@ -39,10 +39,22 @@ class Admin {
 		add_filter( 'manage_page_posts_columns', [ $this, 'page_custom_columns' ] );
 		add_action( 'manage_page_posts_custom_column', [ $this, 'page_custom_column_contents' ], 10, 2 );
 
+		add_action( 'admin_footer-edit.php', function() {
+		  global $typenow;
+
+		  if ( 'openlab_module' !== $typenow ) {
+			return;
+		  }
+
+		  echo '<div id="clone-module-app-root"></div>';
+		} );
+
 		add_action( 'restrict_manage_posts', [ $this, 'module_filter_for_page_table_markup' ] );
 		add_action( 'pre_get_posts', [ $this, 'module_filter_for_page_table' ] );
 
 		add_filter( 'wp_dropdown_pages', [ $this, 'add_modules_to_page_on_front_dropdown' ], 10, 2 );
+
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_assets' ] );
 
 		add_action( 'admin_init', [ $this, 'set_blogmeta_flag' ] );
 	}
@@ -93,6 +105,43 @@ class Admin {
 	}
 
 	/**
+	 * Enqueues admin assets.
+	 *
+	 * @return void
+	 */
+	public function enqueue_admin_assets() {
+		// Assets that are specific to edit.php?post_type=openlab_module.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( 'edit.php' === $GLOBALS['pagenow'] && isset( $_GET['post_type'] ) && Schema::get_module_post_type() === $_GET['post_type'] ) {
+			$blocks_asset_file = Editor::get_blocks_asset_file( 'admin' );
+
+			wp_enqueue_script(
+				'openlab-modules-admin',
+				OPENLAB_MODULES_PLUGIN_URL . '/build/admin.js',
+				[ 'wp-element', 'wp-api-fetch', 'wp-i18n' ],
+				$blocks_asset_file['version'],
+				true
+			);
+
+			wp_localize_script(
+				'openlab-modules-admin',
+				'openlabModulesAdmin',
+				[
+					'clone' => __( 'Clone', 'openlab-modules' ),
+					'nonce' => wp_create_nonce( 'wp_rest' ),
+				]
+			);
+
+			wp_enqueue_style(
+				'openlab-modules-admin',
+				OPENLAB_MODULES_PLUGIN_URL . '/build/admin.css',
+				[],
+				$blocks_asset_file['version']
+			);
+		}
+	}
+
+	/**
 	 * Generates content for Modules edit.php custom columns.
 	 *
 	 * @param string $column_name String defining the column.
@@ -116,6 +165,28 @@ class Admin {
 							esc_html( $author->display_name )
 						);
 					}
+				}
+			}
+
+			$module = Module::get_instance( $post_id );
+			if ( $module ) {
+				$enable_sharing = $module->is_sharing_enabled();
+
+				printf(
+					'<input class="enable-sharing" type="hidden" id="enable-sharing-%s" value="%s" />',
+					esc_attr( (string) $post_id ),
+					$enable_sharing ? '1' : '0'
+				);
+
+				if ( $enable_sharing ) {
+					$module_id = (string) $post_id;
+					$uniqid    = 'clone-module-' . $module_id;
+					echo '<div
+						class="clone-module-container"
+						data-module-id="' . esc_attr( $module_id ) . '"
+						data-nonce="' . esc_attr( wp_create_nonce( 'wp_rest' ) ) . '"
+						data-uniqid="' . esc_attr( $uniqid ) . '"
+					></div>';
 				}
 			}
 		}

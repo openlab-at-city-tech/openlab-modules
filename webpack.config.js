@@ -1,6 +1,5 @@
 // webpack.config.js
-const defaultConfig = require("@wordpress/scripts/config/webpack.config");
-const path = require("path");
+const defaultConfig = require( "@wordpress/scripts/config/webpack.config" );
 
 module.exports = {
   ...defaultConfig,
@@ -14,10 +13,22 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-react']
+            presets: ['@babel/preset-react'],
           },
         },
       },
     ],
   },
+  externals: ( ( { name }, callback ) => {
+    if ( name === 'admin' ) {
+      // Admin bundle: react and react-dom must be externals
+      callback( null, {
+        react: 'React',
+        'react-dom': 'ReactDOM',
+      } );
+    } else {
+      // Frontend (and other) bundles: use default externals
+      callback( null, defaultConfig.externals );
+    }
+  } ),
 };

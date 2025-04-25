@@ -24,6 +24,8 @@ const ROOT_FILE = __FILE__;
 require ROOT_DIR . '/constants.php';
 require ROOT_DIR . '/vendor/autoload.php';
 
+const VERSION = '1.0.0-alpha';
+
 register_activation_hook(
 	__FILE__,
 	function () {

@@ -1,11 +1,13 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import CloneModule from '../../components/CloneModule';
+import CloneModuleFrontend from '../../components/CloneModuleFrontend';
+
+import '../../components/clone-module.scss';
 
 const App = ( { moduleId, nonce, uniqid } ) => {
     return (
         <div>
-            <CloneModule
+            <CloneModuleFrontend
 							moduleId={ moduleId }
 							nonce={ nonce }
 							uniqid={ uniqid }
