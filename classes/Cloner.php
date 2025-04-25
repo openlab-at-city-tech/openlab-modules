@@ -44,7 +44,7 @@ class Cloner {
 			'post_title'   => sprintf( __( 'Clone of %s', 'openlab-modules' ), $module_data->get_title() ),
 			'post_content' => $module_data->get_content(),
 			'post_name'    => $module_data->get_slug(),
-			'post_status'  => 'publish',
+			'post_status'  => 'draft',
 			'post_type'    => Schema::get_module_post_type(),
 		];
 
