@@ -97,14 +97,17 @@ class Cloner {
 		}
 
 		if ( ! function_exists( 'download_url' ) ) {
+			/* @phpstan-ignore-next-line */
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
 
 		if ( ! function_exists( 'media_handle_sideload' ) ) {
+			/* @phpstan-ignore-next-line */
 			require_once ABSPATH . 'wp-admin/includes/media.php';
 		}
 
 		if ( ! function_exists( 'wp_read_image_metadata' ) ) {
+			/* @phpstan-ignore-next-line */
 			require_once ABSPATH . 'wp-admin/includes/image.php';
 		}
 
@@ -252,62 +255,99 @@ class Cloner {
 	}
 
 	/**
-	 * Add an attribution block, deleting existing ones if necessary.
+	 * Insert an attribution block, replacing existing ones if necessary.
 	 *
 	 * @param string $post_content Post content.
-	 * @param int    $module_id    ID of the newly created module on the clone destination site.
+	 * @param int    $module_id    ID of the newly created module.
 	 * @return string
 	 */
 	public static function swap_module_attribution_block( $post_content, $module_id ) {
-		// First build the inner openlab-modules/module-attribution block.
-		$inner_block = [
-			'blockName'    => 'openlab-modules/module-attribution',
-			'attrs'        => [
-				'moduleId' => $module_id,
-			],
-			'innerBlocks'  => [],
-			'innerHTML'    => '',
-			'innerContent' => [],
-		];
+		// Get the attribution text for the module.
+		$module = \OpenLab\Modules\Module::get_instance( $module_id );
+		if ( ! $module ) {
+			return $post_content;
+		}
 
-		$inner_block_serialized = serialize_block( $inner_block );
+		$attribution_text = $module->get_attribution_text();
 
-		$outer_block = [
-			'blockName'    => 'core/group',
-			'attrs'        => [
-				'style'     => [
-					'color'   => [
-						'background' => '#efefef',
-					],
-					'spacing' => [
-						'padding' => '20px',
-					],
-				],
-				'className' => 'openlab-modules-module-attribution-wrapper',
-				'layout'    => [
-					'type' => 'constrained',
-				],
-			],
-			'innerBlocks'  => array( $inner_block ),
-			'innerHTML'    => '<div class="wp-block-group openlab-modules-module-attribution-wrapper has-background" style="background-color:#efefef;padding:20px"></div>',
+		// Create a paragraph block with the attribution prefix and text.
+		$paragraph_block = array(
+			'blockName'    => 'core/paragraph',
+			'attrs'        => array(
+				'fontSize' => '14-px',
+				'style'    => array(
+					'spacing' => array(
+						'margin'  => '0',
+						'padding' => '0',
+					),
+				),
+			),
+			'innerBlocks'  => array(),
+			'innerHTML'    => sprintf(
+				'<p class="has-14-px-font-size" style="margin:0;padding:0"><strong class="openlab-module-attribution-prefix" style="font-weight:700">Attribution:</strong> %s</p>',
+				wp_kses_post( $attribution_text )
+			),
 			'innerContent' => array(
-				'<div class="wp-block-group openlab-modules-module-attribution-wrapper has-background" style="background-color:#efefef;padding:20px">',
-				$inner_block_serialized,
+				sprintf(
+					'<p class="has-14-px-font-size" style="margin:0;padding:0"><strong class="openlab-module-attribution-prefix" style="font-weight:700">Attribution:</strong> %s</p>',
+					wp_kses_post( $attribution_text )
+				),
+			),
+		);
+
+		// Create an inner group block to hold the paragraph (with the attribution text class).
+		$inner_group_block = array(
+			'blockName'    => 'core/group',
+			'attrs'        => array(
+				'className' => 'openlab-modules-attribution-text',
+			),
+			'innerBlocks'  => array( $paragraph_block ),
+			'innerHTML'    => '<div class="wp-block-group openlab-modules-attribution-text"></div>',
+			'innerContent' => array(
+				'<div class="wp-block-group openlab-modules-attribution-text">',
+				null, // This will be replaced by the paragraph block.
 				'</div>',
 			),
-		];
+		);
 
-		// Serialize the new block.
-		$block_markup = serialize_block( $outer_block );
+		// Create the outer group block with styling.
+		$outer_group_block = array(
+			'blockName'    => 'core/group',
+			'attrs'        => array(
+				'className' => 'openlab-modules-attribution-wrapper',
+				'style'     => array(
+					'color'   => array(
+						'background' => '#efefef',
+					),
+					'spacing' => array(
+						'padding' => '20px',
+					),
+				),
+			),
+			'innerBlocks'  => array( $inner_group_block ),
+			'innerHTML'    => '<div class="wp-block-group openlab-modules-attribution-wrapper has-background" style="background-color:#efefef;padding:20px"></div>',
+			'innerContent' => array(
+				'<div class="wp-block-group openlab-modules-attribution-wrapper has-background" style="background-color:#efefef;padding:20px">',
+				null, // This will be replaced by the inner group block.
+				'</div>',
+			),
+		);
 
-		// Look for existing attribution wrapper group blocks.
-		$regex = '/<!-- wp:group[^>]+className:"openlab-modules-module-attribution-wrapper".*?<!-- \/wp:group -->/s';
+		$original_post_content = $post_content;
 
+		// Serialize the block.
+		$block_markup = serialize_block( $outer_group_block );
+
+		$regex         = '/<!-- wp:group[^>]+className:"openlab-modules-attribution-wrapper".*?<!-- \/wp:group -->/s';
+		$style_regex   = '/<!-- wp:group[^>]+"background":"#efefef"[^>]+padding":"20px"[^>]*--.*?<!-- \/wp:group -->/s';
 		$sharing_regex = '/<!-- wp:openlab-modules\/sharing[^>]*-->/s';
 
 		if ( preg_match( $regex, $post_content, $matches ) ) {
 			// Replace existing block with new block.
 			$post_content = preg_replace( $regex, $block_markup, $post_content );
+		} elseif ( preg_match( $style_regex, $post_content, $matches ) ) {
+			// Try the style-based regex as a fallback.
+			$post_content = preg_replace( $style_regex, $block_markup, $post_content );
 		} elseif ( preg_match( $sharing_regex, $post_content ) ) {
 			// Look for a openlab-modules/sharing block, and put it before that.
 			$post_content = preg_replace( $sharing_regex, $block_markup . '$0', $post_content );
@@ -316,7 +356,12 @@ class Cloner {
 			$post_content = $block_markup . $post_content;
 		}
 
-		return (string) $post_content;
+		if ( null === $post_content ) {
+			// If the regex fails, return the original content.
+			return $original_post_content;
+		}
+
+		return $post_content;
 	}
 
 	/**

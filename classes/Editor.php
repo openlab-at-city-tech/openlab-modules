@@ -45,6 +45,8 @@ class Editor {
 		add_action( 'save_post', [ $this, 'link_to_module_on_post_creation' ] );
 
 		add_filter( 'use_block_editor_for_post', [ $this, 'use_block_editor_for_module' ], 200, 2 );
+
+		add_action( 'after_setup_theme', [ $this, 'register_custom_font_sizes' ], 20 );
 	}
 
 	/**
@@ -82,22 +84,6 @@ class Editor {
 	 * @return void
 	 */
 	public function register_dynamic_blocks() {
-		register_block_type(
-			'openlab-modules/module-attribution',
-			[
-				'api_version'     => '2',
-				'attributes'      => [
-					'moduleId' => [
-						'type'    => 'integer',
-						'default' => 0,
-					],
-				],
-				'render_callback' => function ( $attributes, $content ) {
-					return $this->render_block( 'module-attribution', $attributes, $content );
-				},
-			]
-		);
-
 		register_block_type(
 			'openlab-modules/module-list',
 			[
@@ -241,21 +227,24 @@ class Editor {
 	/**
 	 * Recursive version of serialize_block().
 	 *
-	 * @param mixed[] $block Block definition. See `serialize_block()`.
+	 * @param array<string,mixed> $block Block definition. See `serialize_block()`.
 	 * @return string
 	 */
 	public static function serialize_block_recursive( $block ) {
 		if ( empty( $block['innerBlocks'] ) || ! is_array( $block['innerBlocks'] ) ) {
+			/* @phpstan-ignore-next-line */
 			return serialize_block( $block );
 		}
 
 		$inner_content = [];
 		foreach ( $block['innerBlocks'] as $inner_block ) {
+			/* @phpstan-ignore-next-line */
 			$inner_content[] = self::serialize_block_recursive( $inner_block );
 		}
 
 		$block['innerContent'] = $inner_content;
 
+		/* @phpstan-ignore-next-line */
 		return serialize_block( $block );
 	}
 
@@ -272,5 +261,77 @@ class Editor {
 		}
 
 		return $use_block_editor;
+	}
+
+	/**
+	 * Register custom font sizes for the editor.
+	 *
+	 * @return void
+	 */
+	public function register_custom_font_sizes() {
+		// Get existing font sizes if they exist.
+		$existing_font_sizes = [];
+		$existing_support    = get_theme_support( 'editor-font-sizes' );
+
+		if ( $existing_support && is_array( $existing_support ) && ! empty( $existing_support[0] ) ) {
+			$existing_font_sizes = $existing_support[0];
+		}
+
+		if ( ! is_array( $existing_font_sizes ) ) {
+			$existing_font_sizes = [];
+		}
+
+		// Check if our font size already exists (to avoid duplicates).
+		$has_attribution_size = false;
+		foreach ( $existing_font_sizes as $font_size ) {
+			if ( is_array( $font_size ) && isset( $font_size['slug'] ) && '14-px' === $font_size['slug'] ) {
+				$has_attribution_size = true;
+				break;
+			}
+		}
+
+		// Only add our font size if it doesn't already exist.
+		if ( ! $has_attribution_size ) {
+			$existing_font_sizes[] = array(
+				'name'      => __( '14px', 'openlab-modules' ),
+				'shortName' => __( '14px', 'openlab-modules' ),
+				'size'      => 14,
+				'slug'      => '14-px',
+			);
+		}
+
+		// Remove existing support before adding it again with our additions.
+		remove_theme_support( 'editor-font-sizes' );
+		add_theme_support( 'editor-font-sizes', $existing_font_sizes );
+
+		// Add custom CSS for classes that won't be edited by users.
+		add_action(
+			'wp_head',
+			function () {
+				echo '<style>
+					.has-14-px-font-size {
+						font-size: 14px;
+					}
+					.openlab-module-attribution-prefix {
+						font-weight: 700;
+					}
+				</style>';
+			}
+		);
+
+		// Add the same styles to the editor.
+		add_action(
+			'admin_head',
+			function () {
+				echo '<style>
+					.has-14-px-font-size {
+						font-size: 14px;
+					}
+					.openlab-module-attribution-prefix {
+						font-weight: 700;
+					}
+				</style>';
+			}
+		);
 	}
 }

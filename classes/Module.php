@@ -66,12 +66,17 @@ class Module {
 			$module_page_ids_raw = '[]';
 		}
 
-		$page_ids = json_decode( $module_page_ids_raw );
-		if ( ! is_array( $page_ids ) ) {
-			$page_ids = [];
+		$page_ids_raw = json_decode( $module_page_ids_raw );
+		if ( ! is_array( $page_ids_raw ) ) {
+			$page_ids_raw = [];
 		}
 
-		$page_ids = array_map( 'intval', $page_ids );
+		$page_ids = [];
+		foreach ( $page_ids_raw as $pid ) {
+			if ( is_numeric( $pid ) ) {
+				$page_ids[] = intval( $pid );
+			}
+		}
 
 		if ( 'publish' === $type ) {
 			$page_ids = array_filter(
@@ -286,7 +291,7 @@ class Module {
 		}
 
 		$retval = [
-			'user_id'    => isset( $attribution['user_id'] ) ? (int) $attribution['user_id'] : $default['user_id'],
+			'user_id'    => isset( $attribution['user_id'] ) && is_scalar( $attribution['user_id'] ) ? (int) $attribution['user_id'] : $default['user_id'],
 			'post_id'    => isset( $attribution['post_id'] ) ? (int) $attribution['post_id'] : $default['post_id'],
 			'site_id'    => isset( $attribution['site_id'] ) ? (int) $attribution['site_id'] : $default['site_id'],
 			'user_url'   => isset( $attribution['user_url'] ) ? (string) $attribution['user_url'] : '',
@@ -309,7 +314,7 @@ class Module {
 
 		return sprintf(
 			// translators: 1. Link to source module, 2. Link to source module author.
-			__( '<span class="openlab-module-attribution-prefix">Attribution:</span> This module is based on %1$s by %2$s.', 'openlab-modules' ),
+			__( 'This module is based on %1$s by %2$s.', 'openlab-modules' ),
 			'<a href="' . esc_url( $attribution_data['post_url'] ) . '">' . esc_html( $attribution_data['post_title'] ) . '</a>',
 			'<a href="' . esc_url( $attribution_data['user_url'] ) . '">' . esc_html( $attribution_data['user_name'] ) . '</a>'
 		);
@@ -402,7 +407,7 @@ class Module {
 			if ( $post ) {
 				$attachment_urls = [];
 				preg_match_all( '/<img[^>]+src=[\'"]([^\'"]+)[\'"][^>]*>/i', $post->post_content, $matches );
-				if ( isset( $matches[1] ) ) {
+				if ( ! empty( $matches[1] ) ) {
 					$attachment_urls = $matches[1];
 				}
 

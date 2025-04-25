@@ -6,7 +6,6 @@ import './store'
 /**
  * Blocks.
  */
-import './blocks/module-attribution'
 import './blocks/module-list'
 import './blocks/module-navigation'
 import './blocks/placeholder-text'

@@ -59,7 +59,7 @@ class PageModules extends WP_REST_Controller {
 	 */
 	public function get_item( $request ) {
 		// phpcs:ignore Generic.Commenting.DocComment.MissingShort
-		/** @var \WP_REST_Request $request */
+		/** @var \WP_REST_Request<array<string,mixed>> $request */
 		$page_id = $request->get_param( 'page_id' );
 		$modules = [];
 
