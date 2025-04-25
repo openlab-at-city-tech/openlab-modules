@@ -40,7 +40,8 @@ class Cloner {
 
 		// Create the module first, so we have the new module ID.
 		$module_post_data = [
-			'post_title'   => $module_data->get_title(),
+			// translators: %s is the module title.
+			'post_title'   => sprintf( __( 'Clone of %s', 'openlab-modules' ), $module_data->get_title() ),
 			'post_content' => $module_data->get_content(),
 			'post_name'    => $module_data->get_slug(),
 			'post_status'  => 'publish',
