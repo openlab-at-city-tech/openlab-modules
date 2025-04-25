@@ -32,7 +32,7 @@ class Cloner {
 	 *
 	 * @param ModuleData $module_data Module data object.
 	 * @param int        $destination_site_id Destination site ID.
-	 * @return array{clone_url: string}|\WP_Error
+	 * @return array{clone_url: string, clone_edit_url: string}|\WP_Error
 	 */
 	public static function import_module_to_site( ModuleData $module_data, $destination_site_id ) {
 		$id_map  = [];
