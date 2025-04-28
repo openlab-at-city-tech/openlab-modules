@@ -79,7 +79,22 @@ class Sites extends WP_REST_Controller {
 			],
 		];
 
-		foreach ( $query->sites as $site ) {
+		// The current site should be the first one processed.
+		$first_sites   = [];
+		$ordered_sites = [];
+
+		$current_site_id = get_current_blog_id();
+		foreach ( $query->sites as $key => $site ) {
+			if ( (int) $site->blog_id === (int) $current_site_id ) {
+				$first_sites[] = $site;
+			} else {
+				$ordered_sites[] = $site;
+			}
+		}
+
+		$ordered_sites = array_merge( $first_sites, $ordered_sites );
+
+		foreach ( $ordered_sites as $site ) {
 			// Only show for users with edit_others_posts capability.
 			if ( ! current_user_can_for_blog( $site->blog_id, 'edit_others_posts' ) ) {
 				continue;
@@ -93,9 +108,10 @@ class Sites extends WP_REST_Controller {
 			);
 
 			$retval['results'][] = [
-				'url'  => get_home_url( $site->blog_id ),
-				'text' => $label,
-				'id'   => $site->blog_id,
+				'url'           => get_home_url( $site->blog_id ),
+				'text'          => $label,
+				'id'            => $site->blog_id,
+				'isCurrentSite' => (int) $site->blog_id === (int) $current_site,
 			];
 		}
 
