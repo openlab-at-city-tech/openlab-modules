@@ -111,7 +111,7 @@ export default function EditModule( {} ) {
 		const postData = {
 			title: createTitle,
 			content: '',
-			status: 'publish',
+			status: [ 'publish', 'private' ],
 			type: 'page'
 		}
 
