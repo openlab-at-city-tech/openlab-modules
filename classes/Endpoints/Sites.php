@@ -86,9 +86,8 @@ class Sites extends WP_REST_Controller {
 			}
 
 			$label = sprintf(
-				// translators: 1. Numeric ID of site, 2. Name of site, 3. URL of site.
-				__( '#%1$s %2$s (%3$s)', 'openlab-modules' ),
-				$site->blog_id,
+				// translators: 1. Name of site, 2. URL of site.
+				__( '%1$s (%2$s)', 'openlab-modules' ),
 				$site->blogname,
 				$site->siteurl
 			);
