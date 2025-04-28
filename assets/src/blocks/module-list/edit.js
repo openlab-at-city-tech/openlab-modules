@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
-import { useBlockProps } from '@wordpress/block-editor';
-import { Button, Spinner } from '@wordpress/components';
+import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
+import { Button, Panel, PanelBody, Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
@@ -127,52 +127,62 @@ export default function Edit({ attributes, isSelected, setAttributes }) {
   };
 
   return (
-    <div { ...useBlockProps() }>
-      { null !== allModules && allModules.length > 0 && (
-        <ul className="openlab-modules-module-list">
-					{ isSelected && (
-						<DndContext
-							sensors={sensors}
-							collisionDetection={closestCenter}
-							onDragEnd={handleDragEnd}
-						>
-							<SortableContext
-								items={orderedModules.map(module => module.id)}
-								strategy={verticalListSortingStrategy}
+		<>
+			<InspectorControls>
+				<Panel>
+					<PanelBody title={ __( 'Module Order', 'openlab-modules' ) }>
+						<p>{ __( 'Drag and drop Module titles to change the order in which they appear.', 'openlab-modules' ) }</p>
+					</PanelBody>
+				</Panel>
+			</InspectorControls>
+
+			<div { ...useBlockProps() }>
+				{ null !== allModules && allModules.length > 0 && (
+					<ul className="openlab-modules-module-list">
+						{ isSelected && (
+							<DndContext
+								sensors={sensors}
+								collisionDetection={closestCenter}
+								onDragEnd={handleDragEnd}
 							>
+								<SortableContext
+									items={orderedModules.map(module => module.id)}
+									strategy={verticalListSortingStrategy}
+								>
+									{ orderedModules.map((module) => (
+										<SortableItem
+											key={'module-' + module.id}
+											id={module.id}
+											title={module.title.rendered}
+											link={module.link}
+											description={module.meta.module_description}
+										/>
+									)) }
+								</SortableContext>
+							</DndContext>
+						) }
+
+						{ ! isSelected && (
+							<>
 								{ orderedModules.map((module) => (
-									<SortableItem
-										key={'module-' + module.id}
-										id={module.id}
-										title={module.title.rendered}
-										link={module.link}
-										description={module.meta.module_description}
-									/>
+									<li key={'module-' + module.id}>
+										<h2><a href={module.link}>{module.title.rendered}</a></h2>
+										<p className="module-description">{module.meta.module_description}</p>
+									</li>
 								)) }
-							</SortableContext>
-						</DndContext>
-					) }
+							</>
+						) }
+					</ul>
+				) }
 
-					{ ! isSelected && (
-						<>
-							{ orderedModules.map((module) => (
-								<li key={'module-' + module.id}>
-									<h2><a href={module.link}>{module.title.rendered}</a></h2>
-									<p className="module-description">{module.meta.module_description}</p>
-								</li>
-							)) }
-						</>
-					) }
-        </ul>
-      ) }
+				{ null !== allModules && allModules.length === 0 && (
+					<p>{ __( 'This site has no modules to display.', 'openlab-modules' ) }</p>
+				) }
 
-			{ null !== allModules && allModules.length === 0 && (
-        <p>{ __( 'This site has no modules to display.', 'openlab-modules' ) }</p>
-      ) }
-
-			{ null === allModules && (
-        <Spinner />
-      ) }
-    </div>
+				{ null === allModules && (
+					<Spinner />
+				) }
+			</div>
+		</>
   );
 }
