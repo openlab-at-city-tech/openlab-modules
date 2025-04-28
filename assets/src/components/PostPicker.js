@@ -51,6 +51,9 @@ export const PostPicker = (props) => {
 
 				searchParams.append( 'search', keyword )
 
+				searchParams.append( 'status[]', 'publish' );
+				searchParams.append( 'status[]', 'private' );
+
 				Object.entries( fetchParams ).forEach(([key, value]) => {
 					searchParams.append( key, value )
 				})
@@ -59,7 +62,6 @@ export const PostPicker = (props) => {
 
         Promise.all( postTypes.map( ( postType ) => {
 					const path = `/wp/v2/${postType}?${queryString}`
-					console.log(path)
 					return apiFetch({
 							path: path
 					})
