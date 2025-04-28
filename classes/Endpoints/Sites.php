@@ -111,7 +111,7 @@ class Sites extends WP_REST_Controller {
 				'url'           => get_home_url( $site->blog_id ),
 				'text'          => $label,
 				'id'            => $site->blog_id,
-				'isCurrentSite' => (int) $site->blog_id === (int) $current_site,
+				'isCurrentSite' => (int) $site->blog_id === (int) $current_site_id,
 			];
 		}
 

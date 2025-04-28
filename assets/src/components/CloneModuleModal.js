@@ -165,7 +165,10 @@ const CloneModuleModal = ( { moduleId, nonce, uniqid, isOpen, onClose } ) => {
 
 								{ userSites.map( ( site ) => (
 									<option key={ site.id } value={ site.id }>
-										{ he.decode( site.text ) }
+										{ site.isCurrentSite
+											? sprintf( __( 'This site: %s' ), he.decode( site.text ) )
+											: he.decode( site.text )
+										}
 									</option>
 								)) }
 							</select>
