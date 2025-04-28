@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 import he from 'he';
@@ -18,13 +18,41 @@ const CloneModuleModal = ( { moduleId, nonce, uniqid, isOpen, onClose } ) => {
     }
   }, [ isOpen, uniqid ] );
 
-  const closeModal = () => {
-    setCloneResult( null );
-    setSelectedSite( null );
-    onClose();
-    setModuleWithSameNameExistsOnTargetSite( false );
-    setRequiredPluginsMissing( [] );
-  };
+	useEffect( () => {
+		if ( isOpen ) {
+			const firstFocusable = document.querySelector( '.clone-module-modal-content select' );
+			if ( firstFocusable ) {
+				firstFocusable.focus();
+			}
+		}
+	}, [ isOpen ] );
+
+	useEffect( () => {
+		if ( ! isOpen ) {
+			return;
+		}
+
+		const handleKeyDown = ( event ) => {
+			if ( event.key === 'Escape' ) {
+				event.preventDefault();
+				closeModal();
+			}
+		};
+
+		window.addEventListener( 'keydown', handleKeyDown );
+
+		return () => {
+			window.removeEventListener( 'keydown', handleKeyDown );
+		};
+	}, [ isOpen ] );
+
+	const closeModal = useCallback( () => {
+		setCloneResult( null );
+		setSelectedSite( null );
+		onClose();
+		setModuleWithSameNameExistsOnTargetSite( false );
+		setRequiredPluginsMissing( [] );
+	}, [ onClose ] );
 
   const fetchSites = async () => {
     let page = 1;
@@ -114,22 +142,15 @@ const CloneModuleModal = ( { moduleId, nonce, uniqid, isOpen, onClose } ) => {
 		} catch ( error ) {}
 	}
 
-	const getDefaultSiteOptionText = () => {
-		if ( userSites.length === 0 ) {
-			return hasFetchedSites ? __( 'No compatible sites found', 'openlab-modules' ) : __( 'Loading...', 'openlab-modules' );
-		}
-
-		return __( '- Select a site -', 'openlab-modules' );
-	}
-
   if ( ! isOpen ) {
     return null;
   }
 
   return (
-    <div id={`clone-module-modal-${uniqid}`} className="clone-module-modal">
-      <dialog open className="clone-module-modal-content">
-					<div className="dialog__header" aria-labelledby="dialog-title">
+    <div id={`clone-module-modal-${uniqid}`} className="clone-module-modal" role="presentation" aria-hidden="false">
+			<div className="clone-module-modal-backdrop" aria-hidden="true"></div>
+      <div className="clone-module-modal-content" role="dialog" aria-modal="true">
+					<div className="dialog__header">
 						<h1 id="dialog-title">{ __( 'Clone this Module', 'openlab-modules' ) }</h1>
 
 						<button
@@ -145,30 +166,41 @@ const CloneModuleModal = ( { moduleId, nonce, uniqid, isOpen, onClose } ) => {
 								{ __( 'Before you clone this module, make sure the OpenLab Modules plugin is activated on the site you are cloning the module to. You will also need to have an Administrator or Editor role on the site. The site will then appear in the dropdown below.', 'openlab-modules' ) }
 							</p>
 
-							<label htmlFor={ `clone-module-destination-select-${uniqid}` }>
-								{ __( 'Select a site to clone this module to:', 'openlab-modules' ) }
-							</label>
+							{ userSites.length === 0 && (
+								<p><strong>{ __( 'There are currently no sites available that fit these requirements.', 'openlab-modules' ) }</strong></p>
+							) }
 
-							<select
-								className="clone-module-destination-select"
-								id={ `clone-module-destination-select-${uniqid}` }
-								value={ selectedSite ? selectedSite : '' }
-								onChange={ ( e ) => {
-									setSelectedSite( e.target.value )
-									checkForExistingModuleBySameName( e.target.value )
-									checkForRequiredPlugins( e.target.value )
-								} }
-							>
-								<option value="">
-									{ getDefaultSiteOptionText() }
-								</option>
+							{ userSites.length > 0 && (
+								<>
+									<label htmlFor={ `clone-module-destination-select-${uniqid}` }>
+										{ __( 'Select a site to clone this module to:', 'openlab-modules' ) }
+									</label>
 
-								{ userSites.map( ( site ) => (
-									<option key={ site.id } value={ site.id }>
-										{ he.decode( site.text ) }
-									</option>
-								)) }
-							</select>
+									<select
+										className="clone-module-destination-select"
+										id={ `clone-module-destination-select-${uniqid}` }
+										value={ selectedSite ? selectedSite : '' }
+										onChange={ ( e ) => {
+											setSelectedSite( e.target.value )
+											checkForExistingModuleBySameName( e.target.value )
+											checkForRequiredPlugins( e.target.value )
+										} }
+									>
+										<option value="">
+											{ __( '- Select a site -', 'openlab-modules' ) }
+										</option>
+
+										{ userSites.map( ( site ) => (
+											<option key={ site.id } value={ site.id }>
+												{ site.isCurrentSite
+													? sprintf( __( 'This site: %s' ), he.decode( site.text ) )
+													: he.decode( site.text )
+												}
+											</option>
+										)) }
+									</select>
+								</>
+							) }
 
 							{ moduleWithSameNameExistsOnTargetSite && (
 								<p className="clone-module-error">
@@ -202,7 +234,7 @@ const CloneModuleModal = ( { moduleId, nonce, uniqid, isOpen, onClose } ) => {
 
 								<button
 									className="clone-module-button-submit"
-									disabled={ ! selectedSite || cloneInProgress}
+									disabled={ ! selectedSite || cloneInProgress || userSites.length === 0 }
 									onClick={ handleContinueClick }
 								>
 									{ /* eslint-disable-next-line */ }
@@ -240,7 +272,7 @@ const CloneModuleModal = ( { moduleId, nonce, uniqid, isOpen, onClose } ) => {
 							</div>
 						) }
 					</div>
-      </dialog>
+      </div>
     </div>
   );
 };
