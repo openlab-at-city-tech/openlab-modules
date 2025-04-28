@@ -122,6 +122,11 @@ button.clone-module-button {
 
 	button.clone-module-button-submit {
 		padding: 8px 16px;
+
+		&:disabled {
+			cursor: not-allowed;
+			opacity: 0.5;
+		}
 	}
 }
 
