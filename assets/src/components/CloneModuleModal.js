@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 import he from 'he';
@@ -18,13 +18,41 @@ const CloneModuleModal = ( { moduleId, nonce, uniqid, isOpen, onClose } ) => {
     }
   }, [ isOpen, uniqid ] );
 
-  const closeModal = () => {
-    setCloneResult( null );
-    setSelectedSite( null );
-    onClose();
-    setModuleWithSameNameExistsOnTargetSite( false );
-    setRequiredPluginsMissing( [] );
-  };
+	useEffect( () => {
+		if ( isOpen ) {
+			const firstFocusable = document.querySelector( '.clone-module-modal-content select' );
+			if ( firstFocusable ) {
+				firstFocusable.focus();
+			}
+		}
+	}, [ isOpen ] );
+
+	useEffect( () => {
+		if ( ! isOpen ) {
+			return;
+		}
+
+		const handleKeyDown = ( event ) => {
+			if ( event.key === 'Escape' ) {
+				event.preventDefault();
+				closeModal();
+			}
+		};
+
+		window.addEventListener( 'keydown', handleKeyDown );
+
+		return () => {
+			window.removeEventListener( 'keydown', handleKeyDown );
+		};
+	}, [ isOpen ] );
+
+	const closeModal = useCallback( () => {
+		setCloneResult( null );
+		setSelectedSite( null );
+		onClose();
+		setModuleWithSameNameExistsOnTargetSite( false );
+		setRequiredPluginsMissing( [] );
+	}, [ onClose ] );
 
   const fetchSites = async () => {
     let page = 1;
@@ -127,9 +155,10 @@ const CloneModuleModal = ( { moduleId, nonce, uniqid, isOpen, onClose } ) => {
   }
 
   return (
-    <div id={`clone-module-modal-${uniqid}`} className="clone-module-modal">
-      <dialog open className="clone-module-modal-content">
-					<div className="dialog__header" aria-labelledby="dialog-title">
+    <div id={`clone-module-modal-${uniqid}`} className="clone-module-modal" role="presentation" aria-hidden="false">
+			<div className="clone-module-modal-backdrop" aria-hidden="true"></div>
+      <div className="clone-module-modal-content" role="dialog" aria-modal="true">
+					<div className="dialog__header">
 						<h1 id="dialog-title">{ __( 'Clone this Module', 'openlab-modules' ) }</h1>
 
 						<button
@@ -243,7 +272,7 @@ const CloneModuleModal = ( { moduleId, nonce, uniqid, isOpen, onClose } ) => {
 							</div>
 						) }
 					</div>
-      </dialog>
+      </div>
     </div>
   );
 };
