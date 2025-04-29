@@ -7,13 +7,42 @@
 
 namespace OpenLab\Modules\Export;
 
-use OpenLab\Modules\Module;
 use OpenLab\Modules\Editor;
+use OpenLab\Modules\Module;
+use OpenLab\Modules\Schema;
 
 /**
  * Admin class.
  */
 class Admin {
+
+	/**
+	 * Initializes the class.
+	 *
+	 * @return void
+	 */
+	public function init() {
+		add_action( 'admin_menu', [ $this, 'add_submenu' ] );
+		add_action( 'admin_post_export-module', [ $this, 'handle' ] );
+	}
+
+	/**
+	 * Adds the 'Module Export' to the 'Modules' menu.
+	 *
+	 * @return void
+	 */
+	public function add_submenu() {
+		$parent = 'edit.php?post_type=' . Schema::get_module_post_type();
+		add_submenu_page(
+			$parent,
+			__( 'Module Export', 'openlab-modules' ),
+			__( 'Export Modules', 'openlab-modules' ),
+			'manage_options',
+			Schema::get_module_post_type() . '-export',
+			[ __CLASS__, 'render_export_page' ]
+		);
+	}
+
 	/**
 	 * Renders the Export Modules admin page.
 	 *
@@ -68,7 +97,7 @@ class Admin {
 
 			<p><?php esc_html_e( 'Use this tool to create a Module Archive file (.zip) that will be downloaded to your computer and can be used with the Module Export Import plugin to import into another site.', 'openlab-modules' ); ?></p>
 
-			<form method="post" id="export-site" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+			<form method="post" id="export-module" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<h2><?php esc_html_e( 'Choose what to export', 'openlab-modules' ); ?></h2>
 
 				<p><?php esc_html_e( 'Please choose the module you would like to export.', 'openlab-modules' ); ?></p>
@@ -102,9 +131,9 @@ class Admin {
 
 				<textarea class="widefat" name="acknowledgements-text" id="acknowledgements-text" aria-describedby="acknowledgements-description"></textarea>
 
-				<input type="hidden" name="action" value="export-site" />
+				<input type="hidden" name="action" value="export-module" />
 
-				<?php wp_nonce_field( 'ol-export-site' ); ?>
+				<?php wp_nonce_field( 'openlab-modules-export' ); ?>
 
 				<br />
 
@@ -121,5 +150,78 @@ class Admin {
 		</div>
 
 		<?php
+	}
+
+	/**
+	 * Handles the export request.
+	 *
+	 * @return void
+	 */
+	public function handle() {
+		check_admin_referer( 'openlab-modules-export' );
+
+		$exporter = new Exporter( wp_get_upload_dir() );
+
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$module_id_raw = isset( $_POST['module-select'] ) ? wp_unslash( $_POST['module-select'] ) : '';
+		$module_id     = is_numeric( $module_id_raw ) ? (int) $module_id_raw : 0;
+
+		$referer = wp_get_referer();
+		if ( ! $referer ) {
+			$referer = admin_url( 'edit.php?post_type=' . Schema::get_module_post_type() );
+		}
+
+		if ( empty( $module_id ) ) {
+			add_settings_error(
+				'failed_export',
+				'failed_export',
+				__( 'Please select a module to export.', 'openlab-modules' )
+			);
+
+			wp_safe_redirect( $referer );
+			exit;
+		}
+
+		$exporter->set_module_id( $module_id );
+
+		if ( ! empty( $_POST['readme-additional-text'] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$additional_text_raw = wp_unslash( $_POST['readme-additional-text'] );
+			$additional_text     = is_string( $additional_text_raw ) ? sanitize_textarea_field( $additional_text_raw ) : '';
+
+			$exporter->add_readme_custom_text( $additional_text );
+		}
+
+		if ( ! empty( $_POST['acknowledgements-text'] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$acknowledgements_text_raw = wp_unslash( $_POST['acknowledgements-text'] );
+			$acknowledgements_text     = is_string( $acknowledgements_text_raw ) ? wp_kses_post( $acknowledgements_text_raw ) : '';
+
+			$exporter->add_acknowledgements_text( $acknowledgements_text );
+		}
+
+		wp_ob_end_flush_all();
+		$filename = $exporter->run();
+
+		if ( is_wp_error( $filename ) ) {
+			add_settings_error(
+				'failed_export',
+				'failed_export',
+				$filename->get_error_message()
+			);
+
+			wp_safe_redirect( $referer );
+			exit;
+		}
+
+		header( 'Content-type: application/zip' );
+		header( 'Content-Disposition: attachment; filename="' . basename( $filename ) . '"' );
+		header( 'Content-length: ' . filesize( $filename ) );
+		readfile( $filename );
+
+		// Remove file.
+		unlink( $filename );
+
+		exit;
 	}
 }
