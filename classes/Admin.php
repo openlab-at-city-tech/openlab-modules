@@ -7,6 +7,8 @@
 
 namespace OpenLab\Modules;
 
+use OpenLab\Modules\Export\Admin as ExportAdmin;
+
 /**
  * Admin module.
  */
@@ -49,6 +51,9 @@ class Admin {
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_assets' ] );
 
 		add_action( 'admin_init', [ $this, 'set_blogmeta_flag' ] );
+
+		// Add 'Module Export' and 'Module Import' to the 'Modules' menu.
+		add_action( 'admin_menu', [ $this, 'add_export_import_submenu' ] );
 	}
 
 	/**
@@ -347,5 +352,34 @@ class Admin {
 		}
 
 		update_site_meta( get_current_blog_id(), 'openlab_modules_active', '1' );
+	}
+
+	/**
+	 * Adds the 'Module Export' and 'Module Import' submenu items to the 'Modules' menu.
+	 *
+	 * @return void
+	 */
+	public function add_export_import_submenu() {
+		$parent = 'edit.php?post_type=' . Schema::get_module_post_type();
+		add_submenu_page(
+			$parent,
+			__( 'Module Export', 'openlab-modules' ),
+			__( 'Export Modules', 'openlab-modules' ),
+			'manage_options',
+			Schema::get_module_post_type() . '-export',
+			[ ExportAdmin::class, 'render_export_page' ]
+		);
+
+		/*
+
+		add_submenu_page(
+			$parent,
+			__( 'Module Import', 'openlab-modules' ),
+			__( 'Import', 'openlab-modules' ),
+			'manage_options',
+			Schema::get_module_post_type() . '-import',
+			[ Import::class, 'render_import_page' ]
+		);
+		*/
 	}
 }

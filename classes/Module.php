@@ -262,6 +262,51 @@ class Module {
 	}
 
 	/**
+	 * Gets the "raw" attribution data for the module.
+	 *
+	 * We call it "raw" because it's the data that corresponds to the current
+	 * module. What's stored in the 'module_attribution' post meta may refer
+	 * to the source module.
+	 *
+	 * @return array{user_id: int, post_id: int, site_id: int, user_url: string, user_name: string, post_url: string, post_title: string, text: string}
+	 */
+	public function get_raw_attribution_data() {
+		$module_post = $this->get_post();
+
+		$attribution_data = [
+			'user_id'    => 0,
+			'user_url'   => '',
+			'user_name'  => '',
+			'post_id'    => 0,
+			'post_url'   => '',
+			'post_title' => '',
+			'site_id'    => 0,
+			'text'       => '',
+		];
+
+		if ( ! $module_post ) {
+			return $attribution_data;
+		}
+
+		$attribution_data['user_id']    = (int) $module_post->post_author;
+		$attribution_data['user_url']   = bp_core_get_user_domain( $module_post->post_author );
+		$attribution_data['user_name']  = bp_core_get_user_displayname( $module_post->post_author );
+		$attribution_data['post_id']    = $module_post->ID;
+		$attribution_data['post_url']   = (string) get_permalink( $module_post->ID );
+		$attribution_data['post_title'] = $module_post->post_title;
+		$attribution_data['site_id']    = get_current_blog_id();
+
+		$attribution_data['text'] = sprintf(
+			// translators: 1. Link to source module, 2. Link to source module author.
+			__( '<span class="openlab-module-attribution-prefix">Attribution:</span> This module is based on %1$s by %2$s.', 'openlab-modules' ),
+			'<a href="' . $attribution_data['post_url'] . '">' . $attribution_data['post_title'] . '</a>',
+			'<a href="' . $attribution_data['user_url'] . '">' . $attribution_data['user_name'] . '</a>'
+		);
+
+		return $attribution_data;
+	}
+
+	/**
 	 * Gets the attribution data for the module.
 	 *
 	 * @return array{user_id: int, post_id: int, site_id: int, user_url: string, user_name: string, post_url: string, post_title: string, text: string}
@@ -459,27 +504,7 @@ class Module {
 			}
 		}
 
-		$module_post = $this->get_post();
-		if ( $module_post ) {
-			$attribution_data = [
-				'user_id'    => (int) $module_post->post_author,
-				'user_url'   => bp_core_get_user_domain( $module_post->post_author ),
-				'user_name'  => bp_core_get_user_displayname( $module_post->post_author ),
-				'post_id'    => $this->id,
-				'post_url'   => get_permalink( $this->id ),
-				'post_title' => $this->get_title(),
-				'site_id'    => get_current_blog_id(),
-			];
-
-			$attribution_data['text'] = sprintf(
-				// translators: 1. Link to source module, 2. Link to source module author.
-				__( '<span class="openlab-module-attribution-prefix">Attribution:</span> This module is based on %1$s by %2$s.', 'openlab-modules' ),
-				'<a href="' . $attribution_data['post_url'] . '">' . $attribution_data['post_title'] . '</a>',
-				'<a href="' . $attribution_data['user_url'] . '">' . $attribution_data['user_name'] . '</a>'
-			);
-
-			$module_data->set_attribution( $attribution_data );
-		}
+		$module_data->set_attribution( $this->get_raw_attribution_data() );
 
 		return $module_data;
 	}
