@@ -533,4 +533,113 @@ class Module {
 
 		return array_filter( $modules );
 	}
+
+	/**
+	 * Generates the markup for an attribution block.
+	 *
+	 * @param string $attribution_text Attribution text.
+	 * @return string
+	 */
+	public static function generate_attribution_block( $attribution_text ) {
+		// Create a paragraph block with the attribution prefix and text.
+		$paragraph_block = [
+			'blockName'    => 'core/paragraph',
+			'attrs'        => [
+				'fontSize' => '14-px',
+				'style'    => [
+					'spacing' => [
+						'margin'  => '0',
+						'padding' => '0',
+					],
+				],
+			],
+			'innerBlocks'  => [],
+			'innerHTML'    => [
+				'<p class="has-14-px-font-size" style="margin:0;padding:0"><strong class="openlab-module-attribution-prefix" style="font-weight:700">Attribution:</strong> %s</p>',
+				wp_kses_post( $attribution_text ),
+			],
+			'innerContent' => [
+				sprintf(
+					'<p class="has-14-px-font-size" style="margin:0;padding:0"><strong class="openlab-module-attribution-prefix" style="font-weight:700">Attribution:</strong> %s</p>',
+					wp_kses_post( $attribution_text )
+				),
+			],
+		];
+
+		// Create an inner group block to hold the paragraph (with the attribution text class).
+		$inner_group_block = [
+			'blockName'    => 'core/group',
+			'attrs'        => [
+				'className' => 'openlab-modules-attribution-text',
+			],
+			'innerBlocks'  => [ $paragraph_block ],
+			'innerHTML'    => '<div class="wp-block-group openlab-modules-attribution-text"></div>',
+			'innerContent' => [
+				'<div class="wp-block-group openlab-modules-attribution-text">',
+				null, // This will be replaced by the paragraph block.
+				'</div>',
+			],
+		];
+
+		// Create the outer group block with styling.
+		$outer_group_block = [
+			'blockName'    => 'core/group',
+			'attrs'        => [
+				'className' => 'openlab-modules-attribution-wrapper',
+				'style'     => [
+					'color'   => [
+						'background' => '#efefef',
+					],
+					'spacing' => [
+						'padding' => '20px',
+					],
+				],
+			],
+			'innerBlocks'  => [ $inner_group_block ],
+			'innerHTML'    => '<div class="wp-block-group openlab-modules-attribution-wrapper has-background" style="background-color:#efefef;padding:20px"></div>',
+			'innerContent' => [
+				'<div class="wp-block-group openlab-modules-attribution-wrapper has-background" style="background-color:#efefef;padding:20px">',
+				null, // This will be replaced by the inner group block.
+				'</div>',
+			],
+		];
+
+		return serialize_block( $outer_group_block );
+	}
+
+	/**
+	 * Inserts an attribution block, swapping with existing ones if found.
+	 *
+	 * @param string $attribution_block Serialized block.
+	 * @param string $post_content      Post content.
+	 * @return string
+	 */
+	public static function insert_attribution_block( $attribution_block, $post_content ) {
+		$original_post_content = $post_content;
+
+		$regex         = '/<!-- wp:group[^>]+className:"openlab-modules-attribution-wrapper".*?<!-- \/wp:group -->/s';
+		$style_regex   = '/<!-- wp:group[^>]+"background":"#efefef"[^>]+padding":"20px"[^>]*--.*?<!-- \/wp:group -->/s';
+		$sharing_regex = '/<!-- wp:openlab-modules\/sharing[^>]*-->/s';
+
+		if ( preg_match( $regex, $post_content, $matches ) ) {
+			// Replace existing block with new block.
+			$post_content = preg_replace( $regex, $attribution_block, $post_content );
+		} elseif ( preg_match( $style_regex, $post_content, $matches ) ) {
+			// Try the style-based regex as a fallback.
+			$post_content = preg_replace( $style_regex, $attribution_block, $post_content );
+		} elseif ( preg_match( $sharing_regex, $post_content ) ) {
+			// Look for a openlab-modules/sharing block, and put it before that.
+			$post_content = preg_replace( $sharing_regex, $attribution_block . '$0', $post_content );
+		} else {
+			// Prepends the new block to the content.
+			$post_content = $attribution_block . $post_content;
+		}
+
+		if ( null === $post_content ) {
+			// If the regex fails, return the original content.
+			return $original_post_content;
+		}
+
+		return $post_content;
+	}
 }
