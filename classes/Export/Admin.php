@@ -160,7 +160,9 @@ class Admin {
 	public function handle() {
 		check_admin_referer( 'openlab-modules-export' );
 
-		$exporter = new Exporter( wp_get_upload_dir() );
+		$upload_dir = wp_get_upload_dir();
+
+		$exporter = new Exporter( $upload_dir['basedir'], $upload_dir['baseurl'] );
 
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$module_id_raw = isset( $_POST['module-select'] ) ? wp_unslash( $_POST['module-select'] ) : '';

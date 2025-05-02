@@ -1,9 +1,11 @@
 <?php
 /**
  * Generates the WXR export file.
+ *
+ * @package openlab-modules
  */
 
-namespace OpenLab\ImportExport\Export;
+namespace OpenLab\Modules\Export;
 
 /**
  * Based on export_wxp().
@@ -25,11 +27,20 @@ class WXP {
 	protected $module_id = 0;
 
 	/**
-	 * ID of the auto-generated acknowledgements page.
+	 * IDs of the pages belonging to the module.
 	 *
-	 * @var int
+	 * @var array<int>
 	 */
-	protected $acknowledgements_page_id;
+	protected $module_page_ids = [];
+
+	/**
+	 * IDs of all items to export.
+	 *
+	 * Includes attachments.
+	 *
+	 * @var array<int>
+	 */
+	protected $item_ids = [];
 
 	/**
 	 * Exported WXP filename.
@@ -41,7 +52,8 @@ class WXP {
 	/**
 	 * Initialize Export.
 	 *
-	 * @param string $export_dir
+	 * @param string $filename Filename to export.
+	 * @return void
 	 */
 	public function __construct( $filename ) {
 		$this->filename = $filename;
@@ -50,27 +62,27 @@ class WXP {
 	/**
 	 * Set module ID.
 	 *
-	 * @param array
+	 * @param int $module_id Module ID.
+	 * @return void
 	 */
 	public function set_module_id( $module_id ) {
 		$this->module_id = $module_id;
 	}
 
 	/**
-	 * Set acknowledgements page ID.
+	 * Sets the IDs of the pages belonging to the module.
 	 *
-	 * @since 1.0.0
-	 *
-	 * @param int
+	 * @param array<int> $module_page_ids IDs of the pages belonging to the module.
+	 * @return void
 	 */
-	public function set_acknowledgements_page_id( $acknowledgements_page_id ) {
-		$this->acknowledgements_page_id = $acknowledgements_page_id;
+	public function set_module_pages( $module_page_ids ) {
+		$this->module_page_ids = $module_page_ids;
 	}
 
 	/**
 	 * Create WXP export file.
 	 *
-	 * @return void
+	 * @return bool
 	 */
 	public function create() {
 		$header = $this->add_header();
@@ -79,12 +91,10 @@ class WXP {
 			return false;
 		}
 
-		// Continue exporting.
 		$this->add_authors();
 		$this->add_categories();
 		$this->add_tags();
 		$this->add_terms();
-		$this->add_menus();
 		$this->add_content();
 
 		return true;
@@ -98,7 +108,7 @@ class WXP {
 	protected function add_header() {
 		$wxr_version = static::VERSION;
 
-		$header  = '<?xml version="1.0" encoding="' . get_bloginfo('charset') . "\" ?>\n";
+		$header  = '<?xml version="1.0" encoding="' . get_bloginfo( 'charset' ) . "\" ?>\n";
 		$header .= "<!-- This is a WordPress eXtended RSS file generated as an export of your site. -->\n";
 		$header .= "<!-- It contains information about your site's posts, pages, comments, categories, and other content. -->\n";
 		$header .= "<!-- You may use this file to transfer that content from one site to another. -->\n";
@@ -114,17 +124,17 @@ class WXP {
 		$header .= "<!--    existing user on the site or to create a new user. -->\n";
 		$header .= "<!-- 7. WordPress will then import each of the posts, pages, comments, categories, etc. -->\n";
 		$header .= "<!--    contained in this file into your site. -->\n\n";
-		$header .= "<!-- generator=\"WordPress/" . get_bloginfo_rss('version') . "\" created=\"". date('Y-m-d H:i') . "\" -->\n";
+		$header .= '<!-- generator="WordPress/' . get_bloginfo_rss( 'version' ) . '" created="' . gmdate( 'Y-m-d H:i' ) . '" -->\n';
 		$header .= "<rss version=\"2.0\" xmlns:excerpt=\"http://wordpress.org/export/$wxr_version/excerpt/\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\" xmlns:wfw=\"http://wellformedweb.org/CommentAPI/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:wp=\"http://wordpress.org/export/$wxr_version/\">\n";
 		$header .= "<channel>\n";
-		$header .= "\t<title>" . get_bloginfo_rss( 'name' ) ."</title>\n";
-		$header .= "\t<link>" . get_bloginfo_rss( 'url' ) ."</link>\n";
-		$header .= "\t<description>" . get_bloginfo_rss( 'description' ) ."</description>\n";
-		$header .= "\t<pubDate>" . date( 'D, d M Y H:i:s +0000' ) ."</pubDate>\n";
-		$header .= "\t<language>" . get_bloginfo_rss( 'language' ) ."</language>\n";
-		$header .= "\t<wp:wxr_version>" . $wxr_version ."</wp:wxr_version>\n";
-		$header .= "\t<wp:site_id>" . get_current_blog_id() ."</wp:site_id>\n";
-		$header .= "\t<wp:base_blog_url>" . get_bloginfo_rss( 'url' ) ."</wp:base_blog_url>\n";
+		$header .= "\t<title>" . get_bloginfo_rss( 'name' ) . "</title>\n";
+		$header .= "\t<link>" . get_bloginfo_rss( 'url' ) . "</link>\n";
+		$header .= "\t<description>" . get_bloginfo_rss( 'description' ) . "</description>\n";
+		$header .= "\t<pubDate>" . gmdate( 'D, d M Y H:i:s +0000' ) . "</pubDate>\n";
+		$header .= "\t<language>" . get_bloginfo_rss( 'language' ) . "</language>\n";
+		$header .= "\t<wp:wxr_version>" . $wxr_version . "</wp:wxr_version>\n";
+		$header .= "\t<wp:site_id>" . get_current_blog_id() . "</wp:site_id>\n";
+		$header .= "\t<wp:base_blog_url>" . get_bloginfo_rss( 'url' ) . "</wp:base_blog_url>\n";
 
 		if ( ! file_put_contents( $this->filename, $header, FILE_APPEND ) ) {
 			return false;
@@ -135,15 +145,74 @@ class WXP {
 	}
 
 	/**
+	 * Gets a list of item IDs that will be exported.
+	 *
+	 * This is a list of the module ID plus the list of page IDs.
+	 *
+	 * @return array<int>
+	 */
+	protected function get_item_ids() {
+		if ( ! empty( $this->item_ids ) ) {
+			return $this->item_ids;
+		}
+
+		$this->item_ids = [ $this->module_id ];
+
+		if ( ! empty( $this->module_page_ids ) ) {
+			$this->item_ids = array_merge( $this->item_ids, $this->module_page_ids );
+		}
+
+		// Get attachments.
+		foreach ( $this->item_ids as $item_id ) {
+			$children = get_children(
+				[
+					'post_parent' => $item_id,
+					'post_type'   => 'any',
+					'post_status' => 'any',
+				]
+			);
+
+			if ( ! empty( $children ) ) {
+				foreach ( $children as $child ) {
+					if ( ! $child instanceof \WP_Post ) {
+						continue;
+					}
+
+					$this->item_ids[] = $child->ID;
+				}
+			}
+		}
+
+		return $this->item_ids;
+	}
+
+	/**
 	 * Add authors to export file.
 	 *
-	 * @return bool.
+	 * @return bool
 	 */
 	protected function add_authors() {
 		global $wpdb;
 
+		$item_ids = $this->get_item_ids();
+
 		$authors = [];
-		$results = $wpdb->get_results( "SELECT DISTINCT post_author FROM $wpdb->posts WHERE post_status != 'auto-draft'" );
+
+		// Fetch only those authors associated with our items.
+		$item_ids = array_map( 'intval', $item_ids );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$results = $wpdb->get_results(
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			$wpdb->prepare(
+				sprintf(
+					"SELECT DISTINCT post_author FROM $wpdb->posts WHERE post_status != 'auto-draft' AND ID IN (%s)",
+					implode( ',', array_fill( 0, count( $item_ids ), '%d' ) )
+				),
+				...$item_ids
+			)
+		);
+
 		foreach ( (array) $results as $result ) {
 			$authors[] = get_userdata( $result->post_author );
 		}
@@ -171,17 +240,33 @@ class WXP {
 	}
 
 	/**
-	 * Add categorie to export file.
+	 * Add categories to export file.
 	 *
 	 * @return bool
 	 */
 	protected function add_categories() {
-		$cats = [];
-		$categories = (array) get_categories( [ 'get' => 'all' ] );
+		// Fetch only those categories associated with our items.
+		$item_ids = $this->get_item_ids();
+		$item_ids = array_map( 'intval', $item_ids );
+
+		$categories = [];
+		foreach ( $item_ids as $item_id ) {
+			$terms = get_the_terms( $item_id, 'category' );
+			if ( ! $terms || is_wp_error( $terms ) ) {
+				continue;
+			}
+
+			foreach ( $terms as $term ) {
+				$categories[ $term->term_id ] = $term;
+			}
+		}
 
 		// Put categories in order with no child going before its parent.
+		$cats = [];
+		// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( $cat = array_shift( $categories ) ) {
-			if ( $cat->parent == 0 || isset( $cats[ $cat->parent ] ) ) {
+			// phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
+			if ( 0 == $cat->parent || isset( $cats[ $cat->parent ] ) ) {
 				$cats[ $cat->term_id ] = $cat;
 			} else {
 				$categories[] = $cat;
@@ -190,7 +275,7 @@ class WXP {
 
 		$xml = '';
 		foreach ( $cats as $c ) {
-			$parent_slug = $c->parent ? $cats[$c->parent]->slug : '';
+			$parent_slug = $c->parent ? $cats[ $c->parent ]->slug : '';
 
 			$xml .= "\t<wp:category>";
 			$xml .= "<wp:term_id>{$c->term_id}</wp:term_id>";
@@ -219,6 +304,10 @@ class WXP {
 
 		$xml = '';
 		foreach ( $tags as $t ) {
+			if ( ! ( $t instanceof \WP_Term ) ) {
+				continue;
+			}
+
 			$xml .= "\t<wp:tag>";
 			$xml .= "<wp:term_id>{$t->term_id}</wp:term_id>";
 			$xml .= "<wp:tag_slug>{$t->slug}</wp:tag_slug>";
@@ -242,20 +331,40 @@ class WXP {
 	 */
 	protected function add_terms() {
 		$terms = [];
-		$custom_taxonomies = get_taxonomies( [ '_builtin' => false ] );
-		$custom_terms = (array) get_terms( $custom_taxonomies, [ 'get' => 'all' ] );
 
-		// put terms in order with no child going before its parent
+		// Fetch only those categories associated with our items.
+		$item_ids = $this->get_item_ids();
+		$item_ids = array_map( 'intval', $item_ids );
+
+		$custom_terms      = [];
+		$custom_taxonomies = get_taxonomies( [ '_builtin' => false ] );
+		foreach ( $custom_taxonomies as $custom_taxonomy ) {
+			foreach ( $item_ids as $item_id ) {
+				$item_terms = get_the_terms( $item_id, $custom_taxonomy );
+				if ( ! $item_terms || is_wp_error( $item_terms ) ) {
+					continue;
+				}
+
+				foreach ( $item_terms as $item_term ) {
+					$custom_terms[ $item_term->term_id ] = $item_term;
+				}
+			}
+		}
+
+		// Put terms in order with no child going before its parent.
+		// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( $t = array_shift( $custom_terms ) ) {
-			if ( $t->parent == 0 || isset( $terms[ $t->parent ] ) )
+			// phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
+			if ( 0 == $t->parent || isset( $terms[ $t->parent ] ) ) {
 				$terms[ $t->term_id ] = $t;
-			else
+			} else {
 				$custom_terms[] = $t;
+			}
 		}
 
 		$xml = '';
 		foreach ( $terms as $t ) {
-			$parent_slug =  $t->parent ? $terms[$t->parent]->slug : '';
+			$parent_slug = $t->parent ? $terms[ $t->parent ]->slug : '';
 
 			$xml .= "\t<wp:term>";
 			$xml .= "<wp:term_id>{$t->term_id}</wp:term_id>";
@@ -276,36 +385,6 @@ class WXP {
 	}
 
 	/**
-	 * Add menus to export file.
-	 *
-	 * @return bool
-	 */
-	protected function add_menus() {
-		$nav_menus = wp_get_nav_menus();
-
-		if ( empty( $nav_menus ) || ! is_array( $nav_menus ) ) {
-			return false;
-		}
-
-		$xml = '';
-		foreach ( $nav_menus as $menu ) {
-			$xml .= "\t<wp:term>";
-			$xml .= "<wp:term_id>{$menu->term_id}</wp:term_id>";
-			$xml .= "<wp:term_taxonomy>nav_menu</wp:term_taxonomy>";
-			$xml .= "<wp:term_slug>{$menu->slug}</wp:term_slug>";
-			$xml .= $this->term_name( $menu );
-			$xml .= "</wp:term>\n";
-		}
-
-		if ( ! file_put_contents( $this->filename, $xml, FILE_APPEND ) ) {
-			return false;
-		}
-
-		unset( $xml );
-		return true;
-	}
-
-	/**
 	 * Add content to export file and wrap it up.
 	 *
 	 * @return bool
@@ -313,26 +392,38 @@ class WXP {
 	protected function add_content() {
 		global $wpdb;
 
-		$post_ids = $this->get_post_ids();
+		$post_ids = $this->get_item_ids();
 		if ( empty( $post_ids ) ) {
 			return false;
 		}
 
 		// Fetch 20 posts at a time rather than loading the entire table into memory.
+		// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( $next_posts = array_splice( $post_ids, 0, 20 ) ) {
 			$where = 'WHERE ID IN (' . join( ',', $next_posts ) . ')';
+
+			// phpcs:ignore
 			$posts = $wpdb->get_results( "SELECT * FROM {$wpdb->posts} $where" );
 
 			$xml = '';
 			foreach ( $posts as $post ) {
 				$is_sticky = is_sticky( $post->ID ) ? 1 : 0;
 
+				$post_time = get_post_time( 'Y-m-d H:i:s', true, $post );
+				if ( ! is_string( $post_time ) ) {
+					$post_time = mysql2date( 'Y-m-d H:i:s', $post->post_date, false );
+				}
+
+				if ( ! is_string( $post_time ) ) {
+					$post_time = '';
+				}
+
 				$xml .= "\t<item>\n";
-				$xml .= "\t\t<title>" . apply_filters( 'the_title_rss', $post->post_title ) ."</title>\n";
-				$xml .= "\t\t<link>" . esc_url( apply_filters( 'the_permalink_rss', get_permalink( $post ) ) ) ."</link>\n";
-				$xml .= "\t\t<pubDate>" . mysql2date( 'D, d M Y H:i:s +0000', get_post_time( 'Y-m-d H:i:s', true, $post ), false ) ."</pubDate>\n";
-				$xml .= "\t\t<dc:creator>" . $this->cdata( get_the_author_meta( 'login', $post->post_author ) ) ."</dc:creator>\n";
-				$xml .= "\t\t<guid isPermaLink=\"false\">" . esc_url( get_the_guid( $post->ID ) ) ."</guid>\n";
+				$xml .= "\t\t<title>" . apply_filters( 'the_title_rss', $post->post_title ) . "</title>\n";
+				$xml .= "\t\t<link>" . esc_url( apply_filters( 'the_permalink_rss', get_permalink( $post ) ) ) . "</link>\n";
+				$xml .= "\t\t<pubDate>" . mysql2date( 'D, d M Y H:i:s +0000', $post_time, false ) . "</pubDate>\n";
+				$xml .= "\t\t<dc:creator>" . $this->cdata( get_the_author_meta( 'login', $post->post_author ) ) . "</dc:creator>\n";
+				$xml .= "\t\t<guid isPermaLink=\"false\">" . esc_url( get_the_guid( $post->ID ) ) . "</guid>\n";
 				$xml .= "\t\t<description></description>\n";
 				$xml .= "\t\t<content:encoded>" . $this->cdata( apply_filters( 'the_content_export', $post->post_content ) ) . "</content:encoded>\n";
 				$xml .= "\t\t<excerpt:encoded>" . $this->cdata( apply_filters( 'the_excerpt_export', $post->post_excerpt ) ) . "</excerpt:encoded>\n";
@@ -349,21 +440,24 @@ class WXP {
 				$xml .= "\t\t<wp:post_password>" . $post->post_password . "</wp:post_password>\n";
 				$xml .= "\t\t<wp:is_sticky>" . $is_sticky . "</wp:is_sticky>\n";
 
-				if ( $post->post_type == 'attachment' ) {
+				if ( 'attachment' === $post->post_type ) {
 					$xml .= "\t\t<wp:attachment_url>" . wp_get_attachment_url( $post->ID ) . "</wp:attachment_url>\n";
 				}
 
 				$xml .= $this->post_taxonomy( $post );
 
+				// phpcs:ignore
 				$postmeta = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->postmeta WHERE post_id = %d", $post->ID ) );
+
 				foreach ( $postmeta as $meta ) {
-					if ( apply_filters( 'ol_portfolio_export_skip_postmeta', false, $meta->meta_key, $meta ) ) {
+					if ( apply_filters( 'openlab_modules_export_skip_postmeta', false, $meta->meta_key, $meta ) ) {
 						continue;
 					}
 
-					$xml .= "\t\t<wp:postmeta>\n\t\t\t<wp:meta_key>" . $meta->meta_key ."</wp:meta_key>\n\t\t\t<wp:meta_value>" .$this->cdata( $meta->meta_value ) ."</wp:meta_value>\n\t\t</wp:postmeta>\n";
+					$xml .= "\t\t<wp:postmeta>\n\t\t\t<wp:meta_key>" . $meta->meta_key . "</wp:meta_key>\n\t\t\t<wp:meta_value>" . $this->cdata( $meta->meta_value ) . "</wp:meta_value>\n\t\t</wp:postmeta>\n";
 				}
 
+				// phpcs:ignore
 				$comments = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_approved <> 'spam'", $post->ID ) );
 				foreach ( $comments as $c ) {
 					// Exclude private or graded comments from wp-grade-comments.
@@ -392,9 +486,12 @@ class WXP {
 					$xml .= "\t\t\t<wp:comment_type>" . $c->comment_type . "</wp:comment_type>\n";
 					$xml .= "\t\t\t<wp:comment_parent>" . $c->comment_parent . "</wp:comment_parent>\n";
 					$xml .= "\t\t\t<wp:comment_user_id>" . $c->user_id . "</wp:comment_user_id>\n";
+
+					// phpcs:ignore
 					$c_meta = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->commentmeta WHERE comment_id = %d", $c->comment_ID ) );
+
 					foreach ( $c_meta as $meta ) {
-						$xml .= "\t\t\t<wp:commentmeta>\n\t\t\t\t<wp:meta_key>" . $meta->meta_key ."</wp:meta_key>\n\t\t\t\t<wp:meta_value>" .$this->cdata( $meta->meta_value ) ."</wp:meta_value>\n\t\t\t</wp:commentmeta>\n";
+						$xml .= "\t\t\t<wp:commentmeta>\n\t\t\t\t<wp:meta_key>" . $meta->meta_key . "</wp:meta_key>\n\t\t\t\t<wp:meta_value>" . $this->cdata( $meta->meta_value ) . "</wp:meta_value>\n\t\t\t</wp:commentmeta>\n";
 					}
 					$xml .= "\t\t</wp:comment>\n";
 				}
@@ -409,76 +506,9 @@ class WXP {
 	}
 
 	/**
-	 * Pre-fetch post IDs.
-	 *
-	 * @return array $post_ids
-	 */
-	protected function get_post_ids() {
-		global $wpdb;
-
-		$post_ids = [];
-		if ( ! empty( $this->post_types ) ) {
-			foreach ( $this->post_types as $pt => $pt_options ) {
-				$ptype = get_post_type_object( $pt );
-				if ( ! $ptype->can_export ) {
-					continue;
-				}
-
-				$where = $wpdb->prepare( "{$wpdb->posts}.post_type = %s", $pt );
-
-				if ( ! empty( $pt_options['status'] ) ) {
-					$where .= $wpdb->prepare( " AND post_status = %s", $pt_options['status'] );
-				} else {
-					$where .= " AND post_status != 'auto-draft'";
-				}
-
-				if ( ! empty( $pt_options['author'] ) ) {
-					$esses  = array_fill( 0, count( $pt_options['author'] ), '%d' );
-					$where  = $wpdb->prepare( "{$wpdb->posts}.post_author IN (" . implode( ',', $esses ) . ')', $pt_options['author'] );
-				}
-
-				if ( ! empty( $pt_options['start_date'] ) ) {
-					$where .= $wpdb->prepare( " AND {$wpdb->posts}.post_date >= %s", gmdate( 'Y-m-d', strtotime( $pt_options['start_date'] ) ) );
-				}
-
-				if ( ! empty( $pt_options['end_date'] ) ) {
-					$where .= $wpdb->prepare( " AND {$wpdb->posts}.post_date < %s", gmdate( 'Y-m-d', strtotime( '+1 month', strtotime( $pt_options['end_date'] ) ) ) );
-				}
-
-				$join = '';
-				if ( ! empty( $pt_options['category'] ) ) {
-					$term = term_exists( $pt_options['category'], 'category' );
-					if ( $term ) {
-						$join   = "INNER JOIN {$wpdb->term_relationships} ON ({$wpdb->posts}.ID = {$wpdb->term_relationships}.object_id)";
-						$where .= $wpdb->prepare( " AND {$wpdb->term_relationships}.term_taxonomy_id = %d", $term['term_taxonomy_id'] );
-					}
-				}
-
-				$pt_post_ids = $wpdb->get_col( "SELECT ID FROM {$wpdb->posts} {$join} WHERE {$where}" );
-
-				$post_ids = array_merge( $post_ids, $pt_post_ids );
-
-				// Always include the Acknowledgements page, even if 'page' is not a post type.
-				if ( ! empty( $this->acknowledgements_page_id ) ) {
-					$post_ids[] = $this->acknowledgements_page_id;
-				}
-			}
-		} else {
-			$post_types = get_post_types( array( 'can_export' => true ) );
-			$esses      = array_fill( 0, count( $post_types ), '%s' );
-			$where      = $wpdb->prepare( "{$wpdb->posts}.post_type IN (" . implode( ',', $esses ) . ')', $post_types );
-			$where     .= " AND {$wpdb->posts}.post_status != 'auto-draft'";
-
-			$post_ids = $wpdb->get_col( "SELECT ID FROM {$wpdb->posts} WHERE $where" );
-		}
-
-		return array_map( 'intval', array_unique( $post_ids ) );
-	}
-
-	/**
 	 * Output list of taxonomy terms, in XML tag format, associated with a post.
 	 *
-	 * @param object $post
+	 * @param \WP_Post $post Post Object.
 	 * @return string
 	 */
 	protected function post_taxonomy( $post ) {
@@ -492,6 +522,10 @@ class WXP {
 		$wxr_post_tags = '';
 
 		foreach ( (array) $terms as $term ) {
+			if ( ! ( $term instanceof \WP_Term ) ) {
+				continue;
+			}
+
 			$wxr_post_tags .= "\t\t<category domain=\"{$term->taxonomy}\" nicename=\"{$term->slug}\">" . $this->cdata( $term->name ) . "</category>\n";
 		}
 
@@ -503,10 +537,10 @@ class WXP {
 	 *
 	 * @param string $str String to wrap in XML CDATA tag.
 	 * @return string
-	*/
+	 */
 	protected function cdata( $str ) {
 		if ( ! seems_utf8( $str ) ) {
-			$str = utf8_encode( $str );
+			$str = mb_convert_encoding( $str, 'UTF-8', 'ISO-8859-1' );
 		}
 
 		$str = '<![CDATA[' . str_replace( ']]>', ']]]]><![CDATA[>', $str ) . ']]>';
@@ -517,12 +551,13 @@ class WXP {
 	/**
 	 * Output a cat_name XML tag from a given category object.
 	 *
-	 * @param object $category Category Object
+	 * @param object $category Category Object.
 	 * @return string
 	 */
 	protected function cat_name( $category ) {
-		if ( empty( $category->name ) )
+		if ( empty( $category->name ) ) {
 			return '';
+		}
 
 		return '<wp:cat_name>' . $this->cdata( $category->name ) . '</wp:cat_name>';
 	}
@@ -530,12 +565,13 @@ class WXP {
 	/**
 	 * Output a category_description XML tag from a given category object.
 	 *
-	 * @param object $category Category Object
+	 * @param object $category Category Object.
 	 * @return string
 	 */
 	protected function category_description( $category ) {
-		if ( empty( $category->description ) )
+		if ( empty( $category->description ) ) {
 			return '';
+		}
 
 		return '<wp:category_description>' . $this->cdata( $category->description ) . '</wp:category_description>';
 	}
@@ -543,12 +579,13 @@ class WXP {
 	/**
 	 * Output a tag_name XML tag from a given tag object.
 	 *
-	 * @param object $tag Tag Object
+	 * @param object $tag Tag Object.
 	 * @return string
 	 */
 	protected function tag_name( $tag ) {
-		if ( empty( $tag->name ) )
+		if ( empty( $tag->name ) ) {
 			return '';
+		}
 
 		return '<wp:tag_name>' . $this->cdata( $tag->name ) . '</wp:tag_name>';
 	}
@@ -556,12 +593,13 @@ class WXP {
 	/**
 	 * Output a tag_description XML tag from a given tag object.
 	 *
-	 * @param object $tag Tag Object
+	 * @param object $tag Tag Object.
 	 * @return string
 	 */
 	protected function tag_description( $tag ) {
-		if ( empty( $tag->description ) )
+		if ( empty( $tag->description ) ) {
 			return '';
+		}
 
 		return '<wp:tag_description>' . $this->cdata( $tag->description ) . '</wp:tag_description>';
 	}
@@ -569,12 +607,13 @@ class WXP {
 	/**
 	 * Output a term_name XML tag from a given term object.
 	 *
-	 * @param object $term Term Object
+	 * @param object $term Term Object.
 	 * @return string
 	 */
 	protected function term_name( $term ) {
-		if ( empty( $term->name ) )
+		if ( empty( $term->name ) ) {
 			return '';
+		}
 
 		return '<wp:term_name>' . $this->cdata( $term->name ) . '</wp:term_name>';
 	}
@@ -582,12 +621,13 @@ class WXP {
 	/**
 	 * Output a term_description XML tag from a given term object.
 	 *
-	 * @param object $term Term Object
+	 * @param object $term Term Object.
 	 * @return string
 	 */
 	protected function term_description( $term ) {
-		if ( empty( $term->description ) )
+		if ( empty( $term->description ) ) {
 			return '';
+		}
 
 		return '<wp:term_description>' . $this->cdata( $term->description ) . '</wp:term_description>';
 	}

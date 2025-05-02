@@ -10,6 +10,7 @@ namespace OpenLab\Modules\Export;
 use WP_Error;
 use ZipArchive;
 use OpenLab\Modules\Iterator\UploadsIterator;
+use OpenLab\Modules\Module;
 
 /**
  * Exporter class.
@@ -59,11 +60,18 @@ class Exporter {
 	protected $readme_text;
 
 	/**
-	 * Cached value of `wp_upload_dir()`.
+	 * Cached version of 'basedir' from `wp_upload_dir()`.
 	 *
-	 * @var array
+	 * @var string
 	 */
-	public $uploads_dir = [];
+	protected $uploads_dir_basedir;
+
+	/**
+	 * Cached version of 'baseurl' from `wp_upload_dir()`.
+	 *
+	 * @var string
+	 */
+	protected $uploads_dir_baseurl;
 
 	/**
 	 * Exports directory.
@@ -80,14 +88,31 @@ class Exporter {
 	public $exports_url;
 
 	/**
+	 * Original post_content for module post.
+	 *
+	 * @var string
+	 */
+	protected $original_post_content;
+
+	/**
+	 * Module page IDs.
+	 *
+	 * @var array<int>
+	 */
+	protected $module_pages = [];
+
+	/**
 	 * Create export object.
 	 *
-	 * @param array $upload_dir
+	 * @param string $upload_dir_basedir Upload directory base directory.
+	 * @param string $upload_dir_baseurl Upload directory base URL.
 	 */
-	public function __construct( array $upload_dir ) {
-		$this->uploads_dir = $upload_dir;
-		$this->exports_dir = trailingslashit( $upload_dir['basedir'] ) . 'openlab-modules-exports/';
-		$this->exports_url = trailingslashit( $upload_dir['baseurl'] ) . 'openlab-modules-exports/';
+	public function __construct( $upload_dir_basedir, $upload_dir_baseurl ) {
+		$this->uploads_dir_basedir = $upload_dir_basedir;
+		$this->uploads_dir_baseurl = $upload_dir_baseurl;
+
+		$this->exports_dir = trailingslashit( $this->uploads_dir_basedir ) . 'openlab-modules-exports/';
+		$this->exports_url = trailingslashit( $this->uploads_dir_baseurl ) . 'openlab-modules-exports/';
 	}
 
 	/**
@@ -104,16 +129,16 @@ class Exporter {
 
 		$this->delete_previous_export_files();
 
-		$this->create_acknowledgements_page();
+		$this->insert_acknowledgements_block();
 
 		$export = $this->create_wxp();
 		if ( is_wp_error( $export ) ) {
 			return $export;
 		}
 
-		$this->delete_acknowledgements_page();
+		$this->delete_acknowledgements_block();
 
-		$this->prepare_files( $this->uploads_dir['basedir'] );
+		$this->prepare_files( $this->uploads_dir_basedir );
 
 		$this->prepare_readme();
 
@@ -183,52 +208,67 @@ class Exporter {
 	}
 
 	/**
-	 * Creates an Acknowledgements page to be included in the export.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return null
-	 */
-	protected function create_acknowledgements_page() {
-		if ( empty( $this->acknowledgements_text ) ) {
-			return;
-		}
-
-		$post_id = wp_insert_post(
-			[
-				'post_type'    => 'page',
-				'post_name'    => 'acknowledgements',
-				'post_status'  => 'draft',
-				'post_title'   => __( 'Acknowledgements', 'openlab-import-export' ),
-				'post_content' => $this->acknowledgements_text,
-			]
-		);
-
-		if ( ! $post_id || is_wp_error( $post_id ) ) {
-			return;
-		}
-
-		$this->acknowledgements_page_id = $post_id;
-	}
-
-	/**
-	 * Deletes the auto-generated Acknowledgements page.
+	 * Inserts an acknowledgements block into the module.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return void
 	 */
-	protected function delete_acknowledgements_page() {
+	protected function insert_acknowledgements_block() {
+		if ( empty( $this->acknowledgements_text ) ) {
+			return;
+		}
+
+		$module_post = get_post( $this->module_id );
+		if ( ! $module_post ) {
+			return;
+		}
+
+		$this->original_post_content = $module_post->post_content;
+
+		$block_markup = Module::generate_attribution_block( $this->acknowledgements_text );
+		$new_content  = Module::insert_attribution_block( $block_markup, $module_post->post_content );
+
+		$module_post->post_content = $new_content;
+
+		wp_update_post(
+			[
+				'ID'           => $this->module_id,
+				'post_content' => $new_content,
+			]
+		);
+	}
+
+	/**
+	 * Deletes the auto-generated Acknowledgements block.
+	 *
+	 * We do this by restoring the original post content.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	protected function delete_acknowledgements_block() {
 		if ( empty( $this->acknowledgements_page_id ) ) {
 			return;
 		}
 
-		wp_delete_post( $this->acknowledgements_page_id, true );
+		if ( empty( $this->original_post_content ) ) {
+			return;
+		}
+
+		wp_update_post(
+			[
+				'ID'           => $this->module_id,
+				'post_content' => $this->original_post_content,
+			]
+		);
 	}
 
 	/**
 	 * Prepare backups files. Image uploads, etc.
 	 *
+	 * @param string $folder Folder to prepare.
 	 * @return \WP_Error|void
 	 */
 	protected function prepare_files( $folder ) {
@@ -248,17 +288,32 @@ class Exporter {
 			);
 		}
 
-		try {
-			$iterator = UploadsIterator::create( $folder );
+		// Get a list of all posts/pages in the module.
+		$item_ids = [ $this->module_id ];
+		$item_ids = array_merge( $item_ids, $this->get_module_pages() );
 
-			foreach ( $iterator as $file ) {
-				$this->files[] = $file->getPathname();
+		// Get the relative path of $folder, which we'll use as a sniff.
+		$folder = str_replace( $this->uploads_dir_basedir, '', $folder );
+
+		// Crawl them and look for uploads.
+		foreach ( $item_ids as $item_id ) {
+			$item = get_post( $item_id );
+			if ( ! $item ) {
+				continue;
 			}
-		} catch ( UnexpectedValueException $e ) {
-			return new WP_Error(
-				'ol.exporter.prepare.files',
-				sprintf( 'Could not open path: %', $e->getMessage() )
+
+			$matches = [];
+			preg_match_all(
+				'#(https?://[^/]+)?' . preg_quote( $this->uploads_dir_baseurl, '#' ) . '((.*?)(\.(jpg|jpeg|png|gif)))#i',
+				$item->post_content,
+				$matches
 			);
+
+			if ( ! empty( $matches[2] ) ) {
+				foreach ( $matches[2] as $match ) {
+					$this->files[] = trailingslashit( $this->uploads_dir_basedir ) . $match;
+				}
+			}
 		}
 	}
 
@@ -410,8 +465,8 @@ class Exporter {
 		// phpcs:ignore WordPress.WP
 		$wxp = new WXP( $this->exports_dir . 'wordpress.xml' );
 
-		$wxp->set_post_types( $this->post_types );
-		$wxp->set_acknowledgements_page_id( $this->acknowledgements_page_id );
+		$wxp->set_module_id( $this->module_id );
+		$wxp->set_module_pages( $this->get_module_pages() );
 
 		if ( ! $wxp->create() ) {
 			return new WP_Error(
@@ -421,6 +476,26 @@ class Exporter {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Gets a list of IDs of pages belonging to the module.
+	 *
+	 * @return array<int>
+	 */
+	protected function get_module_pages() {
+		if ( ! empty( $this->module_pages ) ) {
+			return $this->module_pages;
+		}
+
+		$module = Module::get_instance( $this->module_id );
+		if ( ! $module ) {
+			return [];
+		}
+
+		$this->module_pages = $module->get_page_ids();
+
+		return $this->module_pages;
 	}
 
 	/**
@@ -443,7 +518,7 @@ class Exporter {
 			wp_delete_file( $archive_pathname );
 		}
 
-		$zip = new ZipArchive;
+		$zip = new ZipArchive();
 		if ( true !== $zip->open( $archive_pathname, ZipArchive::CREATE ) ) {
 			return new WP_Error(
 				'ol.exporter.archive',
