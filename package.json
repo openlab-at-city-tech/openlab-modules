@@ -9,8 +9,8 @@
 		"babel-loader": "^9.1.2"
 	},
 	"scripts": {
-		"build": "wp-scripts build assets/src/frontend.js assets/src/admin.js assets/src/index.js assets/src/integrations/h5p/h5p.js assets/src/integrations/webwork-problem-embed/webwork-problem-embed.js assets/src/export.js",
-		"start": "wp-scripts start assets/src/frontend.js assets/src/admin.js assets/src/index.js assets/src/integrations/h5p/h5p.js assets/src/integrations/webwork-problem-embed/webwork-problem-embed.js assets/src/export.js"
+		"build": "wp-scripts build assets/src/frontend.js assets/src/admin.js assets/src/index.js assets/src/integrations/h5p/h5p.js assets/src/integrations/webwork-problem-embed/webwork-problem-embed.js assets/src/export.js assets/src/import.js",
+		"start": "wp-scripts start assets/src/frontend.js assets/src/admin.js assets/src/index.js assets/src/integrations/h5p/h5p.js assets/src/integrations/webwork-problem-embed/webwork-problem-embed.js assets/src/export.js assets/src/import.js"
 	},
 	"dependencies": {
 		"@dnd-kit/core": "^6.1.0",
