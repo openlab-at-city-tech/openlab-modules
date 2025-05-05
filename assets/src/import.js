@@ -69,7 +69,7 @@
 	} );
 
 	$uploadSubmitButton.on( 'click', () => {
-		$uploadSubmitButton.val( __( "Uploading&hellip;", 'openlab-modules' ) ).attr( 'disabled', true );
+		$uploadSubmitButton.val( __( "Uploading…", 'openlab-modules' ) ).attr( 'disabled', true );
 		$uploadSubmitButton.closest( 'form' ).submit();
 	} );
 })(jQuery);

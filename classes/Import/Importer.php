@@ -325,6 +325,7 @@ class Importer {
 		$this->site_id  = 0;
 
 		// Start parsing!
+		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		while ( $reader->read() ) {
 			// Only deal with element opens
 			if ( XMLReader::ELEMENT !== $reader->nodeType ) {
@@ -465,6 +466,7 @@ class Importer {
 					break;
 			}
 		}
+		// phpcs:enable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 
 		// Now that we've done the main processing, do any required
 		// post-processing and remapping.

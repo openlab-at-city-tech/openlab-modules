@@ -124,7 +124,11 @@ class WXP {
 		$header .= "<!--    existing user on the site or to create a new user. -->\n";
 		$header .= "<!-- 7. WordPress will then import each of the posts, pages, comments, categories, etc. -->\n";
 		$header .= "<!--    contained in this file into your site. -->\n\n";
-		$header .= '<!-- generator="WordPress/' . get_bloginfo_rss( 'version' ) . '" created="' . gmdate( 'Y-m-d H:i' ) . '" -->\n';
+		$header .= sprintf(
+			"<!-- generator=\"WordPress/%s\" created=\"%s\" -->\n",
+			get_bloginfo_rss( 'version' ),
+			gmdate( 'Y-m-d H:i' )
+		);
 		$header .= "<rss version=\"2.0\" xmlns:excerpt=\"http://wordpress.org/export/$wxr_version/excerpt/\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\" xmlns:wfw=\"http://wellformedweb.org/CommentAPI/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:wp=\"http://wordpress.org/export/$wxr_version/\">\n";
 		$header .= "<channel>\n";
 		$header .= "\t<title>" . get_bloginfo_rss( 'name' ) . "</title>\n";

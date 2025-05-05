@@ -9,6 +9,9 @@ namespace OpenLab\Modules\Import;
 
 use OpenLab\Modules\Schema;
 use OpenLab\Modules\Editor;
+use OpenLab\Modules\Logger\ServerSentEventsLogger;
+
+use WP_Error;
 
 /**
  * Admin class.
@@ -34,7 +37,7 @@ class Admin {
 	 */
 	public function init() {
 		add_action( 'admin_menu', [ $this, 'add_submenu' ] );
-		add_action( 'wp_ajax_openlab-import-export-import', [ $this, 'stream_import' ] );
+		add_action( 'wp_ajax_openlab-modules-import', [ $this, 'stream_import' ] );
 	}
 
 	/**
@@ -60,9 +63,29 @@ class Admin {
 	 * @return void
 	 */
 	public function render_import_page() {
+
 		$step = filter_input( INPUT_GET, 'step', FILTER_VALIDATE_INT );
 		if ( ! $step ) {
 			$step = static::STEP_UPLOAD;
+		}
+
+		if ( static::STEP_SETTINGS === $step ) {
+			$upload = $this->handle_upload();
+
+			if ( is_wp_error( $upload ) ) {
+	//			$this->display_error( $upload );
+				return;
+			}
+
+			$decompressor = new Decompressor( $this->id );
+			$extract_path = $decompressor->extract();
+
+			if ( is_wp_error( $extract_path ) ) {
+				$this->display_error( $extract_path->get_error_message() );
+				return;
+			}
+
+			update_post_meta( $this->id, 'extract_path', $extract_path );
 		}
 
 		$blocks_asset_file = Editor::get_blocks_asset_file();
@@ -78,11 +101,9 @@ class Admin {
 		$max_upload_size   = wp_max_upload_size();
 		$max_upload_size_h = ( ceil( $max_upload_size / ( 1000 * 10 ) ) / 100 ) . ' MB';
 
-		// phpcs:ignore WordPress.Security.NonceVerification
-		$import_id = isset( $_POST['import_id'] ) && is_numeric( $_POST['import_id'] ) ? intval( $_POST['import_id'] ) : 0;
-		$url_args  = [
-			'action' => 'openlab-import-export-import',
-			'id'     => $import_id,
+		$url_args = [
+			'action' => 'openlab-modules-import',
+			'id'     => (string) $this->id,
 		];
 
 		$script_data = [
@@ -163,18 +184,9 @@ class Admin {
 		<p><strong><?php esc_html_e( 'Step 2: Import the Module Export file', 'openlab-modules' ); ?></strong></p>
 
 		<form method="post" action="<?php echo esc_url( self::get_url( 2 ) ); ?>">
-			<input type="hidden" name="import_id" value="<?php echo esc_attr( $this->id ); ?>" />
+			<input type="hidden" name="import_id" value="<?php echo esc_attr( (string) $this->id ); ?>" />
 
-			<?php if ( $this->archive_has_attachments ) : ?>
-
-				<input type="hidden" name="archive-has-attachments" value="1" />
-
-			<?php else : ?>
-
-				<p><?php esc_html_e( 'This archive file does not contain any media files. During the import process, the importer will attempt to copy media files from the original site.', 'openlab-import-export' ); ?></p>
-
-				<p><?php _e( '<strong>Please note</strong>: the original site must be publicly accessible in order to import the media files. If the site is not public, before continuing, please change privacy settings to public on the original site or contact the site owner in order to complete the import process for media files.', 'openlab-import-export' ); ?></p>
-			<?php endif; ?>
+			<input type="hidden" name="archive-has-attachments" value="1" />
 
 			<?php wp_nonce_field( sprintf( 'module.import:%d', $this->id ) ); ?>
 			<?php submit_button( __( 'Start Importing', 'openlab-modules' ) ); ?>
@@ -205,16 +217,39 @@ class Admin {
 	}
 
 	/**
+	 * Handles archive upload.
+	 *
+	 * @return \WP_Error|bool
+	 */
+	protected function handle_upload() {
+		check_admin_referer( 'openlab-modules-import-upload' );
+
+		$uploader = new ArchiveUpload( 'importzip' );
+		$id       = $uploader->handle();
+
+		if ( is_wp_error( $id ) ) {
+			return $id;
+		}
+
+		$this->id = $id;
+		_b( 'Uploaded archive ' . $this->id );
+
+		return true;
+	}
+
+	/**
 	 * Run an import, and send an event-stream response.
 	 *
 	 * @return void
 	 */
 	public function stream_import() {
-		// Turn off PHP output compression
+		// Turn off PHP output compression.
+		// phpcs:disable
 		$previous = error_reporting( error_reporting() ^ E_WARNING );
 		ini_set( 'output_buffering', 'off' );
 		ini_set( 'zlib.output_compression', false );
 		error_reporting( $previous );
+		// phpcs:enable
 
 		if ( $GLOBALS['is_nginx'] ) {
 			// Setting this header instructs Nginx to disable fastcgi_buffering
@@ -226,15 +261,17 @@ class Admin {
 		// Start the event stream.
 		header( 'Content-Type: text/event-stream' );
 
-		$this->id = wp_unslash( (int) $_REQUEST['id'] );
+		// phpcs:ignore WordPress.Security.NonceVerification
+		$this->id = isset( $_REQUEST['id'] ) && is_numeric( $_REQUEST['id'] ) ? (int) $_REQUEST['id'] : 0;
 
-		if ( ! isset( $this->id ) ) {
+		if ( ! $this->id ) {
 			// Tell the browser to stop reconnecting.
 			status_header( 204 );
 			exit;
 		}
 
 		// 2KB padding for IE
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo ':' . str_repeat( ' ', 2048 ) . "\n\n";
 
 		// Time to run the import!
@@ -245,6 +282,11 @@ class Admin {
 		flush();
 
 		$extract_path = get_post_meta( $this->id, 'extract_path', true );
+		if ( ! is_string( $extract_path ) ) {
+			// Tell the browser to stop reconnecting.
+			status_header( 204 );
+			exit;
+		}
 
 		// Skip processing author data.
 		add_filter( 'wxr_importer.pre_process.user', '__return_null' );
@@ -253,9 +295,9 @@ class Admin {
 		$status   = $importer->import( $extract_path . '/wordpress.xml' );
 
 		// Clean up.
-		$decompressor = new Decompressor( $this->id );
-		$decompressor->cleanup();
-		unset( $this->id );
+//		$decompressor = new Decompressor( $this->id );
+//		$decompressor->cleanup();
+		$this->id = 0;
 
 		// Let the browser know we're done.
 		$complete = [
@@ -274,12 +316,13 @@ class Admin {
 	/**
 	 * Get the importer instance.
 	 *
-	 * @param string $archive_id Archive ID.
+	 * @param int $archive_id Archive ID.
 	 * @return Importer
 	 */
 	protected function get_importer( $archive_id ) {
 		$extract_path    = get_post_meta( $archive_id, 'extract_path', true );
 		$attachment_mode = get_post_meta( $archive_id, 'attachment_mode', true );
+
 		$options = [
 			'fetch_attachments'     => true,
 			'attachment_mode'       => $attachment_mode,
