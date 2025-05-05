@@ -36,7 +36,7 @@ class Admin {
 		add_submenu_page(
 			$parent,
 			__( 'Module Export', 'openlab-modules' ),
-			__( 'Export Modules', 'openlab-modules' ),
+			__( 'Module Export', 'openlab-modules' ),
 			'manage_options',
 			Schema::get_module_post_type() . '-export',
 			[ __CLASS__, 'render_export_page' ]
