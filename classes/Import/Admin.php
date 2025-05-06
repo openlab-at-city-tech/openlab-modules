@@ -63,6 +63,7 @@ class Admin {
 	 * @return void
 	 */
 	public function render_import_page() {
+		$url = '';
 
 		$step = filter_input( INPUT_GET, 'step', FILTER_VALIDATE_INT );
 		if ( ! $step ) {
@@ -73,7 +74,7 @@ class Admin {
 			$upload = $this->handle_upload();
 
 			if ( is_wp_error( $upload ) ) {
-	//			$this->display_error( $upload );
+				$this->display_error( $upload );
 				return;
 			}
 
@@ -86,6 +87,27 @@ class Admin {
 			}
 
 			update_post_meta( $this->id, 'extract_path', $extract_path );
+		} elseif ( static::STEP_IMPORT === $step ) {
+			$import_id = filter_input( INPUT_POST, 'import_id', FILTER_VALIDATE_INT );
+
+			if ( ! $import_id ) {
+				$error = new WP_Error(
+					'openlab-modules-import',
+					__( 'Invalid import ID.', 'openlab-modules' ),
+					[ $this->id ]
+				);
+				$this->display_error( $error );
+				return;
+			}
+
+			$this->id = $import_id;
+
+			$url_args = [
+				'action' => 'openlab-modules-import',
+				'id'     => (string) $this->id,
+			];
+
+			$url = add_query_arg( urlencode_deep( $url_args ), admin_url( 'admin-ajax.php' ) );
 		}
 
 		$blocks_asset_file = Editor::get_blocks_asset_file();
@@ -101,13 +123,8 @@ class Admin {
 		$max_upload_size   = wp_max_upload_size();
 		$max_upload_size_h = ( ceil( $max_upload_size / ( 1000 * 10 ) ) / 100 ) . ' MB';
 
-		$url_args = [
-			'action' => 'openlab-modules-import',
-			'id'     => (string) $this->id,
-		];
-
 		$script_data = [
-			'url'           => add_query_arg( urlencode_deep( $url_args ), admin_url( 'admin-ajax.php' ) ),
+			'url'           => $url,
 			'maxUploadSize' => $max_upload_size,
 			'strings'       => [
 				// translators: %s is the max upload size.
@@ -196,6 +213,36 @@ class Admin {
 	}
 
 	/**
+	 * Renders the import step.
+	 *
+	 * @return void
+	 */
+	public function render_import_step() {
+		?>
+
+		<p><del><?php esc_html_e( 'Step 1: Choose and upload your Module Export file (.zip).', 'openlab-modules' ); ?></del></p>
+		<p><del><?php esc_html_e( 'Step 2: Import the Module Export file', 'openlab-modules' ); ?></del></p>
+		<p id="import-status-message"><strong><?php esc_html_e( 'Step 3: Now importing.', 'openlab-modules' ); ?></strong></p>
+
+		<input type="hidden" name="import_id" value="<?php echo esc_attr( (string) $this->id ); ?>" />
+
+		<input type="hidden" name="archive-has-attachments" value="1" />
+
+		<table id="import-log" class="widefat">
+			<thead>
+				<tr>
+					<th><?php esc_html_e( 'Type', 'openlab-modules' ); ?></th>
+					<th><?php esc_html_e( 'Message', 'openlab-modules' ); ?></th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+
+		<?php
+	}
+
+	/**
 	 * Get URL for the importer.
 	 *
 	 * @param int $step Step number.
@@ -232,7 +279,6 @@ class Admin {
 		}
 
 		$this->id = $id;
-		_b( 'Uploaded archive ' . $this->id );
 
 		return true;
 	}
@@ -295,8 +341,8 @@ class Admin {
 		$status   = $importer->import( $extract_path . '/wordpress.xml' );
 
 		// Clean up.
-//		$decompressor = new Decompressor( $this->id );
-//		$decompressor->cleanup();
+		$decompressor = new Decompressor( $this->id );
+		$decompressor->cleanup();
 		$this->id = 0;
 
 		// Let the browser know we're done.
@@ -350,5 +396,17 @@ class Admin {
 		echo ':' . str_repeat( ' ', 2048 ) . "\n\n";
 
 		flush();
+	}
+
+	/**
+	 * Display import process errors.
+	 *
+	 * @param WP_Error $error
+	 * @return void
+	 */
+	protected function display_error( WP_Error $error ) {
+		extract( [ 'error' => $error ], EXTR_SKIP );
+
+		var_dump( $error );
 	}
 }
