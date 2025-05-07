@@ -895,6 +895,9 @@ class Importer {
 
 		// map pre-import ID to local ID
 		$this->mapping['post'][ $original_id ] = (int) $post_id;
+
+		add_post_meta( $post_id, 'import_id', $original_id, true );
+
 		if ( $requires_remapping ) {
 			$this->requires_remapping['post'][ $post_id ] = true;
 		}
@@ -1894,14 +1897,22 @@ class Importer {
 		return $upload;
 	}
 
+	/**
+	 * Perform post-related processes that must be completed after import is complete.
+	 *
+	 * @return void
+	 */
 	protected function post_process() {
-		// Time to tackle any left-over bits
+		// Time to tackle any left-over bits.
 		if ( ! empty( $this->requires_remapping['post'] ) ) {
 			$this->post_process_posts( $this->requires_remapping['post'] );
 		}
+
 		if ( ! empty( $this->requires_remapping['comment'] ) ) {
 			$this->post_process_comments( $this->requires_remapping['comment'] );
 		}
+
+		$this->post_process_post_meta();
 	}
 
 	protected function post_process_posts( $todo ) {
@@ -1994,8 +2005,6 @@ class Importer {
 		}
 	}
 
-
-
 	protected function post_process_comments( $todo ) {
 		foreach ( $todo as $comment_id => $_ ) {
 			$data = array();
@@ -2055,6 +2064,45 @@ class Importer {
 			// Clear out our temporary meta keys
 			delete_comment_meta( $comment_id, '_wxr_import_parent' );
 			delete_comment_meta( $comment_id, '_wxr_import_user' );
+		}
+	}
+
+	/**
+	 * Run processing related to postmeta that must run after all items are imported.
+	 *
+	 * @return void
+	 */
+	protected function post_process_post_meta() {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$found = $wpdb->get_results( "SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = 'import_id'" );
+
+		$mapping = [];
+		foreach ( $found as $item ) {
+			$new_post_id = (int) $item->post_id;
+			$old_post_id = (int) $item->meta_value;
+
+			$mapping[ $old_post_id ] = $new_post_id;
+		}
+
+		foreach ( $mapping as $old_post_id => $new_post_id ) {
+			$module_page_ids_raw = get_post_meta( $new_post_id, 'module_page_ids', true );
+			if ( $module_page_ids_raw && is_string( $module_page_ids_raw ) ) {
+				$module_page_ids = json_decode( $module_page_ids_raw, true );
+
+				if ( is_array( $module_page_ids ) ) {
+					$new_module_page_ids = [];
+					foreach ( $module_page_ids as $old_module_page_id ) {
+						$new_module_page_id = $mapping[ $old_module_page_id ] ?? null;
+						if ( $new_module_page_id ) {
+							$new_module_page_ids[] = $new_module_page_id;
+						}
+					}
+
+					update_post_meta( $new_post_id, 'module_page_ids', wp_json_encode( $new_module_page_ids ) );
+				}
+			}
 		}
 	}
 

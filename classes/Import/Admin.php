@@ -370,10 +370,13 @@ class Admin {
 		$attachment_mode = get_post_meta( $archive_id, 'attachment_mode', true );
 
 		$options = [
-			'fetch_attachments'     => true,
-			'attachment_mode'       => $attachment_mode,
-			'aggressive_url_search' => true,
-			'default_author'        => get_current_user_id(),
+			'fetch_attachments'         => true,
+			'prefill_existing_posts'    => false,
+			'prefill_existing_commetns' => false,
+			'prefill_existing_terms'    => false,
+			'attachment_mode'           => $attachment_mode,
+			'aggressive_url_search'     => true,
+			'default_author'            => get_current_user_id(),
 		];
 
 		$importer = new Importer( $options, $extract_path );
