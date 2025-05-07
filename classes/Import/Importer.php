@@ -1912,6 +1912,7 @@ class Importer {
 			$this->post_process_comments( $this->requires_remapping['comment'] );
 		}
 
+		$this->post_process_block_attributes();
 		$this->post_process_post_meta();
 	}
 
@@ -2068,11 +2069,17 @@ class Importer {
 	}
 
 	/**
-	 * Run processing related to postmeta that must run after all items are imported.
+	 * Gets new_id => old_id map based on 'import_id' postmeta.
 	 *
-	 * @return void
+	 * @return array<int, int>
 	 */
-	protected function post_process_post_meta() {
+	protected function get_post_id_map() {
+		static $mapping;
+
+		if ( isset( $mapping ) ) {
+			return $mapping;
+		}
+
 		global $wpdb;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
@@ -2085,6 +2092,60 @@ class Importer {
 
 			$mapping[ $old_post_id ] = $new_post_id;
 		}
+
+		return $mapping;
+	}
+
+	/**
+	 * Run processing related to block attributes that must run after all items are imported.
+	 *
+	 * @return void
+	 */
+	protected function post_process_block_attributes() {
+		$mapping = $this->get_post_id_map();
+
+		foreach ( $mapping as $old_post_id => $new_post_id ) {
+			$post = get_post( $new_post_id );
+			if ( ! $post ) {
+				continue;
+			}
+
+			// Block attribute for module-navigation can be found with string manipulation - no block parsing required.
+			$new_post_content = preg_replace_callback(
+				'#<!-- wp:openlab-modules/module-navigation\s+\{"moduleId":\s*(\d+)\}\s*/-->#',
+				function ( $matches ) use ( $mapping ) {
+					$old_module_id = (int) $matches[1];
+					$new_module_id = $mapping[ $old_module_id ] ?? null;
+
+					if ( ! $new_module_id ) {
+						return $matches[0];
+					}
+
+					return sprintf( '<!-- wp:openlab-modules/module-navigation {"moduleId":"%s"} -->', $new_module_id );
+				},
+				$post->post_content
+			);
+
+			if ( $new_post_content !== $post->post_content ) {
+				wp_update_post(
+					[
+						'ID'           => (int) $new_post_id,
+						'post_content' => $new_post_content,
+					]
+				);
+			}
+		}
+	}
+
+	/**
+	 * Run processing related to postmeta that must run after all items are imported.
+	 *
+	 * @return void
+	 */
+	protected function post_process_post_meta() {
+		global $wpdb;
+
+		$mapping = $this->get_post_id_map();
 
 		foreach ( $mapping as $old_post_id => $new_post_id ) {
 			$module_page_ids_raw = get_post_meta( $new_post_id, 'module_page_ids', true );
