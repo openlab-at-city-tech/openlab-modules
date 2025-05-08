@@ -403,7 +403,7 @@ class Importer {
 						$this->log_error( $status );
 					}
 
-					// Handled everything in this node, move on to the next
+					// Handled everything in this node, move on to the next.
 					$reader->next();
 					break;
 
@@ -421,7 +421,7 @@ class Importer {
 
 					$status = $this->process_term( $parsed['data'], $parsed['meta'] );
 
-					// Handled everything in this node, move on to the next
+					// Handled everything in this node, move on to the next.
 					$reader->next();
 					break;
 
@@ -829,7 +829,7 @@ class Importer {
 
 		// Whitelist to just the keys we allow
 		$postdata = array(
-			'import_id' => $data['post_id'],
+			//'import_id' => $data['post_id'],
 		);
 		$allowed = array(
 			'post_author'    => true,
@@ -1677,71 +1677,79 @@ class Importer {
 	/**
 	 * Parse term node.
 	 *
-	 * @todo Fix return types.
-	 *
-	 * @param [type] $node
-	 * @param string $type
-	 * @return WP_Error|array
+	 * @param \DOMElement $node Parent node of term data (typically `wp:category` or `wp:tag`).
+	 * @param string      $type Type of term (category or tag).
+	 * @return array Term data and meta data.
 	 */
-	protected function parse_term_node( $node, $type = 'term' ) {
-		$data = array();
-		$meta = array();
+	protected function parse_term_node( \DOMElement $node, $type = 'term' ) {
+		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 
-		$tag_name = array(
-			'id'          => 'wp:term_id',
-			'taxonomy'    => 'wp:term_taxonomy',
-			'slug'        => 'wp:term_slug',
-			'parent'      => 'wp:term_parent',
-			'name'        => 'wp:term_name',
-			'description' => 'wp:term_description',
-		);
-		$taxonomy = null;
+		$data = [];
+		$meta = [];
 
-		// Special casing!
-		switch ( $type ) {
-			case 'category':
-				$tag_name['slug']        = 'wp:category_nicename';
-				$tag_name['parent']      = 'wp:category_parent';
-				$tag_name['name']        = 'wp:cat_name';
-				$tag_name['description'] = 'wp:category_description';
-				$tag_name['taxonomy']    = null;
+		if ( 'category' === $type ) {
+			$data['taxonomy'] = 'category';
 
-				$data['taxonomy'] = 'category';
-				break;
+			foreach ( $node->childNodes as $child ) {
+				if ( XML_ELEMENT_NODE !== $child->nodeType ) {
+					continue;
+				}
 
-			case 'tag':
-				$tag_name['slug']        = 'wp:tag_slug';
-				$tag_name['parent']      = null;
-				$tag_name['name']        = 'wp:tag_name';
-				$tag_name['description'] = 'wp:tag_description';
-				$tag_name['taxonomy']    = null;
-
-				$data['taxonomy'] = 'post_tag';
-				break;
-		}
-
-		foreach ( $node->childNodes as $child ) {
-			// We only care about child elements
-			if ( $child->nodeType !== XML_ELEMENT_NODE ) {
-				continue;
+				$data_key          = preg_replace( '#^wp:#', '', $child->nodeName );
+				$data[ $data_key ] = $child->textContent;
 			}
-
-			$key = array_search( $child->tagName, $tag_name );
-			if ( $key ) {
-				$data[ $key ] = $child->textContent;
-			}
-		}
-
-		if ( empty( $data['taxonomy'] ) ) {
-			return null;
-		}
-
-		// Compatibility with WXR 1.0
-		if ( $data['taxonomy'] === 'tag' ) {
+		} elseif ( 'tag' === $type ) {
 			$data['taxonomy'] = 'post_tag';
+
+			foreach ( $node->childNodes as $child ) {
+				if ( XML_ELEMENT_NODE !== $child->nodeType ) {
+					continue;
+				}
+
+				$data_key          = preg_replace( '#^wp:#', '', $child->nodeName );
+				$data[ $data_key ] = $child->textContent;
+			}
+		} else {
+			foreach ( $node->childNodes as $child ) {
+				if ( XML_ELEMENT_NODE !== $child->nodeType ) {
+					continue;
+				}
+
+				if ( 'wp:termmeta' === $child->nodeName ) {
+					$meta_key   = '';
+					$meta_value = '';
+
+					foreach ( $child->childNodes as $meta_child ) {
+						if ( XML_ELEMENT_NODE !== $meta_child->nodeType ) {
+							continue;
+						}
+
+						if ( 'wp:meta_key' === $meta_child->nodeName ) {
+							$meta_key = $meta_child->textContent;
+						} elseif ( 'wp:meta_value' === $meta_child->nodeName ) {
+							$meta_value = $meta_child->textContent;
+						}
+					}
+
+					if ( $meta_key ) {
+						$meta[] = [
+							'key'   => $meta_key,
+							'value' => $meta_value,
+						];
+					}
+				} else {
+					$data_key          = preg_replace( '#^wp:#', '', $child->nodeName );
+					$data[ $data_key ] = $child->textContent;
+				}
+			}
 		}
 
-		return compact( 'data', 'meta' );
+		// phpcs:enable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+
+		return [
+			'data' => $data,
+			'meta' => $meta,
+		];
 	}
 
 	protected function process_term( $data, $meta ) {
@@ -1756,13 +1764,12 @@ class Importer {
 			return false;
 		}
 
-		$original_id = isset( $data['id'] )      ? (int) $data['id']      : 0;
-		$parent_id   = isset( $data['parent'] )  ? (int) $data['parent']  : 0;
+		$original_id = isset( $data['id'] ) ? (int) $data['id'] : 0;
+		$parent_id   = isset( $data['parent'] ) ? (int) $data['parent'] : 0;
 
 		$mapping_key = sha1( $data['taxonomy'] . ':' . $data['slug'] );
-		$existing = $this->term_exists( $data );
+		$existing    = $this->term_exists( $data );
 		if ( $existing ) {
-
 			/**
 			 * Term processing already imported.
 			 *
@@ -1770,37 +1777,21 @@ class Importer {
 			 */
 			do_action( 'wxr_importer.process_already_imported.term', $data );
 
-			$this->mapping['term'][ $mapping_key ] = $existing;
+			$this->mapping['term'][ $mapping_key ]    = $existing;
 			$this->mapping['term_id'][ $original_id ] = $existing;
 			return false;
 		}
 
-		// WP really likes to repeat itself in export files
+		// WP really likes to repeat itself in export files.
 		if ( isset( $this->mapping['term'][ $mapping_key ] ) ) {
 			return false;
 		}
 
 		$termdata = array();
-		$allowed = array(
-			'slug' => true,
+		$allowed  = array(
+			'slug'        => true,
 			'description' => true,
 		);
-
-		// Map the parent comment, or mark it as one we need to fix
-		// TODO: add parent mapping and remapping
-		/*$requires_remapping = false;
-		if ( $parent_id ) {
-			if ( isset( $this->mapping['term'][ $parent_id ] ) ) {
-				$data['parent'] = $this->mapping['term'][ $parent_id ];
-			} else {
-				// Prepare for remapping later
-				$meta[] = array( 'key' => '_wxr_import_parent', 'value' => $parent_id );
-				$requires_remapping = true;
-
-				// Wipe the parent for now
-				$data['parent'] = 0;
-			}
-		}*/
 
 		foreach ( $data as $key => $value ) {
 			if ( ! isset( $allowed[ $key ] ) ) {
@@ -1833,19 +1824,28 @@ class Importer {
 
 		$term_id = $result['term_id'];
 
-		$this->mapping['term'][ $mapping_key ] = $term_id;
+		$this->mapping['term'][ $mapping_key ]    = $term_id;
 		$this->mapping['term_id'][ $original_id ] = $term_id;
 
-		$this->logger->info( sprintf(
-			__( 'Imported "%s" (%s)', 'wordpress-importer' ),
-			$data['name'],
-			$data['taxonomy']
-		) );
-		$this->logger->debug( sprintf(
-			__( 'Term %d remapped to %d', 'wordpress-importer' ),
-			$original_id,
-			$term_id
-		) );
+		update_term_meta( $term_id, 'import_id', $original_id );
+
+		$this->logger->info(
+			sprintf(
+				// translators: %1$s is the term name, %2$s is the taxonomy name.
+				__( 'Imported "%1$s" (%2$s)', 'openlab-modules' ),
+				$data['name'],
+				$data['taxonomy']
+			)
+		);
+
+		$this->logger->debug(
+			sprintf(
+				// translators: %1$d is the original term ID, %2$d is the new term ID.
+				__( 'Term %1$d remapped to %2$d', 'openlab-modules' ),
+				$original_id,
+				$term_id
+			)
+		);
 
 		do_action( 'wp_import_insert_term', $term_id, $data );
 
@@ -1928,6 +1928,7 @@ class Importer {
 
 		$this->post_process_block_attributes();
 		$this->post_process_post_meta();
+		$this->post_process_cpt_tax_map();
 	}
 
 	protected function post_process_posts( $todo ) {
@@ -2111,6 +2112,39 @@ class Importer {
 	}
 
 	/**
+	 * Gets old_term_id => new_term_id map based on 'import_id' termmeta.
+	 *
+	 * @return array<int, int>
+	 */
+	protected function get_term_id_map() {
+		static $mapping;
+
+		if ( isset( $mapping ) ) {
+			return $mapping;
+		}
+
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$found = $wpdb->get_results(
+			"SELECT tm.term_id, tm.meta_value
+			 FROM {$wpdb->termmeta} tm
+			 INNER JOIN {$wpdb->term_taxonomy} tt ON tm.term_id = tt.term_id
+			 WHERE tm.meta_key = 'import_id'"
+		);
+
+		$mapping = [];
+		foreach ( $found as $item ) {
+			$new_term_id = (int) $item->term_id;
+			$old_term_id = (int) $item->meta_value;
+
+			$mapping[ $old_term_id ] = $new_term_id;
+		}
+
+		return $mapping;
+	}
+
+	/**
 	 * Run processing related to block attributes that must run after all items are imported.
 	 *
 	 * @return void
@@ -2177,6 +2211,34 @@ class Importer {
 
 					update_post_meta( $new_post_id, 'module_page_ids', wp_json_encode( $new_module_page_ids ) );
 				}
+			}
+		}
+	}
+
+	/**
+	 * Run processing related to custom post type and taxonomy mapping that must run after all items are imported.
+	 *
+	 * @return void
+	 */
+	protected function post_process_cpt_tax_map() {
+		$post_map = $this->get_post_id_map();
+		$term_map = $this->get_term_id_map();
+
+		foreach ( $post_map as $old_post_id => $new_post_id ) {
+			// Update post_meta: 'term_id' → new term ID.
+			$old_term_id_raw = get_post_meta( $old_post_id, 'term_id', true );
+			$old_term_id     = is_numeric( $old_term_id_raw ) ? (int) $old_term_id_raw : 0;
+			if ( $old_term_id && isset( $term_map[ $old_term_id ] ) ) {
+				update_post_meta( $new_post_id, 'term_id', $term_map[ $old_term_id ] );
+			}
+		}
+
+		foreach ( $term_map as $old_term_id => $new_term_id ) {
+			// Update term_meta: 'post_id' → new post ID.
+			$old_post_id_raw = get_term_meta( $old_term_id, 'post_id', true );
+			$old_post_id     = is_numeric( $old_post_id_raw ) ? (int) $old_post_id_raw : 0;
+			if ( $old_post_id && isset( $post_map[ $old_post_id ] ) ) {
+				update_term_meta( $new_term_id, 'post_id', $post_map[ $old_post_id ] );
 			}
 		}
 	}

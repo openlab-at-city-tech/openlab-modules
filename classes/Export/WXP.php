@@ -370,14 +370,15 @@ class WXP {
 		foreach ( $terms as $t ) {
 			$parent_slug = $t->parent ? $terms[ $t->parent ]->slug : '';
 
-			$xml .= "\t<wp:term>";
-			$xml .= "<wp:term_id>{$t->term_id}</wp:term_id>";
-			$xml .= "<wp:term_taxonomy>{$t->taxonomy}</wp:term_taxonomy>";
-			$xml .= "<wp:term_slug>{$t->slug}</wp:term_slug>";
-			$xml .= "<wp:term_parent>{$parent_slug}</wp:term_parent>";
+			$xml .= "\t<wp:term>\n";
+			$xml .= "\t\t<wp:term_id>{$t->term_id}</wp:term_id>\n";
+			$xml .= "\t\t<wp:term_taxonomy>{$t->taxonomy}</wp:term_taxonomy>\n";
+			$xml .= "\t\t<wp:term_slug>{$t->slug}</wp:term_slug>\n";
+			$xml .= "\t\t<wp:term_parent>{$parent_slug}</wp:term_parent>\n";
 			$xml .= $this->term_name( $t );
 			$xml .= $this->term_description( $t );
-			$xml .= "</wp:term>\n";
+			$xml .= $this->get_termmeta_xml( $t->term_id );
+			$xml .= "\t</wp:term>\n";
 		}
 
 		if ( ! file_put_contents( $this->filename, $xml, FILE_APPEND ) ) {
@@ -634,5 +635,34 @@ class WXP {
 		}
 
 		return '<wp:term_description>' . $this->cdata( $term->description ) . '</wp:term_description>';
+	}
+
+	/**
+	 * Gets <wp:termmeta> XML for a given term.
+	 *
+	 * @param int $term_id The term ID.
+	 * @return string Termmeta XML.
+	 */
+	protected function get_termmeta_xml( $term_id ) {
+		global $wpdb;
+
+		$termmeta_xml = '';
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$termmeta = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT meta_key, meta_value FROM {$wpdb->termmeta} WHERE term_id = %d",
+				$term_id
+			)
+		);
+
+		foreach ( $termmeta as $meta ) {
+			$termmeta_xml .= "\t\t<wp:termmeta>\n";
+			$termmeta_xml .= "\t\t\t<wp:meta_key>" . esc_html( $meta->meta_key ) . "</wp:meta_key>\n";
+			$termmeta_xml .= "\t\t\t<wp:meta_value>" . $this->cdata( $meta->meta_value ) . "</wp:meta_value>\n";
+			$termmeta_xml .= "\t\t</wp:termmeta>\n";
+		}
+
+		return $termmeta_xml;
 	}
 }
