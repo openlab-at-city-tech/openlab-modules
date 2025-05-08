@@ -602,10 +602,10 @@ class Importer {
 	 * @return array|WP_Error Post data array on success, error otherwise.
 	 */
 	protected function parse_post_node( $node ) {
-		$data = array();
-		$meta = array();
+		$data     = array();
+		$meta     = array();
 		$comments = array();
-		$terms = array();
+		$terms    = array();
 
 		foreach ( $node->childNodes as $child ) {
 			// We only care about child elements
@@ -803,7 +803,10 @@ class Importer {
 			if ( isset( $this->mapping['post'][ $parent_id ] ) ) {
 				$data['post_parent'] = $this->mapping['post'][ $parent_id ];
 			} else {
-				$meta[] = array( 'key' => '_wxr_import_parent', 'value' => $parent_id );
+				$meta[]             = array(
+					'key'   => '_wxr_import_parent',
+					'value' => $parent_id,
+				);
 				$requires_remapping = true;
 
 				$data['post_parent'] = 0;
@@ -823,13 +826,16 @@ class Importer {
 
 		// Does the post look like it contains attachment images?
 		if ( preg_match( self::REGEX_HAS_ATTACHMENT_REFS, $data['post_content'] ) ) {
-			$meta[] = array( 'key' => '_wxr_import_has_attachment_refs', 'value' => true );
+			$meta[]             = array(
+				'key'   => '_wxr_import_has_attachment_refs',
+				'value' => true,
+			);
 			$requires_remapping = true;
 		}
 
 		// Whitelist to just the keys we allow
 		$postdata = array(
-			//'import_id' => $data['post_id'],
+			// 'import_id' => $data['post_id'],
 		);
 		$allowed = array(
 			'post_author'    => true,
@@ -860,10 +866,12 @@ class Importer {
 
 		if ( 'attachment' === $postdata['post_type'] ) {
 			if ( ! $this->options['fetch_attachments'] ) {
-				$this->logger->notice( sprintf(
-					__( 'Skipping attachment "%s", fetching attachments disabled' ),
-					$data['post_title']
-				) );
+				$this->logger->notice(
+					sprintf(
+						__( 'Skipping attachment "%s", fetching attachments disabled' ),
+						$data['post_title']
+					)
+				);
 				/**
 				 * Post processing skipped.
 				 *
@@ -874,18 +882,20 @@ class Importer {
 				return false;
 			}
 			$remote_url = ! empty( $data['attachment_url'] ) ? $data['attachment_url'] : $data['guid'];
-			$post_id = $this->process_attachment( $postdata, $meta, $remote_url );
+			$post_id    = $this->process_attachment( $postdata, $meta, $remote_url );
 		} else {
 			$post_id = wp_insert_post( $postdata, true );
 			do_action( 'wp_import_insert_post', $post_id, $original_id, $postdata, $data );
 		}
 
 		if ( is_wp_error( $post_id ) ) {
-			$this->logger->error( sprintf(
-				__( 'Failed to import "%s" (%s)', 'wordpress-importer' ),
-				$data['post_title'],
-				$post_type_object->labels->singular_name
-			) );
+			$this->logger->error(
+				sprintf(
+					__( 'Failed to import "%1$s" (%2$s)', 'wordpress-importer' ),
+					$data['post_title'],
+					$post_type_object->labels->singular_name
+				)
+			);
 			$this->logger->debug( $post_id->get_error_message() );
 
 			/**
@@ -916,16 +926,20 @@ class Importer {
 		}
 		$this->mark_post_exists( $data, $post_id );
 
-		$this->logger->info( sprintf(
-			__( 'Imported "%s" (%s)', 'wordpress-importer' ),
-			$data['post_title'],
-			$post_type_object->labels->singular_name
-		) );
-		$this->logger->debug( sprintf(
-			__( 'Post %d remapped to %d', 'wordpress-importer' ),
-			$original_id,
-			$post_id
-		) );
+		$this->logger->info(
+			sprintf(
+				__( 'Imported "%1$s" (%2$s)', 'wordpress-importer' ),
+				$data['post_title'],
+				$post_type_object->labels->singular_name
+			)
+		);
+		$this->logger->debug(
+			sprintf(
+				__( 'Post %1$d remapped to %2$d', 'wordpress-importer' ),
+				$original_id,
+				$post_id
+			)
+		);
 
 		// Handle the terms too
 		$terms = apply_filters( 'wp_import_post_terms', $terms, $post_id, $data );
@@ -934,12 +948,15 @@ class Importer {
 			$term_ids = array();
 			foreach ( $terms as $term ) {
 				$taxonomy = $term['taxonomy'];
-				$key = sha1( $taxonomy . ':' . $term['slug'] );
+				$key      = sha1( $taxonomy . ':' . $term['slug'] );
 
 				if ( isset( $this->mapping['term'][ $key ] ) ) {
 					$term_ids[ $taxonomy ][] = (int) $this->mapping['term'][ $key ];
 				} else {
-					$meta[] = array( 'key' => '_wxr_import_term', 'value' => $term );
+					$meta[]             = array(
+						'key'   => '_wxr_import_term',
+						'value' => $term,
+					);
 					$requires_remapping = true;
 				}
 			}
@@ -980,7 +997,7 @@ class Importer {
 	 * Attempt to download a remote file attachment
 	 *
 	 * @param string $url URL of item to fetch
-	 * @param array $post Attachment details
+	 * @param array  $post Attachment details
 	 * @return array|WP_Error Local file location details on success, WP_Error otherwise
 	 */
 	protected function fetch_remote_file( $url, $post ) {
@@ -994,10 +1011,13 @@ class Importer {
 		}
 
 		// fetch the remote url and write it to the placeholder file
-		$response = wp_remote_get( $url, array(
-			'stream' => true,
-			'filename' => $upload['file'],
-		) );
+		$response = wp_remote_get(
+			$url,
+			array(
+				'stream'   => true,
+				'filename' => $upload['file'],
+			)
+		);
 
 		// request failed
 		if ( is_wp_error( $response ) ) {
@@ -1022,7 +1042,7 @@ class Importer {
 		}
 
 		$filesize = filesize( $upload['file'] );
-		$headers = wp_remote_retrieve_headers( $response );
+		$headers  = wp_remote_retrieve_headers( $response );
 
 		if ( isset( $headers['content-length'] ) && $filesize !== (int) $headers['content-length'] ) {
 			unlink( $upload['file'] );
@@ -1133,7 +1153,6 @@ class Importer {
 					foreach ( $post['metadata']['sizes'] as $size => $thumb ) {
 						$remote_thumb_url = trailingslashit( $file_dirname ) . $thumb['file'];
 						$fetched_thumb    = $this->fetch_remote_file( $remote_thumb_url, $post );
-
 
 						if ( ! is_wp_error( $fetched_thumb ) ) {
 							$post['metadata']['sizes'][ $size ]['original_file'] = $remote_thumb_url;
@@ -1342,7 +1361,7 @@ class Importer {
 	 * Process and import comment data.
 	 *
 	 * @param array $comments List of comment data arrays.
-	 * @param int $post_id Post to associate with.
+	 * @param int   $post_id Post to associate with.
 	 * @param array $post Post data.
 	 * @return int|WP_Error Number of comments imported on success, error otherwise.
 	 */
@@ -1370,8 +1389,8 @@ class Importer {
 				return false;
 			}
 
-			$original_id = isset( $comment['comment_id'] )      ? (int) $comment['comment_id']      : 0;
-			$parent_id   = isset( $comment['comment_parent'] )  ? (int) $comment['comment_parent']  : 0;
+			$original_id = isset( $comment['comment_id'] ) ? (int) $comment['comment_id'] : 0;
+			$parent_id   = isset( $comment['comment_parent'] ) ? (int) $comment['comment_parent'] : 0;
 			$author_id   = isset( $comment['comment_user_id'] ) ? (int) $comment['comment_user_id'] : 0;
 
 			// if this is a new post we can skip the comment_exists() check
@@ -1403,7 +1422,10 @@ class Importer {
 					$comment['comment_parent'] = $this->mapping['comment'][ $parent_id ];
 				} else {
 					// Prepare for remapping later
-					$meta[] = array( 'key' => '_wxr_import_parent', 'value' => $parent_id );
+					$meta[]             = array(
+						'key'   => '_wxr_import_parent',
+						'value' => $parent_id,
+					);
 					$requires_remapping = true;
 
 					// Wipe the parent for now
@@ -1417,7 +1439,10 @@ class Importer {
 					$comment['user_id'] = $this->mapping['user'][ $author_id ];
 				} else {
 					// Prepare for remapping later
-					$meta[] = array( 'key' => '_wxr_import_user', 'value' => $author_id );
+					$meta[]             = array(
+						'key'   => '_wxr_import_user',
+						'value' => $author_id,
+					);
 					$requires_remapping = true;
 
 					// Wipe the user for now
@@ -1427,10 +1452,10 @@ class Importer {
 
 			// Run standard core filters
 			$comment['comment_post_ID'] = $post_id;
-			$comment = wp_filter_comment( $comment );
+			$comment                    = wp_filter_comment( $comment );
 
 			// wp_insert_comment expects slashed data
-			$comment_id = wp_insert_comment( wp_slash( $comment ) );
+			$comment_id                               = wp_insert_comment( wp_slash( $comment ) );
 			$this->mapping['comment'][ $original_id ] = $comment_id;
 			if ( $requires_remapping ) {
 				$this->requires_remapping['comment'][ $comment_id ] = true;
@@ -1463,7 +1488,7 @@ class Importer {
 			 */
 			do_action( 'wxr_importer.processed.comment', $comment_id, $comment, $meta, $post_id );
 
-			$num_comments++;
+			++$num_comments;
 		}
 
 		return $num_comments;
@@ -1583,7 +1608,7 @@ class Importer {
 		}
 
 		// Have we already handled this user?
-		$original_id = isset( $data['ID'] ) ? $data['ID'] : 0;
+		$original_id   = isset( $data['ID'] ) ? $data['ID'] : 0;
 		$original_slug = $data['user_login'];
 
 		if ( isset( $this->mapping['user'][ $original_id ] ) ) {
@@ -1613,8 +1638,8 @@ class Importer {
 		}
 
 		$userdata = array(
-			'user_login'   => sanitize_user( $login, true ),
-			'user_pass'    => wp_generate_password(),
+			'user_login' => sanitize_user( $login, true ),
+			'user_pass'  => wp_generate_password(),
 		);
 
 		$allowed = array(
@@ -1633,10 +1658,12 @@ class Importer {
 
 		$user_id = wp_insert_user( wp_slash( $userdata ) );
 		if ( is_wp_error( $user_id ) ) {
-			$this->logger->error( sprintf(
-				__( 'Failed to import user "%s"', 'wordpress-importer' ),
-				$userdata['user_login']
-			) );
+			$this->logger->error(
+				sprintf(
+					__( 'Failed to import user "%s"', 'wordpress-importer' ),
+					$userdata['user_login']
+				)
+			);
 			$this->logger->debug( $user_id->get_error_message() );
 
 			/**
@@ -1654,15 +1681,19 @@ class Importer {
 		}
 		$this->mapping['user_slug'][ $original_slug ] = $user_id;
 
-		$this->logger->info( sprintf(
-			__( 'Imported user "%s"', 'wordpress-importer' ),
-			$userdata['user_login']
-		) );
-		$this->logger->debug( sprintf(
-			__( 'User %d remapped to %d', 'wordpress-importer' ),
-			$original_id,
-			$user_id
-		) );
+		$this->logger->info(
+			sprintf(
+				__( 'Imported user "%s"', 'wordpress-importer' ),
+				$userdata['user_login']
+			)
+		);
+		$this->logger->debug(
+			sprintf(
+				__( 'User %1$d remapped to %2$d', 'wordpress-importer' ),
+				$original_id,
+				$user_id
+			)
+		);
 
 		// TODO: Implement meta handling once WXR includes it
 		/**
@@ -1803,11 +1834,13 @@ class Importer {
 
 		$result = wp_insert_term( $data['name'], $data['taxonomy'], $termdata );
 		if ( is_wp_error( $result ) ) {
-			$this->logger->warning( sprintf(
-				__( 'Failed to import %s %s', 'wordpress-importer' ),
-				$data['taxonomy'],
-				$data['name']
-			) );
+			$this->logger->warning(
+				sprintf(
+					__( 'Failed to import %1$s %2$s', 'wordpress-importer' ),
+					$data['taxonomy'],
+					$data['name']
+				)
+			);
 			$this->logger->debug( $result->get_error_message() );
 			do_action( 'wp_import_insert_term_failed', $result, $data );
 
@@ -1862,7 +1895,7 @@ class Importer {
 	 * Copy attachent file to uploads directory.
 	 *
 	 * @param string $url URL of item to fetch
-	 * @param array $post Attachment details
+	 * @param array  $post Attachment details
 	 * @return array|WP_Error Local file location details on success, WP_Error otherwise
 	 */
 	protected function copy_local_file( $url, $post ) {
@@ -1933,12 +1966,14 @@ class Importer {
 
 	protected function post_process_posts( $todo ) {
 		foreach ( $todo as $post_id => $_ ) {
-			$this->logger->debug( sprintf(
+			$this->logger->debug(
+				sprintf(
 				// Note: title intentionally not used to skip extra processing
 				// for when debug logging is off
-				__( 'Running post-processing for post %d', 'wordpress-importer' ),
-				$post_id
-			) );
+					__( 'Running post-processing for post %d', 'wordpress-importer' ),
+					$post_id
+				)
+			);
 
 			$data = array();
 
@@ -1948,16 +1983,20 @@ class Importer {
 				if ( isset( $this->mapping['post'][ $parent_id ] ) ) {
 					$data['post_parent'] = $this->mapping['post'][ $parent_id ];
 				} else {
-					$this->logger->warning( sprintf(
-						__( 'Could not find the post parent for "%s" (post #%d)', 'wordpress-importer' ),
-						get_the_title( $post_id ),
-						$post_id
-					) );
-					$this->logger->debug( sprintf(
-						__( 'Post %d was imported with parent %d, but could not be found', 'wordpress-importer' ),
-						$post_id,
-						$parent_id
-					) );
+					$this->logger->warning(
+						sprintf(
+							__( 'Could not find the post parent for "%1$s" (post #%2$d)', 'wordpress-importer' ),
+							get_the_title( $post_id ),
+							$post_id
+						)
+					);
+					$this->logger->debug(
+						sprintf(
+							__( 'Post %1$d was imported with parent %2$d, but could not be found', 'wordpress-importer' ),
+							$post_id,
+							$parent_id
+						)
+					);
 				}
 			}
 
@@ -1967,22 +2006,26 @@ class Importer {
 				if ( isset( $this->mapping['user_slug'][ $author_slug ] ) ) {
 					$data['post_author'] = $this->mapping['user_slug'][ $author_slug ];
 				} else {
-					$this->logger->warning( sprintf(
-						__( 'Could not find the author for "%s" (post #%d)', 'wordpress-importer' ),
-						get_the_title( $post_id ),
-						$post_id
-					) );
-					$this->logger->debug( sprintf(
-						__( 'Post %d was imported with author "%s", but could not be found', 'wordpress-importer' ),
-						$post_id,
-						$author_slug
-					) );
+					$this->logger->warning(
+						sprintf(
+							__( 'Could not find the author for "%1$s" (post #%2$d)', 'wordpress-importer' ),
+							get_the_title( $post_id ),
+							$post_id
+						)
+					);
+					$this->logger->debug(
+						sprintf(
+							__( 'Post %1$d was imported with author "%2$s", but could not be found', 'wordpress-importer' ),
+							$post_id,
+							$author_slug
+						)
+					);
 				}
 			}
 
 			$has_attachments = get_post_meta( $post_id, '_wxr_import_has_attachment_refs', true );
 			if ( ! empty( $has_attachments ) ) {
-				$post = get_post( $post_id );
+				$post    = get_post( $post_id );
 				$content = $post->post_content;
 
 				// Replace all the URLs we've got
@@ -1994,22 +2037,26 @@ class Importer {
 
 			// Do we have updates to make?
 			if ( empty( $data ) ) {
-				$this->logger->debug( sprintf(
-					__( 'Post %d was marked for post-processing, but none was required.', 'wordpress-importer' ),
-					$post_id
-				) );
+				$this->logger->debug(
+					sprintf(
+						__( 'Post %d was marked for post-processing, but none was required.', 'wordpress-importer' ),
+						$post_id
+					)
+				);
 				continue;
 			}
 
 			// Run the update
 			$data['ID'] = $post_id;
-			$result = wp_update_post( $data, true );
+			$result     = wp_update_post( $data, true );
 			if ( is_wp_error( $result ) ) {
-				$this->logger->warning( sprintf(
-					__( 'Could not update "%s" (post #%d) with mapped data', 'wordpress-importer' ),
-					get_the_title( $post_id ),
-					$post_id
-				) );
+				$this->logger->warning(
+					sprintf(
+						__( 'Could not update "%1$s" (post #%2$d) with mapped data', 'wordpress-importer' ),
+						get_the_title( $post_id ),
+						$post_id
+					)
+				);
 				$this->logger->debug( $result->get_error_message() );
 				continue;
 			}
@@ -2031,15 +2078,19 @@ class Importer {
 				if ( isset( $this->mapping['comment'][ $parent_id ] ) ) {
 					$data['comment_parent'] = $this->mapping['comment'][ $parent_id ];
 				} else {
-					$this->logger->warning( sprintf(
-						__( 'Could not find the comment parent for comment #%d', 'wordpress-importer' ),
-						$comment_id
-					) );
-					$this->logger->debug( sprintf(
-						__( 'Comment %d was imported with parent %d, but could not be found', 'wordpress-importer' ),
-						$comment_id,
-						$parent_id
-					) );
+					$this->logger->warning(
+						sprintf(
+							__( 'Could not find the comment parent for comment #%d', 'wordpress-importer' ),
+							$comment_id
+						)
+					);
+					$this->logger->debug(
+						sprintf(
+							__( 'Comment %1$d was imported with parent %2$d, but could not be found', 'wordpress-importer' ),
+							$comment_id,
+							$parent_id
+						)
+					);
 				}
 			}
 
@@ -2049,15 +2100,19 @@ class Importer {
 				if ( isset( $this->mapping['user'][ $author_id ] ) ) {
 					$data['user_id'] = $this->mapping['user'][ $author_id ];
 				} else {
-					$this->logger->warning( sprintf(
-						__( 'Could not find the author for comment #%d', 'wordpress-importer' ),
-						$comment_id
-					) );
-					$this->logger->debug( sprintf(
-						__( 'Comment %d was imported with author %d, but could not be found', 'wordpress-importer' ),
-						$comment_id,
-						$author_id
-					) );
+					$this->logger->warning(
+						sprintf(
+							__( 'Could not find the author for comment #%d', 'wordpress-importer' ),
+							$comment_id
+						)
+					);
+					$this->logger->debug(
+						sprintf(
+							__( 'Comment %1$d was imported with author %2$d, but could not be found', 'wordpress-importer' ),
+							$comment_id,
+							$author_id
+						)
+					);
 				}
 			}
 
@@ -2068,12 +2123,14 @@ class Importer {
 
 			// Run the update
 			$data['comment_ID'] = $comment_id;
-			$result = wp_update_comment( wp_slash( $data ) );
+			$result             = wp_update_comment( wp_slash( $data ) );
 			if ( empty( $result ) ) {
-				$this->logger->warning( sprintf(
-					__( 'Could not update comment #%d with mapped data', 'wordpress-importer' ),
-					$comment_id
-				) );
+				$this->logger->warning(
+					sprintf(
+						__( 'Could not update comment #%d with mapped data', 'wordpress-importer' ),
+						$comment_id
+					)
+				);
 				continue;
 			}
 
@@ -2257,7 +2314,7 @@ class Importer {
 			$wpdb->query( $query );
 
 			// remap enclosure urls
-			$query = $wpdb->prepare( "UPDATE {$wpdb->postmeta} SET meta_value = REPLACE(meta_value, %s, %s) WHERE meta_key='enclosure'", $from_url, $to_url );
+			$query  = $wpdb->prepare( "UPDATE {$wpdb->postmeta} SET meta_value = REPLACE(meta_value, %s, %s) WHERE meta_key='enclosure'", $from_url, $to_url );
 			$result = $wpdb->query( $query );
 		}
 	}
@@ -2311,7 +2368,7 @@ class Importer {
 	 * @access protected
 	 * @return int 60
 	 */
-	function bump_request_timeout($val) {
+	function bump_request_timeout( $val ) {
 		return 60;
 	}
 
@@ -2361,7 +2418,7 @@ class Importer {
 		}
 
 		// Still nothing, try post_exists, and cache it
-		$exists = post_exists( $data['post_title'], $data['post_content'], $data['post_date'] );
+		$exists                              = post_exists( $data['post_title'], $data['post_content'], $data['post_date'] );
 		$this->exists['post'][ $exists_key ] = $exists;
 
 		return $exists;
@@ -2371,10 +2428,10 @@ class Importer {
 	 * Mark the post as existing.
 	 *
 	 * @param array $data Post data to mark as existing.
-	 * @param int $post_id Post ID.
+	 * @param int   $post_id Post ID.
 	 */
 	protected function mark_post_exists( $data, $post_id ) {
-		$exists_key = $data['guid'];
+		$exists_key                          = $data['guid'];
 		$this->exists['post'][ $exists_key ] = $post_id;
 	}
 
@@ -2388,7 +2445,7 @@ class Importer {
 		$posts = $wpdb->get_results( "SELECT comment_ID, comment_author, comment_date FROM {$wpdb->comments}" );
 
 		foreach ( $posts as $item ) {
-			$exists_key = sha1( $item->comment_author . ':' . $item->comment_date );
+			$exists_key                             = sha1( $item->comment_author . ':' . $item->comment_date );
 			$this->exists['comment'][ $exists_key ] = $item->comment_ID;
 		}
 	}
@@ -2413,7 +2470,7 @@ class Importer {
 		}
 
 		// Still nothing, try comment_exists, and cache it
-		$exists = comment_exists( $data['comment_author'], $data['comment_date'] );
+		$exists                                 = comment_exists( $data['comment_author'], $data['comment_date'] );
 		$this->exists['comment'][ $exists_key ] = $exists;
 
 		return $exists;
@@ -2423,10 +2480,10 @@ class Importer {
 	 * Mark the comment as existing.
 	 *
 	 * @param array $data Comment data to mark as existing.
-	 * @param int $comment_id Comment ID.
+	 * @param int   $comment_id Comment ID.
 	 */
 	protected function mark_comment_exists( $data, $comment_id ) {
-		$exists_key = sha1( $data['comment_author'] . ':' . $data['comment_date'] );
+		$exists_key                             = sha1( $data['comment_author'] . ':' . $data['comment_date'] );
 		$this->exists['comment'][ $exists_key ] = $comment_id;
 	}
 
@@ -2437,12 +2494,12 @@ class Importer {
 	 */
 	protected function prefill_existing_terms() {
 		global $wpdb;
-		$query = "SELECT t.term_id, tt.taxonomy, t.slug FROM {$wpdb->terms} AS t";
+		$query  = "SELECT t.term_id, tt.taxonomy, t.slug FROM {$wpdb->terms} AS t";
 		$query .= " JOIN {$wpdb->term_taxonomy} AS tt ON t.term_id = tt.term_id";
-		$terms = $wpdb->get_results( $query );
+		$terms  = $wpdb->get_results( $query );
 
 		foreach ( $terms as $item ) {
-			$exists_key = sha1( $item->taxonomy . ':' . $item->slug );
+			$exists_key                          = sha1( $item->taxonomy . ':' . $item->slug );
 			$this->exists['term'][ $exists_key ] = $item->term_id;
 		}
 	}
@@ -2481,10 +2538,10 @@ class Importer {
 	 * Mark the term as existing.
 	 *
 	 * @param array $data Term data to mark as existing.
-	 * @param int $term_id Term ID.
+	 * @param int   $term_id Term ID.
 	 */
 	protected function mark_term_exists( $data, $term_id ) {
-		$exists_key = sha1( $data['taxonomy'] . ':' . $data['slug'] );
+		$exists_key                          = sha1( $data['taxonomy'] . ':' . $data['slug'] );
 		$this->exists['term'][ $exists_key ] = $term_id;
 	}
 
