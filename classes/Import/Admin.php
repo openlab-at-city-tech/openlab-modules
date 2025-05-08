@@ -380,7 +380,7 @@ class Admin {
 		];
 
 		$importer = new Importer( $options, $extract_path );
-		$logger   = new ServerSentEventsLogger;
+		$logger   = new ServerSentEventsLogger();
 		$importer->set_logger( $logger );
 
 		return $importer;

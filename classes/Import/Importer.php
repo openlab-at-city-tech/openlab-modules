@@ -134,7 +134,7 @@ class Importer {
 	/**
 	 * URL remap.
 	 *
-	 * @var array
+	 * @var array<string, string>
 	 */
 	protected $url_remap = array();
 
@@ -728,6 +728,12 @@ class Importer {
 	 * Doesn't create a new post if: the post type doesn't exist, the given post ID
 	 * is already noted as imported or a post with the same title and date already exists.
 	 * Note that new/updated terms, comments and meta are imported for the last of the above.
+	 *
+	 * @param array $data     Post data.
+	 * @param array $meta     Meta data.
+	 * @param array $comments Comments on the post.
+	 * @param array $terms    Terms on the post.
+	 * @return bool|void
 	 */
 	protected function process_post( $data, $meta, $comments, $terms ) {
 		/**
@@ -743,8 +749,9 @@ class Importer {
 			return false;
 		}
 
-		$original_id = isset( $data['post_id'] )     ? (int) $data['post_id']     : 0;
-		$parent_id   = isset( $data['post_parent'] ) ? (int) $data['post_parent'] : 0;
+		$original_id = isset( $data['post_id'] ) ? (int) $data['post_id'] : 0;
+
+		$parent_id = isset( $data['post_parent'] ) ? (int) $data['post_parent'] : 0;
 
 		// Have we already processed this?
 		if ( isset( $this->mapping['post'][ $original_id ] ) ) {
@@ -755,21 +762,27 @@ class Importer {
 
 		// Is this type even valid?
 		if ( ! $post_type_object ) {
-			$this->logger->warning( sprintf(
-				__( 'Failed to import "%s": Invalid post type %s', 'wordpress-importer' ),
-				$data['post_title'],
-				$data['post_type']
-			) );
+			$this->logger->warning(
+				sprintf(
+					// translators: %1$s is the post title, %2$s is the post type.
+					__( 'Failed to import "%1$s": Invalid post type %2$s', 'openlab-modules' ),
+					$data['post_title'],
+					$data['post_type']
+				)
+			);
 			return false;
 		}
 
 		$post_exists = $this->post_exists( $data );
 		if ( $post_exists ) {
-			$this->logger->info( sprintf(
-				__( '%s "%s" already exists.', 'wordpress-importer' ),
-				$post_type_object->labels->singular_name,
-				$data['post_title']
-			) );
+			$this->logger->info(
+				sprintf(
+					// translators: %1$s is the post type, %2$s is the post title.
+					__( '%1$s "%2$s" already exists.', 'wordpress-importer' ),
+					$post_type_object->labels->singular_name,
+					$data['post_title']
+				)
+			);
 
 			/**
 			 * Post processing already imported.
@@ -778,7 +791,7 @@ class Importer {
 			 */
 			do_action( 'wxr_importer.process_already_imported.post', $data );
 
-			// Even though this post already exists, new comments might need importing
+			// Even though this post already exists, new comments might need importing.
 			$this->process_comments( $comments, $original_id, $data, $post_exists );
 
 			return false;
@@ -1038,13 +1051,14 @@ class Importer {
 	/**
 	 * If fetching attachments is enabled then attempt to create a new attachment
 	 *
-	 * @param array $post Attachment post details from WXR
-	 * @param string $url URL to fetch attachment from
+	 * @param array  $post       Attachment post details from WXR.
+	 * @param array  $meta       Attachment meta details from WXR.
+	 * @param string $remote_url URL to fetch attachment from.
 	 * @return int|WP_Error Post ID on success, WP_Error otherwise
 	 */
 	protected function process_attachment( $post, $meta, $remote_url ) {
-		// try to use _wp_attached file for upload folder placement to ensure the same location as the export site
-		// e.g. location is 2003/05/image.jpg but the attachment post_date is 2010/09, see media_handle_upload()
+		// try to use _wp_attached file for upload folder placement to ensure the same location as the export site.
+		// e.g. location is 2003/05/image.jpg but the attachment post_date is 2010/09, see media_handle_upload().
 		$post['upload_date'] = $post['post_date'];
 		foreach ( $meta as $meta_item ) {
 			if ( $meta_item['key'] === '_wp_attachment_metadata' ) {
@@ -1084,12 +1098,12 @@ class Importer {
 		$post['post_mime_type'] = $info['type'];
 
 		// WP really likes using the GUID for display. Allow updating it.
-		// See https://core.trac.wordpress.org/ticket/33386
+		// See https://core.trac.wordpress.org/ticket/33386.
 		if ( $this->options['update_attachment_guids'] ) {
 			$post['guid'] = $upload['url'];
 		}
 
-		// as per wp-admin/includes/upload.php
+		// As per wp-admin/includes/upload.php.
 		$post_id = wp_insert_attachment( $post, $upload['file'] );
 		if ( is_wp_error( $post_id ) ) {
 			return $post_id;
@@ -1132,12 +1146,12 @@ class Importer {
 			wp_update_attachment_metadata( $post_id, $post['metadata'] );
 		}
 
-		// Map this image URL later if we need to
+		// Map this image URL later if we need to.
 		$this->url_remap[ $remote_url ] = $upload['url'];
 
-		// If we have a HTTPS URL, ensure the HTTP URL gets replaced too
+		// If we have a HTTPS URL, ensure the HTTP URL gets replaced too.
 		if ( substr( $remote_url, 0, 8 ) === 'https://' ) {
-			$insecure_url = 'http' . substr( $remote_url, 5 );
+			$insecure_url                     = 'http' . substr( $remote_url, 5 );
 			$this->url_remap[ $insecure_url ] = $upload['url'];
 		}
 
@@ -1193,10 +1207,10 @@ class Importer {
 	/**
 	 * Process and import post meta items.
 	 *
-	 * @param array $meta List of meta data arrays
-	 * @param int $post_id Post to associate with
-	 * @param array $post Post data
-	 * @return int|WP_Error Number of meta items imported on success, error otherwise.
+	 * @param array $meta    List of meta data arrays.
+	 * @param int   $post_id Post to associate with.
+	 * @param array $post    Post data.
+	 * @return bool True on success, false otherwise.
 	 */
 	protected function process_post_meta( $meta, $post_id, $post ) {
 		if ( empty( $meta ) ) {
@@ -1215,7 +1229,7 @@ class Importer {
 				return false;
 			}
 
-			$key = apply_filters( 'import_post_meta_key', $meta_item['key'], $post_id, $post );
+			$key   = apply_filters( 'import_post_meta_key', $meta_item['key'], $post_id, $post );
 			$value = false;
 
 			if ( '_edit_last' === $key ) {
@@ -1229,7 +1243,7 @@ class Importer {
 			}
 
 			if ( $key ) {
-				// export gets meta straight from the DB so could have a serialized string
+				// Export gets meta straight from the DB so could have a serialized string.
 				if ( ! $value ) {
 					$value = maybe_unserialize( $meta_item['value'] );
 				}
@@ -1237,7 +1251,7 @@ class Importer {
 				add_post_meta( $post_id, $key, $value );
 				do_action( 'import_post_meta', $post_id, $key, $value );
 
-				// if the post has a featured image, take note of this in case of remap
+				// If the post has a featured image, take note of this in case of remap.
 				if ( '_thumbnail_id' === $key ) {
 					$this->featured_images[ $post_id ] = (int) $value;
 				}
@@ -2121,12 +2135,12 @@ class Importer {
 						return $matches[0];
 					}
 
-					return sprintf( '<!-- wp:openlab-modules/module-navigation {"moduleId":"%s"} -->', $new_module_id );
+					return sprintf( '<!-- wp:openlab-modules/module-navigation {"moduleId":"%s"} /-->', $new_module_id );
 				},
 				$post->post_content
 			);
 
-			if ( $new_post_content !== $post->post_content ) {
+			if ( $new_post_content !== $post->post_content && is_string( $new_post_content ) ) {
 				wp_update_post(
 					[
 						'ID'           => (int) $new_post_id,
