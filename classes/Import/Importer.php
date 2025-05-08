@@ -102,7 +102,6 @@ class Importer {
 	 */
 	protected $processed_posts = array();
 
-	// NEW STYLE
 	/**
 	 * Mapping of old IDs to new IDs.
 	 *
@@ -249,6 +248,7 @@ class Importer {
 		$authors = array();
 		while ( $reader->read() ) {
 			// Only deal with element opens.
+			// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 			if ( XMLReader::ELEMENT !== $reader->nodeType ) {
 				continue;
 			}
@@ -327,7 +327,7 @@ class Importer {
 		// Start parsing!
 		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		while ( $reader->read() ) {
-			// Only deal with element opens
+			// Only deal with element opens.
 			if ( XMLReader::ELEMENT !== $reader->nodeType ) {
 				continue;
 			}
@@ -341,7 +341,7 @@ class Importer {
 						$this->logger->warning(
 							sprintf(
 								// translators: %1$s is the WXR version, %2$s is the importer version.
-								__( 'This WXR file (version %1$s) is newer than the importer (version %2$s) and may not be supported. Please consider updating.', 'wordpress-importer' ),
+								__( 'This WXR file (version %1$s) is newer than the importer (version %2$s) and may not be supported. Please consider updating.', 'openlab-modules' ),
 								$this->version,
 								self::MAX_WXR_VERSION
 							)
@@ -502,7 +502,7 @@ class Importer {
 	 * Parses the WXR file and prepares us for the task of processing parsed data.
 	 *
 	 * @param string $file Path to the WXR file for importing.
-	 * @return void
+	 * @return void|WP_Error
 	 */
 	protected function import_start( $file ) {
 		if ( ! is_file( $file ) ) {
@@ -568,7 +568,8 @@ class Importer {
 	public function set_user_mapping( $mapping ) {
 		foreach ( $mapping as $map ) {
 			if ( empty( $map['old_slug'] ) || empty( $map['old_id'] ) || empty( $map['new_id'] ) ) {
-				$this->logger->warning( __( 'Invalid author mapping', 'wordpress-importer' ) );
+				$this->logger->warning( __( 'Invalid author mapping', 'openlab-modules' ) );
+				// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_var_export
 				$this->logger->debug( var_export( $map, true ) );
 				continue;
 			}
@@ -602,14 +603,16 @@ class Importer {
 	 * @return array|WP_Error Post data array on success, error otherwise.
 	 */
 	protected function parse_post_node( $node ) {
+		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+
 		$data     = array();
 		$meta     = array();
 		$comments = array();
 		$terms    = array();
 
 		foreach ( $node->childNodes as $child ) {
-			// We only care about child elements
-			if ( $child->nodeType !== XML_ELEMENT_NODE ) {
+			// We only care about child elements.
+			if ( XML_ELEMENT_NODE !== $child->nodeType ) {
 				continue;
 			}
 
@@ -665,11 +668,11 @@ class Importer {
 				case 'wp:status':
 					$data['post_status'] = $child->textContent;
 
-					if ( $data['post_status'] === 'auto-draft' ) {
-						// Bail now
+					if ( 'auto-draft' === $data['post_status'] ) {
+						// Bail now.
 						return new WP_Error(
 							'wxr_importer.post.cannot_import_draft',
-							__( 'Cannot import auto-draft posts' ),
+							__( 'Cannot import auto-draft posts', 'openlab-modules' ),
 							$data
 						);
 					}
@@ -717,6 +720,8 @@ class Importer {
 					break;
 			}
 		}
+
+		// phpcs:enable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 
 		return compact( 'data', 'meta', 'comments', 'terms' );
 	}
@@ -778,7 +783,7 @@ class Importer {
 			$this->logger->info(
 				sprintf(
 					// translators: %1$s is the post type, %2$s is the post title.
-					__( '%1$s "%2$s" already exists.', 'wordpress-importer' ),
+					__( '%1$s "%2$s" already exists.', 'openlab-modules' ),
 					$post_type_object->labels->singular_name,
 					$data['post_title']
 				)
@@ -797,7 +802,7 @@ class Importer {
 			return false;
 		}
 
-		// Map the parent post, or mark it as one we need to fix
+		// Map the parent post, or mark it as one we need to fix.
 		$requires_remapping = false;
 		if ( $parent_id ) {
 			if ( isset( $this->mapping['post'][ $parent_id ] ) ) {
@@ -813,7 +818,7 @@ class Importer {
 			}
 		}
 
-		// Map the author, or mark it as one we need to fix
+		// Map the author, or mark it as one we need to fix.
 		$author = sanitize_user( $data['post_author'], true );
 		if ( empty( $author ) ) {
 			// Missing or invalid author, use default if available.
@@ -833,10 +838,9 @@ class Importer {
 			$requires_remapping = true;
 		}
 
-		// Whitelist to just the keys we allow
-		$postdata = array(
-			// 'import_id' => $data['post_id'],
-		);
+		// Whitelist to just the keys we allow.
+		$postdata = array();
+
 		$allowed = array(
 			'post_author'    => true,
 			'post_date'      => true,
@@ -868,7 +872,8 @@ class Importer {
 			if ( ! $this->options['fetch_attachments'] ) {
 				$this->logger->notice(
 					sprintf(
-						__( 'Skipping attachment "%s", fetching attachments disabled' ),
+						// translators: %s is the attachment title.
+						__( 'Skipping attachment "%s", fetching attachments disabled', 'openlab-modules' ),
 						$data['post_title']
 					)
 				);
@@ -891,7 +896,8 @@ class Importer {
 		if ( is_wp_error( $post_id ) ) {
 			$this->logger->error(
 				sprintf(
-					__( 'Failed to import "%1$s" (%2$s)', 'wordpress-importer' ),
+					// translators: %1$s is the post title, %2$s is the post type.
+					__( 'Failed to import "%1$s" (%2$s)', 'openlab-modules' ),
 					$data['post_title'],
 					$post_type_object->labels->singular_name
 				)
@@ -911,12 +917,12 @@ class Importer {
 			return false;
 		}
 
-		// Ensure stickiness is handled correctly too
-		if ( $data['is_sticky'] === '1' ) {
+		// Ensure stickiness is handled correctly too.
+		if ( '1' === $data['is_sticky'] ) {
 			stick_post( $post_id );
 		}
 
-		// map pre-import ID to local ID
+		// map pre-import ID to local ID.
 		$this->mapping['post'][ $original_id ] = (int) $post_id;
 
 		add_post_meta( $post_id, 'import_id', $original_id, true );
@@ -928,20 +934,22 @@ class Importer {
 
 		$this->logger->info(
 			sprintf(
-				__( 'Imported "%1$s" (%2$s)', 'wordpress-importer' ),
+				// translators: %1$s is the post title, %2$s is the post type.
+				__( 'Imported "%1$s" (%2$s)', 'openlab-modules' ),
 				$data['post_title'],
 				$post_type_object->labels->singular_name
 			)
 		);
 		$this->logger->debug(
 			sprintf(
-				__( 'Post %1$d remapped to %2$d', 'wordpress-importer' ),
+				// translators: %1$d is the original post ID, %2$d is the new post ID.
+				__( 'Post %1$d remapped to %2$d', 'openlab-modules' ),
 				$original_id,
 				$post_id
 			)
 		);
 
-		// Handle the terms too
+		// Handle the terms too.
 		$terms = apply_filters( 'wp_import_post_terms', $terms, $post_id, $data );
 
 		if ( ! empty( $terms ) ) {
@@ -983,34 +991,23 @@ class Importer {
 	}
 
 	/**
-	 * Attempt to create a new menu item from import data
-	 *
-	 * Fails for draft, orphaned menu items and those without an associated nav_menu
-	 * or an invalid nav_menu term. If the post type or term object which the menu item
-	 * represents doesn't exist then the menu item will not be imported (waits until the
-	 * end of the import to retry again before discarding).
-	 *
-	 * @param array $item Menu item details from WXR file
-	 */
-
-	/**
 	 * Attempt to download a remote file attachment
 	 *
-	 * @param string $url URL of item to fetch
-	 * @param array  $post Attachment details
-	 * @return array|WP_Error Local file location details on success, WP_Error otherwise
+	 * @param string $url  URL of item to fetch.
+	 * @param array  $post Attachment details.
+	 * @return array|WP_Error Local file location details on success, WP_Error otherwise.
 	 */
 	protected function fetch_remote_file( $url, $post ) {
-		// extract the file name and extension from the url
+		// extract the file name and extension from the url.
 		$file_name = basename( $url );
 
-		// get placeholder file in the upload dir with a unique, sanitized filename
-		$upload = wp_upload_bits( $file_name, 0, '', $post['upload_date'] );
+		// get placeholder file in the upload dir with a unique, sanitized filename.
+		$upload = wp_upload_bits( $file_name, null, '', $post['upload_date'] );
 		if ( $upload['error'] ) {
 			return new WP_Error( 'upload_dir_error', $upload['error'] );
 		}
 
-		// fetch the remote url and write it to the placeholder file
+		// fetch the remote url and write it to the placeholder file.
 		$response = wp_remote_get(
 			$url,
 			array(
@@ -1019,21 +1016,22 @@ class Importer {
 			)
 		);
 
-		// request failed
+		// request failed.
 		if ( is_wp_error( $response ) ) {
-			unlink( $upload['file'] );
+			wp_delete_file( $upload['file'] );
 			return $response;
 		}
 
 		$code = (int) wp_remote_retrieve_response_code( $response );
 
-		// make sure the fetch was successful
-		if ( $code !== 200 ) {
-			unlink( $upload['file'] );
+		// make sure the fetch was successful.
+		if ( 200 !== $code ) {
+			wp_delete_file( $upload['file'] );
 			return new WP_Error(
 				'import_file_error',
 				sprintf(
-					__( 'Remote server returned %1$d %2$s for %3$s', 'wordpress-importer' ),
+					// translators: %1$d is the HTTP response code, %2$s is the response message, %3$s is the URL.
+					__( 'Remote server returned %1$d %2$s for %3$s', 'openlab-modules' ),
 					$code,
 					get_status_header_desc( $code ),
 					$url
@@ -1045,19 +1043,22 @@ class Importer {
 		$headers  = wp_remote_retrieve_headers( $response );
 
 		if ( isset( $headers['content-length'] ) && $filesize !== (int) $headers['content-length'] ) {
-			unlink( $upload['file'] );
-			return new WP_Error( 'import_file_error', __( 'Remote file is incorrect size', 'wordpress-importer' ) );
+			wp_delete_file( $upload['file'] );
+			return new WP_Error( 'import_file_error', __( 'Remote file is incorrect size', 'openlab-modules' ) );
 		}
 
 		if ( 0 === $filesize ) {
-			unlink( $upload['file'] );
-			return new WP_Error( 'import_file_error', __( 'Zero size file downloaded', 'wordpress-importer' ) );
+			wp_delete_file( $upload['file'] );
+			return new WP_Error( 'import_file_error', __( 'Zero size file downloaded', 'openlab-modules' ) );
 		}
 
 		$max_size = (int) $this->max_attachment_size();
 		if ( ! empty( $max_size ) && $filesize > $max_size ) {
-			unlink( $upload['file'] );
-			$message = sprintf( __( 'Remote file is too large, limit is %s', 'wordpress-importer' ), size_format( $max_size ) );
+			wp_delete_file( $upload['file'] );
+
+			// translators: %s is the max size.
+			$message = sprintf( __( 'Remote file is too large, limit is %s', 'openlab-modules' ), size_format( $max_size ) );
+
 			return new WP_Error( 'import_file_error', $message );
 		}
 
@@ -1081,12 +1082,12 @@ class Importer {
 		// e.g. location is 2003/05/image.jpg but the attachment post_date is 2010/09, see media_handle_upload().
 		$post['upload_date'] = $post['post_date'];
 		foreach ( $meta as $meta_item ) {
-			if ( $meta_item['key'] === '_wp_attachment_metadata' ) {
+			if ( '_wp_attachment_metadata' === $meta_item['key'] ) {
 				$post['metadata'] = maybe_unserialize( $meta_item['value'] );
 				continue;
 			}
 
-			if ( $meta_item['key'] !== '_wp_attached_file' ) {
+			if ( '_wp_attached_file' !== $meta_item['key'] ) {
 				continue;
 			}
 
@@ -1095,7 +1096,7 @@ class Importer {
 			}
 		}
 
-		// if the URL is absolute, but does not contain address, then upload it assuming base_site_url
+		// if the URL is absolute, but does not contain address, then upload it assuming base_site_url.
 		if ( preg_match( '|^/[\w\W]+$|', $remote_url ) ) {
 			$remote_url = rtrim( $this->base_url, '/' ) . $remote_url;
 		}
@@ -1112,7 +1113,7 @@ class Importer {
 
 		$info = wp_check_filetype( $upload['file'] );
 		if ( ! $info ) {
-			return new WP_Error( 'attachment_processing_error', __( 'Invalid file type', 'wordpress-importer' ) );
+			return new WP_Error( 'attachment_processing_error', __( 'Invalid file type', 'openlab-modules' ) );
 		}
 
 		$post['post_mime_type'] = $info['type'];
@@ -1130,7 +1131,7 @@ class Importer {
 		}
 
 		// Generate metadata for PDFs. This creates PDF thubmnails.
-		if ( $info['type'] === 'application/pdf' ) {
+		if ( 'application/pdf' === $info['type'] ) {
 			$post['metadata'] = wp_generate_attachment_metadata( $post_id, $upload['file'] );
 		}
 
@@ -1199,9 +1200,11 @@ class Importer {
 	 * @return array|null Meta data array on success, or null on error.
 	 */
 	protected function parse_meta_node( $node ) {
+		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+
 		foreach ( $node->childNodes as $child ) {
-			// We only care about child elements
-			if ( $child->nodeType !== XML_ELEMENT_NODE ) {
+			// We only care about child elements.
+			if ( XML_ELEMENT_NODE !== $child->nodeType ) {
 				continue;
 			}
 
@@ -1219,6 +1222,8 @@ class Importer {
 		if ( empty( $key ) || empty( $value ) ) {
 			return null;
 		}
+
+		// phpcs:enable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 
 		return compact( 'key', 'value' );
 	}
@@ -1287,13 +1292,15 @@ class Importer {
 	 * @return array Comment data array.
 	 */
 	protected function parse_comment_node( $node ) {
+		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+
 		$data = array(
 			'commentmeta' => array(),
 		);
 
 		foreach ( $node->childNodes as $child ) {
-			// We only care about child elements
-			if ( $child->nodeType !== XML_ELEMENT_NODE ) {
+			// We only care about child elements.
+			if ( XML_ELEMENT_NODE !== $child->nodeType ) {
 				continue;
 			}
 
@@ -1354,6 +1361,8 @@ class Importer {
 			}
 		}
 
+		// phpcs:enable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+
 		return $data;
 	}
 
@@ -1363,6 +1372,7 @@ class Importer {
 	 * @param array $comments List of comment data arrays.
 	 * @param int   $post_id Post to associate with.
 	 * @param array $post Post data.
+	 * @param bool  $post_exists Whether the post already exists.
 	 * @return int|WP_Error Number of comments imported on success, error otherwise.
 	 */
 	protected function process_comments( $comments, $post_id, $post, $post_exists = false ) {
@@ -1374,7 +1384,7 @@ class Importer {
 
 		$num_comments = 0;
 
-		// Sort by ID to avoid excessive remapping later
+		// Sort by ID to avoid excessive remapping later.
 		usort( $comments, array( $this, 'sort_comments_by_id' ) );
 
 		foreach ( $comments as $key => $comment ) {
@@ -1393,8 +1403,8 @@ class Importer {
 			$parent_id   = isset( $comment['comment_parent'] ) ? (int) $comment['comment_parent'] : 0;
 			$author_id   = isset( $comment['comment_user_id'] ) ? (int) $comment['comment_user_id'] : 0;
 
-			// if this is a new post we can skip the comment_exists() check
-			// TODO: Check comment_exists for performance
+			// if this is a new post we can skip the comment_exists() check.
+			// TODO: Check comment_exists for performance.
 			if ( $post_exists ) {
 				$existing = $this->comment_exists( $comment );
 				if ( $existing ) {
@@ -1411,51 +1421,52 @@ class Importer {
 				}
 			}
 
-			// Remove meta from the main array
+			// Remove meta from the main array.
 			$meta = isset( $comment['commentmeta'] ) ? $comment['commentmeta'] : array();
 			unset( $comment['commentmeta'] );
 
-			// Map the parent comment, or mark it as one we need to fix
+			// Map the parent comment, or mark it as one we need to fix.
 			$requires_remapping = false;
 			if ( $parent_id ) {
 				if ( isset( $this->mapping['comment'][ $parent_id ] ) ) {
 					$comment['comment_parent'] = $this->mapping['comment'][ $parent_id ];
 				} else {
-					// Prepare for remapping later
+					// Prepare for remapping later.
 					$meta[]             = array(
 						'key'   => '_wxr_import_parent',
 						'value' => $parent_id,
 					);
 					$requires_remapping = true;
 
-					// Wipe the parent for now
+					// Wipe the parent for now.
 					$comment['comment_parent'] = 0;
 				}
 			}
 
-			// Map the author, or mark it as one we need to fix
+			// Map the author, or mark it as one we need to fix.
 			if ( $author_id ) {
 				if ( isset( $this->mapping['user'][ $author_id ] ) ) {
 					$comment['user_id'] = $this->mapping['user'][ $author_id ];
 				} else {
-					// Prepare for remapping later
+					// Prepare for remapping later.
 					$meta[]             = array(
 						'key'   => '_wxr_import_user',
 						'value' => $author_id,
 					);
 					$requires_remapping = true;
 
-					// Wipe the user for now
+					// Wipe the user for now.
 					$comment['user_id'] = 0;
 				}
 			}
 
-			// Run standard core filters
+			// Run standard core filters.
 			$comment['comment_post_ID'] = $post_id;
 			$comment                    = wp_filter_comment( $comment );
 
-			// wp_insert_comment expects slashed data
-			$comment_id                               = wp_insert_comment( wp_slash( $comment ) );
+			// wp_insert_comment expects slashed data.
+			$comment_id = wp_insert_comment( wp_slash( $comment ) );
+
 			$this->mapping['comment'][ $original_id ] = $comment_id;
 			if ( $requires_remapping ) {
 				$this->requires_remapping['comment'][ $comment_id ] = true;
@@ -1472,7 +1483,7 @@ class Importer {
 			 */
 			do_action( 'wp_import_insert_comment', $comment_id, $comment, $post_id, $post );
 
-			// Process the meta items
+			// Process the meta items.
 			foreach ( $meta as $meta_item ) {
 				$value = maybe_unserialize( $meta_item['value'] );
 				add_comment_meta( $comment_id, wp_slash( $meta_item['key'] ), wp_slash( $value ) );
@@ -1494,9 +1505,17 @@ class Importer {
 		return $num_comments;
 	}
 
+	/**
+	 * Parse a category node into category data.
+	 *
+	 * @param \DOMElement $node Parent node of category data (typically `wp:category`).
+	 * @return array|null Category data array on success, or null on error.
+	 */
 	protected function parse_category_node( $node ) {
+		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+
 		$data = array(
-			// Default taxonomy to "category", since this is a `<category>` tag
+			// Default taxonomy to "category", since this is a `<category>` tag.
 			'taxonomy' => 'category',
 		);
 		$meta = array();
@@ -1504,6 +1523,7 @@ class Importer {
 		if ( $node->hasAttribute( 'domain' ) ) {
 			$data['taxonomy'] = $node->getAttribute( 'domain' );
 		}
+
 		if ( $node->hasAttribute( 'nicename' ) ) {
 			$data['slug'] = $node->getAttribute( 'nicename' );
 		}
@@ -1514,10 +1534,12 @@ class Importer {
 			return null;
 		}
 
-		// Just for extra compatibility
-		if ( $data['taxonomy'] === 'tag' ) {
+		// Just for extra compatibility.
+		if ( 'tag' === $data['taxonomy'] ) {
 			$data['taxonomy'] = 'post_tag';
 		}
+
+		// phpcs:enable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 
 		return $data;
 	}
@@ -1525,8 +1547,8 @@ class Importer {
 	/**
 	 * Callback for `usort` to sort comments by ID
 	 *
-	 * @param array $a Comment data for the first comment
-	 * @param array $b Comment data for the second comment
+	 * @param array $a Comment data for the first comment.
+	 * @param array $b Comment data for the second comment.
 	 * @return int
 	 */
 	public static function sort_comments_by_id( $a, $b ) {
@@ -1544,17 +1566,17 @@ class Importer {
 	/**
 	 * Parse author node
 	 *
-	 * @todo Fix return type.
-	 *
-	 * @param [type] $node
+	 * @param \DOMElement $node Parent node of author data (typically `wp:author`).
 	 * @return WP_Error|array
 	 */
 	protected function parse_author_node( $node ) {
+		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+
 		$data = array();
 		$meta = array();
 		foreach ( $node->childNodes as $child ) {
-			// We only care about child elements
-			if ( $child->nodeType !== XML_ELEMENT_NODE ) {
+			// We only care about child elements.
+			if ( XML_ELEMENT_NODE !== $child->nodeType ) {
 				continue;
 			}
 
@@ -1585,14 +1607,16 @@ class Importer {
 			}
 		}
 
+		// phpcs:enable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+
 		return compact( 'data', 'meta' );
 	}
 
 	/**
 	 * Process author data.
 	 *
-	 * @param [type] $data
-	 * @param [type] $meta
+	 * @param array $data Data from the author node.
+	 * @param array $meta Meta data from the author node.
 	 * @return WP_Error|array
 	 */
 	protected function process_author( $data, $meta ) {
@@ -1614,7 +1638,7 @@ class Importer {
 		if ( isset( $this->mapping['user'][ $original_id ] ) ) {
 			$existing = $this->mapping['user'][ $original_id ];
 
-			// Note the slug mapping if we need to too
+			// Note the slug mapping if we need to too.
 			if ( ! isset( $this->mapping['user_slug'][ $original_slug ] ) ) {
 				$this->mapping['user_slug'][ $original_slug ] = $existing;
 			}
@@ -1625,13 +1649,13 @@ class Importer {
 		if ( isset( $this->mapping['user_slug'][ $original_slug ] ) ) {
 			$existing = $this->mapping['user_slug'][ $original_slug ];
 
-			// Ensure we note the mapping too
+			// Ensure we note the mapping too.
 			$this->mapping['user'][ $original_id ] = $existing;
 
 			return false;
 		}
 
-		// Allow overriding the user's slug
+		// Allow overriding the user's slug.
 		$login = $original_slug;
 		if ( isset( $this->user_slug_override[ $login ] ) ) {
 			$login = $this->user_slug_override[ $login ];
@@ -1660,7 +1684,8 @@ class Importer {
 		if ( is_wp_error( $user_id ) ) {
 			$this->logger->error(
 				sprintf(
-					__( 'Failed to import user "%s"', 'wordpress-importer' ),
+					// translators: %s is the user login.
+					__( 'Failed to import user "%s"', 'openlab-modules' ),
 					$userdata['user_login']
 				)
 			);
@@ -1683,19 +1708,20 @@ class Importer {
 
 		$this->logger->info(
 			sprintf(
-				__( 'Imported user "%s"', 'wordpress-importer' ),
+				// translators: %s is the user login.
+				__( 'Imported user "%s"', 'openlab-modules' ),
 				$userdata['user_login']
 			)
 		);
 		$this->logger->debug(
 			sprintf(
-				__( 'User %1$d remapped to %2$d', 'wordpress-importer' ),
+				// Translators: %1$d is the original user ID, %2$d is the new user ID.
+				__( 'User %1$d remapped to %2$d', 'openlab-modules' ),
 				$original_id,
 				$user_id
 			)
 		);
 
-		// TODO: Implement meta handling once WXR includes it
 		/**
 		 * User processing completed.
 		 *
@@ -1783,6 +1809,13 @@ class Importer {
 		];
 	}
 
+	/**
+	 * Process term data.
+	 *
+	 * @param array $data Term data.
+	 * @param array $meta Meta data.
+	 * @return bool|int Term ID on success, false otherwise.
+	 */
 	protected function process_term( $data, $meta ) {
 		/**
 		 * Pre-process term data.
@@ -1836,7 +1869,8 @@ class Importer {
 		if ( is_wp_error( $result ) ) {
 			$this->logger->warning(
 				sprintf(
-					__( 'Failed to import %1$s %2$s', 'wordpress-importer' ),
+					// translators: %1$s is the taxonomy name, %2$s is the term name.
+					__( 'Failed to import %1$s %2$s', 'openlab-modules' ),
 					$data['taxonomy'],
 					$data['name']
 				)
@@ -1894,19 +1928,21 @@ class Importer {
 	/**
 	 * Copy attachent file to uploads directory.
 	 *
-	 * @param string $url URL of item to fetch
-	 * @param array  $post Attachment details
+	 * @param string $url  URL of item to fetch.
+	 * @param array  $post Attachment details.
 	 * @return array|WP_Error Local file location details on success, WP_Error otherwise
 	 */
 	protected function copy_local_file( $url, $post ) {
-		// extract the file name and extension from the url
+		// extract the file name and extension from the url.
 		$name = basename( $url );
 
 		// Get local file details.
 		$filename = str_replace( $this->base_url, $this->path, $url );
-		$bits     = file_get_contents( $filename );
 
-		$upload = wp_upload_bits( $name, 0, $bits, $post['upload_date'] );
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		$bits = file_get_contents( $filename );
+
+		$upload = wp_upload_bits( $name, null, $bits, $post['upload_date'] );
 		if ( $upload['error'] ) {
 			return new WP_Error( 'upload_dir_error', $upload['error'] );
 		}
@@ -1915,7 +1951,7 @@ class Importer {
 		$max_size = (int) $this->max_attachment_size();
 
 		if ( ! empty( $max_size ) && $filesize > $max_size ) {
-			unlink( $upload['file'] );
+			wp_delete_file( $upload['file'] );
 			$message = sprintf( 'Local file is too large, limit is %s', size_format( $max_size ) );
 			return new WP_Error( 'import_file_error', $message );
 		}
@@ -1932,8 +1968,9 @@ class Importer {
 					continue;
 				}
 
+				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 				$bits  = file_get_contents( $path );
-				$thumb = wp_upload_bits( $data['file'], 0, $bits, $post['upload_date'] );
+				$thumb = wp_upload_bits( $data['file'], null, $bits, $post['upload_date'] );
 
 				if ( ! is_wp_error( $thumb ) ) {
 					$upload['sizes'][ $size ] = $thumb;
@@ -1964,13 +2001,20 @@ class Importer {
 		$this->post_process_cpt_tax_map();
 	}
 
+	/**
+	 * Post-process posts to update parent and author IDs.
+	 *
+	 * @param array<int, mixed> $todo List of post IDs to process.
+	 * @return void
+	 */
 	protected function post_process_posts( $todo ) {
 		foreach ( $todo as $post_id => $_ ) {
 			$this->logger->debug(
 				sprintf(
-				// Note: title intentionally not used to skip extra processing
-				// for when debug logging is off
-					__( 'Running post-processing for post %d', 'wordpress-importer' ),
+					// Note: title intentionally not used to skip extra processing
+					// for when debug logging is off.
+					// translators: %d is the post ID.
+					__( 'Running post-processing for post %d', 'openlab-modules' ),
 					$post_id
 				)
 			);
@@ -1985,14 +2029,16 @@ class Importer {
 				} else {
 					$this->logger->warning(
 						sprintf(
-							__( 'Could not find the post parent for "%1$s" (post #%2$d)', 'wordpress-importer' ),
+							// translators: %1$s is the post title, %2$d is the post ID.
+							__( 'Could not find the post parent for "%1$s" (post #%2$d)', 'openlab-modules' ),
 							get_the_title( $post_id ),
 							$post_id
 						)
 					);
 					$this->logger->debug(
 						sprintf(
-							__( 'Post %1$d was imported with parent %2$d, but could not be found', 'wordpress-importer' ),
+							// translators: %1$d is the post ID, %2$d is the parent ID.
+							__( 'Post %1$d was imported with parent %2$d, but could not be found', 'openlab-modules' ),
 							$post_id,
 							$parent_id
 						)
@@ -2008,14 +2054,16 @@ class Importer {
 				} else {
 					$this->logger->warning(
 						sprintf(
-							__( 'Could not find the author for "%1$s" (post #%2$d)', 'wordpress-importer' ),
+							// translators: %1$s is the post title, %2$d is the post ID.
+							__( 'Could not find the author for "%1$s" (post #%2$d)', 'openlab-modules' ),
 							get_the_title( $post_id ),
 							$post_id
 						)
 					);
 					$this->logger->debug(
 						sprintf(
-							__( 'Post %1$d was imported with author "%2$s", but could not be found', 'wordpress-importer' ),
+							// translators: %1$d is the post ID, %2$s is the author slug.
+							__( 'Post %1$d was imported with author "%2$s", but could not be found', 'openlab-modules' ),
 							$post_id,
 							$author_slug
 						)
@@ -2025,13 +2073,15 @@ class Importer {
 
 			$has_attachments = get_post_meta( $post_id, '_wxr_import_has_attachment_refs', true );
 			if ( ! empty( $has_attachments ) ) {
-				$post    = get_post( $post_id );
-				$content = $post->post_content;
+				$post = get_post( $post_id );
+				if ( $post ) {
+					$content = $post->post_content;
 
-				// Replace all the URLs we've got
-				$new_content = str_replace( array_keys( $this->url_remap ), $this->url_remap, $content );
-				if ( $new_content !== $content ) {
-					$data['post_content'] = $new_content;
+					// Replace all the URLs we've got.
+					$new_content = str_replace( array_keys( $this->url_remap ), $this->url_remap, $content );
+					if ( $new_content !== $content ) {
+						$data['post_content'] = $new_content;
+					}
 				}
 			}
 
@@ -2039,20 +2089,22 @@ class Importer {
 			if ( empty( $data ) ) {
 				$this->logger->debug(
 					sprintf(
-						__( 'Post %d was marked for post-processing, but none was required.', 'wordpress-importer' ),
+						// translators: %d is the post ID.
+						__( 'Post %d was marked for post-processing, but none was required.', 'openlab-modules' ),
 						$post_id
 					)
 				);
 				continue;
 			}
 
-			// Run the update
+			// Run the update.
 			$data['ID'] = $post_id;
 			$result     = wp_update_post( $data, true );
 			if ( is_wp_error( $result ) ) {
 				$this->logger->warning(
 					sprintf(
-						__( 'Could not update "%1$s" (post #%2$d) with mapped data', 'wordpress-importer' ),
+						// translators: %1$s is the post title, %2$d is the post ID.
+						__( 'Could not update "%1$s" (post #%2$d) with mapped data', 'openlab-modules' ),
 						get_the_title( $post_id ),
 						$post_id
 					)
@@ -2061,13 +2113,19 @@ class Importer {
 				continue;
 			}
 
-			// Clear out our temporary meta keys
+			// Clear out our temporary meta keys.
 			delete_post_meta( $post_id, '_wxr_import_parent' );
 			delete_post_meta( $post_id, '_wxr_import_user_slug' );
 			delete_post_meta( $post_id, '_wxr_import_has_attachment_refs' );
 		}
 	}
 
+	/**
+	 * Post-process comments to update parent and author IDs.
+	 *
+	 * @param array<int, mixed> $todo List of comment IDs to process.
+	 * @return void
+	 */
 	protected function post_process_comments( $todo ) {
 		foreach ( $todo as $comment_id => $_ ) {
 			$data = array();
@@ -2080,13 +2138,15 @@ class Importer {
 				} else {
 					$this->logger->warning(
 						sprintf(
-							__( 'Could not find the comment parent for comment #%d', 'wordpress-importer' ),
+							// translators: %d is the comment ID.
+							__( 'Could not find the comment parent for comment #%d', 'openlab-modules' ),
 							$comment_id
 						)
 					);
 					$this->logger->debug(
 						sprintf(
-							__( 'Comment %1$d was imported with parent %2$d, but could not be found', 'wordpress-importer' ),
+							// translators: %1$d is the comment ID, %2$d is the parent ID.
+							__( 'Comment %1$d was imported with parent %2$d, but could not be found', 'openlab-modules' ),
 							$comment_id,
 							$parent_id
 						)
@@ -2102,13 +2162,15 @@ class Importer {
 				} else {
 					$this->logger->warning(
 						sprintf(
-							__( 'Could not find the author for comment #%d', 'wordpress-importer' ),
+							// translators: %d is the comment ID.
+							__( 'Could not find the author for comment #%d', 'openlab-modules' ),
 							$comment_id
 						)
 					);
 					$this->logger->debug(
 						sprintf(
-							__( 'Comment %1$d was imported with author %2$d, but could not be found', 'wordpress-importer' ),
+							// translators: %1$d is the comment ID, %2$d is the author ID.
+							__( 'Comment %1$d was imported with author %2$d, but could not be found', 'openlab-modules' ),
 							$comment_id,
 							$author_id
 						)
@@ -2121,20 +2183,21 @@ class Importer {
 				continue;
 			}
 
-			// Run the update
+			// Run the update.
 			$data['comment_ID'] = $comment_id;
 			$result             = wp_update_comment( wp_slash( $data ) );
 			if ( empty( $result ) ) {
 				$this->logger->warning(
 					sprintf(
-						__( 'Could not update comment #%d with mapped data', 'wordpress-importer' ),
+						// translators: %d is the comment ID.
+						__( 'Could not update comment #%d with mapped data', 'openlab-modules' ),
 						$comment_id
 					)
 				);
 				continue;
 			}
 
-			// Clear out our temporary meta keys
+			// Clear out our temporary meta keys.
 			delete_comment_meta( $comment_id, '_wxr_import_parent' );
 			delete_comment_meta( $comment_id, '_wxr_import_user' );
 		}
@@ -2302,33 +2365,41 @@ class Importer {
 
 	/**
 	 * Use stored mapping information to update old attachment URLs
+	 *
+	 * @return void
 	 */
 	protected function replace_attachment_urls_in_content() {
 		global $wpdb;
-		// make sure we do the longest urls first, in case one is a substring of another
+		// make sure we do the longest urls first, in case one is a substring of another.
 		uksort( $this->url_remap, array( $this, 'cmpr_strlen' ) );
 
 		foreach ( $this->url_remap as $from_url => $to_url ) {
-			// remap urls in post_content
+			// remap urls in post_content.
 			$query = $wpdb->prepare( "UPDATE {$wpdb->posts} SET post_content = REPLACE(post_content, %s, %s)", $from_url, $to_url );
+
+			// phpcs:disable WordPress.DB
 			$wpdb->query( $query );
 
-			// remap enclosure urls
-			$query  = $wpdb->prepare( "UPDATE {$wpdb->postmeta} SET meta_value = REPLACE(meta_value, %s, %s) WHERE meta_key='enclosure'", $from_url, $to_url );
+			// remap enclosure urls.
+			$query = $wpdb->prepare( "UPDATE {$wpdb->postmeta} SET meta_value = REPLACE(meta_value, %s, %s) WHERE meta_key='enclosure'", $from_url, $to_url );
+
+			// phpcs:disable WordPress.DB
 			$result = $wpdb->query( $query );
 		}
 	}
 
 	/**
 	 * Update _thumbnail_id meta to new, imported attachment IDs
+	 *
+	 * @return void
 	 */
-	function remap_featured_images() {
-		// cycle through posts that have a featured image
+	protected function remap_featured_images() {
+		// cycle through posts that have a featured image.
 		foreach ( $this->featured_images as $post_id => $value ) {
 			if ( isset( $this->processed_posts[ $value ] ) ) {
 				$new_id = $this->processed_posts[ $value ];
 
-				// only update if there's a difference
+				// only update if there's a difference.
 				if ( $new_id !== $value ) {
 					update_post_meta( $post_id, '_thumbnail_id', $new_id );
 				}
@@ -2337,15 +2408,15 @@ class Importer {
 	}
 
 	/**
-	 * Decide if the given meta key maps to information we will want to import
+	 * Decide if the given meta key maps to information we will want to import.
 	 *
-	 * @param string $key The meta key to check
-	 * @return string|bool The key if we do want to import, false if not
+	 * @param string $key The meta key to check.
+	 * @return string|bool The key if we do want to import, false if not.
 	 */
 	public function is_valid_meta_key( $key ) {
-		// skip attachment metadata since we'll regenerate it from scratch
-		// skip _edit_lock as not relevant for import
-		if ( in_array( $key, array( '_wp_attached_file', '_wp_attachment_metadata', '_edit_lock' ) ) ) {
+		// skip attachment metadata since we'll regenerate it from scratch.
+		// skip _edit_lock as not relevant for import.
+		if ( in_array( $key, array( '_wp_attached_file', '_wp_attachment_metadata', '_edit_lock' ), true ) ) {
 			return false;
 		}
 
@@ -2363,17 +2434,24 @@ class Importer {
 	}
 
 	/**
-	 * Added to http_request_timeout filter to force timeout at 60 seconds during import
+	 * Added to http_request_timeout filter to force timeout at 60 seconds during import.
 	 *
 	 * @access protected
+	 *
 	 * @return int 60
 	 */
-	function bump_request_timeout( $val ) {
+	public function bump_request_timeout() {
 		return 60;
 	}
 
-	// return the difference in length between two strings
-	function cmpr_strlen( $a, $b ) {
+	/**
+	 * Compare function for sorting by string length.
+	 *
+	 * @param string $a First string.
+	 * @param string $b Second string.
+	 * @return int Comparison result.
+	 */
+	protected function cmpr_strlen( $a, $b ) {
 		return strlen( $b ) - strlen( $a );
 	}
 
@@ -2391,6 +2469,8 @@ class Importer {
 	 */
 	protected function prefill_existing_posts() {
 		global $wpdb;
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery
 		$posts = $wpdb->get_results( "SELECT ID, guid FROM {$wpdb->posts}" );
 
 		foreach ( $posts as $item ) {
@@ -2405,19 +2485,19 @@ class Importer {
 	 * @return int|bool Existing post ID if it exists, false otherwise.
 	 */
 	protected function post_exists( $data ) {
-		// Constant-time lookup if we prefilled
+		// Constant-time lookup if we prefilled.
 		$exists_key = $data['guid'];
 
 		if ( $this->options['prefill_existing_posts'] ) {
 			return isset( $this->exists['post'][ $exists_key ] ) ? $this->exists['post'][ $exists_key ] : false;
 		}
 
-		// No prefilling, but might have already handled it
+		// No prefilling, but might have already handled it.
 		if ( isset( $this->exists['post'][ $exists_key ] ) ) {
 			return $this->exists['post'][ $exists_key ];
 		}
 
-		// Still nothing, try post_exists, and cache it
+		// Still nothing, try post_exists, and cache it.
 		$exists                              = post_exists( $data['post_title'], $data['post_content'], $data['post_date'] );
 		$this->exists['post'][ $exists_key ] = $exists;
 
@@ -2442,6 +2522,8 @@ class Importer {
 	 */
 	protected function prefill_existing_comments() {
 		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 		$posts = $wpdb->get_results( "SELECT comment_ID, comment_author, comment_date FROM {$wpdb->comments}" );
 
 		foreach ( $posts as $item ) {
@@ -2459,17 +2541,17 @@ class Importer {
 	protected function comment_exists( $data ) {
 		$exists_key = sha1( $data['comment_author'] . ':' . $data['comment_date'] );
 
-		// Constant-time lookup if we prefilled
+		// Constant-time lookup if we prefilled.
 		if ( $this->options['prefill_existing_comments'] ) {
 			return isset( $this->exists['comment'][ $exists_key ] ) ? $this->exists['comment'][ $exists_key ] : false;
 		}
 
-		// No prefilling, but might have already handled it
+		// No prefilling, but might have already handled it.
 		if ( isset( $this->exists['comment'][ $exists_key ] ) ) {
 			return $this->exists['comment'][ $exists_key ];
 		}
 
-		// Still nothing, try comment_exists, and cache it
+		// Still nothing, try comment_exists, and cache it.
 		$exists                                 = comment_exists( $data['comment_author'], $data['comment_date'] );
 		$this->exists['comment'][ $exists_key ] = $exists;
 
@@ -2496,7 +2578,9 @@ class Importer {
 		global $wpdb;
 		$query  = "SELECT t.term_id, tt.taxonomy, t.slug FROM {$wpdb->terms} AS t";
 		$query .= " JOIN {$wpdb->term_taxonomy} AS tt ON t.term_id = tt.term_id";
-		$terms  = $wpdb->get_results( $query );
+
+		// phpcs:disable WordPress.DB
+		$terms = $wpdb->get_results( $query );
 
 		foreach ( $terms as $item ) {
 			$exists_key                          = sha1( $item->taxonomy . ':' . $item->slug );
@@ -2513,17 +2597,17 @@ class Importer {
 	protected function term_exists( $data ) {
 		$exists_key = sha1( $data['taxonomy'] . ':' . $data['slug'] );
 
-		// Constant-time lookup if we prefilled
+		// Constant-time lookup if we prefilled.
 		if ( $this->options['prefill_existing_terms'] ) {
 			return isset( $this->exists['term'][ $exists_key ] ) ? $this->exists['term'][ $exists_key ] : false;
 		}
 
-		// No prefilling, but might have already handled it
+		// No prefilling, but might have already handled it.
 		if ( isset( $this->exists['term'][ $exists_key ] ) ) {
 			return $this->exists['term'][ $exists_key ];
 		}
 
-		// Still nothing, try comment_exists, and cache it
+		// Still nothing, try comment_exists, and cache it.
 		$exists = term_exists( $data['slug'], $data['taxonomy'] );
 		if ( is_array( $exists ) ) {
 			$exists = $exists['term_id'];

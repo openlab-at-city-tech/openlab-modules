@@ -16,6 +16,10 @@
         <exclude name="Universal.Arrays.DisallowShortArraySyntax" />
     </rule>
 
+    <rule ref="WordPress.NamingConventions.ValidHookName.UseUnderscores">
+	<exclude-pattern>classes/Import/Importer.php</exclude-pattern>
+    </rule>
+
     <rule ref="WordPress.WP.I18n">
         <properties>
             <property name="text_domain" type="array" value="openlab-modules" />
