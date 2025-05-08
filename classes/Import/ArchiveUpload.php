@@ -2,7 +2,8 @@
 /**
  * Import Upload handler.
  *
- * Based on `File_Upload_Upgrader`
+ * Based on `File_Upload_Upgrader`.
+ *
  * @see https://developer.wordpress.org/reference/classes/file_upload_upgrader/.
  *
  * @package openlab-modules

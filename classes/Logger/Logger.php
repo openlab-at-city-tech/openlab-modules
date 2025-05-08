@@ -78,7 +78,7 @@ class Logger {
 	 * @param array<mixed> $context Contextual data.
 	 * @return null
 	 */
-	public function error( $message, array $context = array()) {
+	public function error( $message, array $context = array() ) {
 		return $this->log( 'error', $message, $context );
 	}
 

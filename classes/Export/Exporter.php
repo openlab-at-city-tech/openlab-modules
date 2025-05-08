@@ -201,7 +201,7 @@ class Exporter {
 		if ( ! empty( $files ) ) {
 			foreach ( $files as $file ) {
 				if ( is_file( $file ) ) {
-					unlink( $file );
+					wp_delete_file( $file );
 				}
 			}
 		}
@@ -325,7 +325,7 @@ class Exporter {
 	protected function prepare_readme() {
 		$admin_names = \OpenLab\ImportExport\get_site_admin_names();
 
-		$text = esc_html__( 'Acknowledgements', 'openlab-import-export' );
+		$text = esc_html__( 'Acknowledgements', 'openlab-modules' );
 
 		$converter = new \League\HTMLToMarkdown\HtmlConverter();
 
@@ -334,17 +334,17 @@ class Exporter {
 
 		if ( ! empty( $this->readme_custom_text ) ) {
 			$text .= "\n\n";
-			$text .= '# ' . esc_html__( 'Note from Exporter', 'openlab-import-export' );
+			$text .= '# ' . esc_html__( 'Note from Exporter', 'openlab-modules' );
 			$text .= "\n\n";
 			$text .= $this->readme_custom_text;
-		};
+		}
 
 		$text .= "\n\n";
 
-		$text .= '# ' . esc_html__( 'Theme, Plugins, and Menu', 'openlab-import-export' );
+		$text .= '# ' . esc_html__( 'Theme, Plugins, and Menu', 'openlab-modules' );
 		$text .= "\n\n";
 
-		$text .= esc_html__( 'The exported site uses the theme and plugins listed below. If you want your site to have the same appearance and features, you will need to install (if necessary) and activate the theme and plugins before you import.', 'openlab-import-export' );
+		$text .= esc_html__( 'The exported site uses the theme and plugins listed below. If you want your site to have the same appearance and features, you will need to install (if necessary) and activate the theme and plugins before you import.', 'openlab-modules' );
 
 		$active_theme = wp_get_theme( get_stylesheet() );
 
@@ -354,7 +354,7 @@ class Exporter {
 		}
 
 		$text .= "\n\n";
-		$text .= esc_html__( 'Theme:', 'openlab-import-export' );
+		$text .= esc_html__( 'Theme:', 'openlab-modules' );
 		$text .= "\n";
 		$text .= sprintf(
 			'* %s: %s',
@@ -363,7 +363,7 @@ class Exporter {
 		);
 		$text .= "\n\n";
 
-		$text .= esc_html__( 'Plugins:', 'openlab-import-export' );
+		$text .= esc_html__( 'Plugins:', 'openlab-modules' );
 		$text .= "\n";
 
 		$all_plugins = get_plugins();
@@ -402,7 +402,8 @@ class Exporter {
 	/**
 	 * Gets a wordpress.org download URI for a plugin file.
 	 *
-	 * @param string $plugin_file
+	 * @param string $plugin_file The plugin file path.
+	 * @return string
 	 */
 	protected function get_plugin_uri( $plugin_file ) {
 		$pf_parts    = explode( '/', $plugin_file );
@@ -414,7 +415,8 @@ class Exporter {
 	/**
 	 * Gets a wordpress.org download URI for a theme.
 	 *
-	 * @param string $theme
+	 * @param string $theme The theme slug.
+	 * @return string
 	 */
 	protected function get_theme_uri( $theme ) {
 		return $this->get_download_uri( $theme, 'themes' );
@@ -423,8 +425,9 @@ class Exporter {
 	/**
 	 * Gets a wordpress.org download URI for a theme or plugin.
 	 *
-	 * @param string $slug
+	 * @param string $slug The slug of the plugin or theme.
 	 * @param string $type 'plugins' or 'themes'.
+	 * @return string
 	 */
 	protected function get_download_uri( $slug, $type ) {
 		$cached = get_transient( 'download_uri_' . $slug );
@@ -545,13 +548,13 @@ class Exporter {
 	 * @return int Attachment post ID, or 0 if none found.
 	 */
 	protected function get_attachment_id_from_url( $url ) {
-		// 1) Try the built-in function first
+		// 1) Try the built-in function first.
 		$id = attachment_url_to_postid( $url );
 		if ( $id ) {
 			return $id;
 		}
 
-		// 2) Strip out -WxH size suffix (e.g. "-680x1024") before the extension
+		// 2) Strip out -WxH size suffix (e.g. "-680x1024") before the extension.
 		$clean = preg_replace(
 			'/-\d+x\d+(?=\.\w{3,4}$)/',
 			'',
@@ -565,19 +568,24 @@ class Exporter {
 			}
 		}
 
-		// 3) Last-ditch DB lookup on the guid (slow but reliable)
+		// 3) Last-ditch DB lookup on the guid (slow but reliable).
 		global $wpdb;
+
+		// We're looking for attachments whose GUID ends with this basename.
 		$basename = wp_basename( $clean );
-		// We're looking for attachments whose GUID ends with this basename
 		$like     = '%' . $wpdb->esc_like( $basename );
-		$id       = $wpdb->get_var( $wpdb->prepare(
-			"SELECT ID
-			 FROM {$wpdb->posts}
-			 WHERE post_type = 'attachment'
-			   AND guid LIKE %s
-			 LIMIT 1",
-			$like
-		) );
+
+		// phpcs:ignore WordPress.DB
+		$id = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT ID
+				 FROM {$wpdb->posts}
+				 WHERE post_type = 'attachment'
+				   AND guid LIKE %s
+				 LIMIT 1",
+				$like
+			)
+		);
 
 		return $id ? (int) $id : 0;
 	}
@@ -617,13 +625,14 @@ class Exporter {
 		}
 
 		$readme_pathname = $this->exports_dir . 'readme.md';
+		// phpcs:ignore WordPress.WP.AlternativeFunctions
 		file_put_contents( $readme_pathname, $this->readme_text );
 		$zip->addFile( $readme_pathname, 'readme.md' );
 
 		$zip->close();
 
 		// Remove export file.
-		unlink( $this->exports_dir . 'wordpress.xml' );
+		wp_delete_file( $this->exports_dir . 'wordpress.xml' );
 
 		return $archive_pathname;
 	}
@@ -644,7 +653,7 @@ class Exporter {
 	/**
 	 * Change file path for better storing in archive.
 	 *
-	 * @param string $file
+	 * @param string $file File path.
 	 * @return string
 	 */
 	protected function normalize_path( $file ) {

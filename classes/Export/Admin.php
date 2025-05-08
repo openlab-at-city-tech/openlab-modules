@@ -219,10 +219,12 @@ class Admin {
 		header( 'Content-type: application/zip' );
 		header( 'Content-Disposition: attachment; filename="' . basename( $filename ) . '"' );
 		header( 'Content-length: ' . filesize( $filename ) );
+
+		// phpcs:ignore WordPress.WP.AlternativeFunctions
 		readfile( $filename );
 
 		// Remove file.
-		unlink( $filename );
+		wp_delete_file( $filename );
 
 		exit;
 	}

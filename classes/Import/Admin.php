@@ -396,6 +396,7 @@ class Admin {
 		echo 'data: ' . wp_json_encode( $data ) . "\n\n";
 
 		// Extra padding.
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo ':' . str_repeat( ' ', 2048 ) . "\n\n";
 
 		flush();
@@ -404,12 +405,10 @@ class Admin {
 	/**
 	 * Display import process errors.
 	 *
-	 * @param WP_Error $error
+	 * @param WP_Error $error Error object.
 	 * @return void
 	 */
 	protected function display_error( WP_Error $error ) {
-		extract( [ 'error' => $error ], EXTR_SKIP );
-
-		var_dump( $error );
+		echo esc_html( $error->get_error_message() );
 	}
 }
