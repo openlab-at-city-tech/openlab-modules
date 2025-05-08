@@ -34,6 +34,13 @@ class WXP {
 	protected $module_page_ids = [];
 
 	/**
+	 * IDs of the attachments to export.
+	 *
+	 * @var array<int>
+	 */
+	protected $attachment_ids = [];
+
+	/**
 	 * IDs of all items to export.
 	 *
 	 * Includes attachments.
@@ -77,6 +84,16 @@ class WXP {
 	 */
 	public function set_module_pages( $module_page_ids ) {
 		$this->module_page_ids = $module_page_ids;
+	}
+
+	/**
+	 * Sets the IDs of the attachments to export.
+	 *
+	 * @param array<int> $item_ids IDs of the attachments to export.
+	 * @return void
+	 */
+	public function set_attachments( $item_ids ) {
+		$this->attachment_ids = $item_ids;
 	}
 
 	/**
@@ -156,38 +173,9 @@ class WXP {
 	 * @return array<int>
 	 */
 	protected function get_item_ids() {
-		if ( ! empty( $this->item_ids ) ) {
-			return $this->item_ids;
-		}
-
-		$this->item_ids = [ $this->module_id ];
-
-		if ( ! empty( $this->module_page_ids ) ) {
-			$this->item_ids = array_merge( $this->item_ids, $this->module_page_ids );
-		}
-
-		// Get attachments.
-		foreach ( $this->item_ids as $item_id ) {
-			$children = get_children(
-				[
-					'post_parent' => $item_id,
-					'post_type'   => 'any',
-					'post_status' => 'any',
-				]
-			);
-
-			if ( ! empty( $children ) ) {
-				foreach ( $children as $child ) {
-					if ( ! $child instanceof \WP_Post ) {
-						continue;
-					}
-
-					$this->item_ids[] = $child->ID;
-				}
-			}
-		}
-
-		return $this->item_ids;
+		$ids = [ $this->module_id ];
+		$ids = array_merge( $ids, $this->module_page_ids, $this->attachment_ids );
+		return array_unique( $ids );
 	}
 
 	/**

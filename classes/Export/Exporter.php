@@ -467,6 +467,7 @@ class Exporter {
 
 		$wxp->set_module_id( $this->module_id );
 		$wxp->set_module_pages( $this->get_module_pages() );
+		$wxp->set_attachments( $this->get_attachments() );
 
 		if ( ! $wxp->create() ) {
 			return new WP_Error(
@@ -496,6 +497,89 @@ class Exporter {
 		$this->module_pages = $module->get_page_ids();
 
 		return $this->module_pages;
+	}
+
+	/**
+	 * Gets a list of IDs belonging to attachments that should be included in the export.
+	 *
+	 * We loop through the content of all module and pages and look for image URLs.
+	 *
+	 * @return array<int>
+	 */
+	protected function get_attachments() {
+		$item_ids = [ $this->module_id ];
+		$item_ids = array_merge( $item_ids, $this->get_module_pages() );
+
+		// Now collect any attachments referenced in post_content.
+		$attachment_ids = [];
+
+		foreach ( $item_ids as $post_id ) {
+			$post = get_post( $post_id );
+			if ( ! $post ) {
+				continue;
+			}
+
+			preg_match_all(
+				'#(https?://[^/]+)?' . preg_quote( $this->uploads_dir_baseurl, '#' ) . '((.*?)(\.(jpg|jpeg|png|gif|pdf|webp)))#i',
+				$post->post_content,
+				$matches
+			);
+
+			if ( ! empty( $matches[0] ) ) {
+				foreach ( $matches[0] as $url ) {
+					$attachment_id = $this->get_attachment_id_from_url( $url );
+					if ( $attachment_id ) {
+						$attachment_ids[] = $attachment_id;
+					}
+				}
+			}
+		}
+
+		return array_unique( $attachment_ids );
+	}
+
+	/**
+	 * Map any uploads URL (even sized variants) back to its attachment ID.
+	 *
+	 * @param string $url Full URL to the image file.
+	 * @return int Attachment post ID, or 0 if none found.
+	 */
+	protected function get_attachment_id_from_url( $url ) {
+		// 1) Try the built-in function first
+		$id = attachment_url_to_postid( $url );
+		if ( $id ) {
+			return $id;
+		}
+
+		// 2) Strip out -WxH size suffix (e.g. "-680x1024") before the extension
+		$clean = preg_replace(
+			'/-\d+x\d+(?=\.\w{3,4}$)/',
+			'',
+			$url
+		);
+
+		if ( $clean !== $url ) {
+			$id = attachment_url_to_postid( $clean );
+			if ( $id ) {
+				return $id;
+			}
+		}
+
+		// 3) Last-ditch DB lookup on the guid (slow but reliable)
+		global $wpdb;
+		$basename = wp_basename( $clean );
+		// We're looking for attachments whose GUID ends with this basename
+		$like     = '%' . $wpdb->esc_like( $basename );
+		$id       = $wpdb->get_var( $wpdb->prepare(
+			"SELECT ID
+			 FROM {$wpdb->posts}
+			 WHERE post_type = 'attachment'
+			   AND guid LIKE %s
+			 LIMIT 1",
+			$like
+		) );
+
+		return $id ? (int) $id : 0;
 	}
 
 	/**
