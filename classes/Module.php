@@ -573,7 +573,6 @@ class Module {
 				'className' => 'openlab-modules-attribution-text',
 			],
 			'innerBlocks'  => [ $paragraph_block ],
-			'innerHTML'    => '<div class="wp-block-group openlab-modules-attribution-text"></div>',
 			'innerContent' => [
 				'<div class="wp-block-group openlab-modules-attribution-text">',
 				null, // This will be replaced by the paragraph block.
@@ -596,7 +595,6 @@ class Module {
 				],
 			],
 			'innerBlocks'  => [ $inner_group_block ],
-			'innerHTML'    => '<div class="wp-block-group openlab-modules-attribution-wrapper has-background" style="background-color:#efefef;padding:20px"></div>',
 			'innerContent' => [
 				'<div class="wp-block-group openlab-modules-attribution-wrapper has-background" style="background-color:#efefef;padding:20px">',
 				null, // This will be replaced by the inner group block.
