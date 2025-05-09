@@ -82,7 +82,7 @@ class Admin {
 			$extract_path = $decompressor->extract();
 
 			if ( is_wp_error( $extract_path ) ) {
-				$this->display_error( $extract_path->get_error_message() );
+				$this->display_error( $extract_path );
 				return;
 			}
 
@@ -338,7 +338,12 @@ class Admin {
 		add_filter( 'wxr_importer.pre_process.user', '__return_null' );
 
 		$importer = $this->get_importer( $this->id );
-		$status   = $importer->import( $extract_path . '/wordpress.xml' );
+		if ( is_wp_error( $importer ) ) {
+			$this->display_error( $importer );
+			return;
+		}
+
+		$status = $importer->import( $extract_path . '/wordpress.xml' );
 
 		// Clean up.
 		$decompressor = new Decompressor( $this->id );
@@ -363,18 +368,19 @@ class Admin {
 	 * Get the importer instance.
 	 *
 	 * @param int $archive_id Archive ID.
-	 * @return Importer
+	 * @return Importer|\WP_Error
 	 */
 	protected function get_importer( $archive_id ) {
-		$extract_path    = get_post_meta( $archive_id, 'extract_path', true );
-		$attachment_mode = get_post_meta( $archive_id, 'attachment_mode', true );
+		$extract_path = get_post_meta( $archive_id, 'extract_path', true );
+		if ( ! is_string( $extract_path ) ) {
+			return new WP_Error( 'openlab-modules-import', __( 'Invalid archive ID.', 'openlab-modules' ) );
+		}
 
 		$options = [
 			'fetch_attachments'         => true,
 			'prefill_existing_posts'    => false,
 			'prefill_existing_commetns' => false,
 			'prefill_existing_terms'    => false,
-			'attachment_mode'           => $attachment_mode,
 			'aggressive_url_search'     => true,
 			'default_author'            => get_current_user_id(),
 		];
@@ -390,6 +396,7 @@ class Admin {
 	 * Emit a Server-Sent Events message.
 	 *
 	 * @param mixed $data Data to be JSON-encoded and sent in the message.
+	 * @return void
 	 */
 	protected function emit_sse_message( $data ) {
 		echo "event: message\n";
