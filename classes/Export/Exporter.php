@@ -20,7 +20,7 @@ class Exporter {
 	/**
 	 * Files to export.
 	 *
-	 * @var array
+	 * @var array<string>
 	 */
 	protected $files = [];
 
@@ -323,7 +323,7 @@ class Exporter {
 	 * @return void
 	 */
 	protected function prepare_readme() {
-		$admin_names = \OpenLab\ImportExport\get_site_admin_names();
+		$admin_names = $this->get_site_admin_names();
 
 		$text = esc_html__( 'Acknowledgements', 'openlab-modules' );
 
@@ -400,6 +400,23 @@ class Exporter {
 	}
 
 	/**
+	 * Gets a list of names of administrators for the current site.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<string>
+	 */
+	protected function get_site_admin_names() {
+		$admin_names = array_map(
+			function( $user ) {
+				return $user->display_name;
+			},
+			get_users( [ 'role' => 'administrator' ] )
+		);
+		return $admin_names;
+	}
+
+	/**
 	 * Gets a wordpress.org download URI for a plugin file.
 	 *
 	 * @param string $plugin_file The plugin file path.
@@ -431,7 +448,7 @@ class Exporter {
 	 */
 	protected function get_download_uri( $slug, $type ) {
 		$cached = get_transient( 'download_uri_' . $slug );
-		if ( $cached ) {
+		if ( $cached && is_string( $cached ) ) {
 			return $cached;
 		}
 
@@ -561,6 +578,10 @@ class Exporter {
 			$url
 		);
 
+		if ( ! $clean ) {
+			return 0;
+		}
+
 		if ( $clean !== $url ) {
 			$id = attachment_url_to_postid( $clean );
 			if ( $id ) {
@@ -658,6 +679,10 @@ class Exporter {
 	 */
 	protected function normalize_path( $file ) {
 		$abs_path = realpath( ABSPATH );
+		if ( ! $abs_path ) {
+			return $file;
+		}
+
 		$abs_path = trailingslashit( str_replace( '\\', '/', $abs_path ) );
 
 		return str_replace( [ '\\', $abs_path ], '/', $file );
