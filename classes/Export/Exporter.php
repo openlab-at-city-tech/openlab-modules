@@ -408,7 +408,7 @@ class Exporter {
 	 */
 	protected function get_site_admin_names() {
 		$admin_names = array_map(
-			function( $user ) {
+			function ( $user ) {
 				return $user->display_name;
 			},
 			get_users( [ 'role' => 'administrator' ] )
