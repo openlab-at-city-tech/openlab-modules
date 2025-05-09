@@ -406,6 +406,32 @@ class Schema {
 		);
 
 		register_rest_field(
+			[ 'openlab_module' ],
+			'completionMessageBccString',
+			[
+				'get_callback'    => function ( $data_object ) {
+					$module = Module::get_instance( $data_object['id'] );
+					if ( ! $module ) {
+						return '';
+					}
+
+					return $module->get_completion_message_bcc_string();
+				},
+				'update_callback' => function ( $value, $data_object ) {
+					$module = Module::get_instance( $data_object->ID );
+					if ( ! $module ) {
+						return;
+					}
+
+					$sanitized = array_map( 'trim', explode( ',', $value ) );
+					$string    = implode( ',', $sanitized );
+
+					update_post_meta( $data_object->ID, 'completion_message_bcc', $string );
+				},
+			]
+		);
+
+		register_rest_field(
 			[ 'page' ],
 			'moduleIds',
 			[

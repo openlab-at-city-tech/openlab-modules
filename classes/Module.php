@@ -366,6 +366,30 @@ class Module {
 	}
 
 	/**
+	 * Gets the completion message BCC string, for use in the editor.
+	 *
+	 * @return string
+	 */
+	public function get_completion_message_bcc_string() {
+		return implode( ', ', $this->get_completion_message_bcc_list() );
+	}
+
+	/**
+	 * Gets the list of completion message BCC addresses for this module.
+	 *
+	 * @return string[]
+	 */
+	public function get_completion_message_bcc_list() {
+		$completion_message_bcc = get_post_meta( $this->id, 'completion_message_bcc', true );
+
+		if ( ! is_string( $completion_message_bcc ) ) {
+			$completion_message_bcc = '';
+		}
+
+		return array_filter( array_map( 'trim', explode( ',', $completion_message_bcc ) ) );
+	}
+
+	/**
 	 * Is sharing enable for this module?
 	 *
 	 * @return bool
