@@ -21,7 +21,7 @@ class ArchiveUpload {
 	/**
 	 * Supported archive extensions
 	 *
-	 * @var array
+	 * @var array<string>
 	 */
 	private $supported_archives = [
 		'zip',
@@ -81,7 +81,6 @@ class ArchiveUpload {
 		}
 
 		$file_path_info = is_string( $_FILES[ $this->form ]['name'] ) ? pathinfo( sanitize_text_field( wp_unslash( $_FILES[ $this->form ]['name'] ) ) ) : [];
-		_b( $file_path_info );
 
 		if ( ! $this->is_archive( $file_path_info ) ) {
 			return new WP_Error( 'import.upload.handle', 'Incorrect format. Please choose an OpenLab site archive file.' );
@@ -94,7 +93,6 @@ class ArchiveUpload {
 
 		// @phpstan-ignore-next-line
 		$file = wp_handle_upload( $_FILES[ $this->form ], $overrides );
-		_b( $file );
 
 		if ( isset( $file['error'] ) ) {
 			return new WP_Error( 'import.upload.handle', $file['error'] );
