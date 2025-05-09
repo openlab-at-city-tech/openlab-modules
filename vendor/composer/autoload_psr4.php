@@ -7,5 +7,6 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'OpenLab\\Modules\\' => array($baseDir . '/classes'),
+    'League\\HTMLToMarkdown\\' => array($vendorDir . '/league/html-to-markdown/src'),
     'HardG\\CptTax\\' => array($vendorDir . '/hard-g/cpt-tax/src'),
 );

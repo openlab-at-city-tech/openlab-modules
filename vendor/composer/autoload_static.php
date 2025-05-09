@@ -4,12 +4,16 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit4f686584772785c887b54963dfa25627
+class ComposerStaticInit7d2dce5640e95b0c5b052288780f9fba
 {
     public static $prefixLengthsPsr4 = array (
         'O' => 
         array (
             'OpenLab\\Modules\\' => 16,
+        ),
+        'L' => 
+        array (
+            'League\\HTMLToMarkdown\\' => 22,
         ),
         'H' => 
         array (
@@ -21,6 +25,10 @@ class ComposerStaticInit4f686584772785c887b54963dfa25627
         'OpenLab\\Modules\\' => 
         array (
             0 => __DIR__ . '/../..' . '/classes',
+        ),
+        'League\\HTMLToMarkdown\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/league/html-to-markdown/src',
         ),
         'HardG\\CptTax\\' => 
         array (
@@ -35,9 +43,9 @@ class ComposerStaticInit4f686584772785c887b54963dfa25627
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit4f686584772785c887b54963dfa25627::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit4f686584772785c887b54963dfa25627::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit4f686584772785c887b54963dfa25627::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit7d2dce5640e95b0c5b052288780f9fba::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit7d2dce5640e95b0c5b052288780f9fba::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit7d2dce5640e95b0c5b052288780f9fba::$classMap;
 
         }, null, ClassLoader::class);
     }
