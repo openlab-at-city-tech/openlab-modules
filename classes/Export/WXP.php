@@ -496,6 +496,8 @@ class WXP {
 
 		unset( $xml );
 		file_put_contents( $this->filename, "</channel>\n</rss>", FILE_APPEND );
+
+		return true;
 	}
 
 	/**
