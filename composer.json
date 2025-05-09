@@ -27,6 +27,7 @@
         }
     },
     "require": {
-        "hard-g/cpt-tax": "^1.0"
+        "hard-g/cpt-tax": "^1.0",
+        "league/html-to-markdown": "^5.1"
     }
 }

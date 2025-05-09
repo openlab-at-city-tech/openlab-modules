@@ -7,10 +7,27 @@
 
 namespace OpenLab\Modules;
 
+use OpenLab\Modules\Export\Admin as ExportAdmin;
+use OpenLab\Modules\Import\Admin as ImportAdmin;
+
 /**
  * Admin module.
  */
 class Admin {
+	/**
+	 * Export Admin.
+	 *
+	 * @var \OpenLab\Modules\Export\Admin
+	 */
+	private $export_admin;
+
+	/**
+	 * Import Admin.
+	 *
+	 * @var \OpenLab\Modules\Import\Admin
+	 */
+	private $import_admin;
+
 	/**
 	 * Fetches the singleton instance of this class.
 	 *
@@ -49,6 +66,12 @@ class Admin {
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_assets' ] );
 
 		add_action( 'admin_init', [ $this, 'set_blogmeta_flag' ] );
+
+		$this->export_admin = new ExportAdmin();
+		$this->export_admin->init();
+
+		$this->import_admin = new Import\Admin();
+		$this->import_admin->init();
 	}
 
 	/**

@@ -262,6 +262,51 @@ class Module {
 	}
 
 	/**
+	 * Gets the "raw" attribution data for the module.
+	 *
+	 * We call it "raw" because it's the data that corresponds to the current
+	 * module. What's stored in the 'module_attribution' post meta may refer
+	 * to the source module.
+	 *
+	 * @return array{user_id: int, post_id: int, site_id: int, user_url: string, user_name: string, post_url: string, post_title: string, text: string}
+	 */
+	public function get_raw_attribution_data() {
+		$module_post = $this->get_post();
+
+		$attribution_data = [
+			'user_id'    => 0,
+			'user_url'   => '',
+			'user_name'  => '',
+			'post_id'    => 0,
+			'post_url'   => '',
+			'post_title' => '',
+			'site_id'    => 0,
+			'text'       => '',
+		];
+
+		if ( ! $module_post ) {
+			return $attribution_data;
+		}
+
+		$attribution_data['user_id']    = (int) $module_post->post_author;
+		$attribution_data['user_url']   = bp_core_get_user_domain( $module_post->post_author );
+		$attribution_data['user_name']  = bp_core_get_user_displayname( $module_post->post_author );
+		$attribution_data['post_id']    = $module_post->ID;
+		$attribution_data['post_url']   = (string) get_permalink( $module_post->ID );
+		$attribution_data['post_title'] = $module_post->post_title;
+		$attribution_data['site_id']    = get_current_blog_id();
+
+		$attribution_data['text'] = sprintf(
+			// translators: 1. Link to source module, 2. Link to source module author.
+			__( '<span class="openlab-module-attribution-prefix">Attribution:</span> This module is based on %1$s by %2$s.', 'openlab-modules' ),
+			'<a href="' . $attribution_data['post_url'] . '">' . $attribution_data['post_title'] . '</a>',
+			'<a href="' . $attribution_data['user_url'] . '">' . $attribution_data['user_name'] . '</a>'
+		);
+
+		return $attribution_data;
+	}
+
+	/**
 	 * Gets the attribution data for the module.
 	 *
 	 * @return array{user_id: int, post_id: int, site_id: int, user_url: string, user_name: string, post_url: string, post_title: string, text: string}
@@ -459,27 +504,7 @@ class Module {
 			}
 		}
 
-		$module_post = $this->get_post();
-		if ( $module_post ) {
-			$attribution_data = [
-				'user_id'    => (int) $module_post->post_author,
-				'user_url'   => bp_core_get_user_domain( $module_post->post_author ),
-				'user_name'  => bp_core_get_user_displayname( $module_post->post_author ),
-				'post_id'    => $this->id,
-				'post_url'   => get_permalink( $this->id ),
-				'post_title' => $this->get_title(),
-				'site_id'    => get_current_blog_id(),
-			];
-
-			$attribution_data['text'] = sprintf(
-				// translators: 1. Link to source module, 2. Link to source module author.
-				__( '<span class="openlab-module-attribution-prefix">Attribution:</span> This module is based on %1$s by %2$s.', 'openlab-modules' ),
-				'<a href="' . $attribution_data['post_url'] . '">' . $attribution_data['post_title'] . '</a>',
-				'<a href="' . $attribution_data['user_url'] . '">' . $attribution_data['user_name'] . '</a>'
-			);
-
-			$module_data->set_attribution( $attribution_data );
-		}
+		$module_data->set_attribution( $this->get_raw_attribution_data() );
 
 		return $module_data;
 	}
@@ -507,5 +532,112 @@ class Module {
 		);
 
 		return array_filter( $modules );
+	}
+
+	/**
+	 * Generates the markup for an attribution block.
+	 *
+	 * @param string $attribution_text Attribution text.
+	 * @return string
+	 */
+	public static function generate_attribution_block( $attribution_text ) {
+		// Create a paragraph block with the attribution prefix and text.
+		$paragraph_block = [
+			'blockName'    => 'core/paragraph',
+			'attrs'        => [
+				'fontSize' => '14-px',
+				'style'    => [
+					'spacing' => [
+						'margin'  => '0',
+						'padding' => '0',
+					],
+				],
+			],
+			'innerBlocks'  => [],
+			'innerHTML'    => [
+				'<p class="has-14-px-font-size" style="margin:0;padding:0"><strong class="openlab-module-attribution-prefix" style="font-weight:700">Attribution:</strong> %s</p>',
+				wp_kses_post( $attribution_text ),
+			],
+			'innerContent' => [
+				sprintf(
+					'<p class="has-14-px-font-size" style="margin:0;padding:0"><strong class="openlab-module-attribution-prefix" style="font-weight:700">Attribution:</strong> %s</p>',
+					wp_kses_post( $attribution_text )
+				),
+			],
+		];
+
+		// Create an inner group block to hold the paragraph (with the attribution text class).
+		$inner_group_block = [
+			'blockName'    => 'core/group',
+			'attrs'        => [
+				'className' => 'openlab-modules-attribution-text',
+			],
+			'innerBlocks'  => [ $paragraph_block ],
+			'innerContent' => [
+				'<div class="wp-block-group openlab-modules-attribution-text">',
+				null, // This will be replaced by the paragraph block.
+				'</div>',
+			],
+		];
+
+		// Create the outer group block with styling.
+		$outer_group_block = [
+			'blockName'    => 'core/group',
+			'attrs'        => [
+				'className' => 'openlab-modules-attribution-wrapper',
+				'style'     => [
+					'color'   => [
+						'background' => '#efefef',
+					],
+					'spacing' => [
+						'padding' => '20px',
+					],
+				],
+			],
+			'innerBlocks'  => [ $inner_group_block ],
+			'innerContent' => [
+				'<div class="wp-block-group openlab-modules-attribution-wrapper has-background" style="background-color:#efefef;padding:20px">',
+				null, // This will be replaced by the inner group block.
+				'</div>',
+			],
+		];
+
+		return serialize_block( $outer_group_block );
+	}
+
+	/**
+	 * Inserts an attribution block, swapping with existing ones if found.
+	 *
+	 * @param string $attribution_block Serialized block.
+	 * @param string $post_content      Post content.
+	 * @return string
+	 */
+	public static function insert_attribution_block( $attribution_block, $post_content ) {
+		$original_post_content = $post_content;
+
+		$regex         = '/<!-- wp:group[^>]+className:"openlab-modules-attribution-wrapper".*?<!-- \/wp:group -->/s';
+		$style_regex   = '/<!-- wp:group[^>]+"background":"#efefef"[^>]+padding":"20px"[^>]*--.*?<!-- \/wp:group -->/s';
+		$sharing_regex = '/<!-- wp:openlab-modules\/sharing[^>]*-->/s';
+
+		if ( preg_match( $regex, $post_content, $matches ) ) {
+			// Replace existing block with new block.
+			$post_content = preg_replace( $regex, $attribution_block, $post_content );
+		} elseif ( preg_match( $style_regex, $post_content, $matches ) ) {
+			// Try the style-based regex as a fallback.
+			$post_content = preg_replace( $style_regex, $attribution_block, $post_content );
+		} elseif ( preg_match( $sharing_regex, $post_content ) ) {
+			// Look for a openlab-modules/sharing block, and put it before that.
+			$post_content = preg_replace( $sharing_regex, $attribution_block . '$0', $post_content );
+		} else {
+			// Prepends the new block to the content.
+			$post_content = $attribution_block . $post_content;
+		}
+
+		if ( null === $post_content ) {
+			// If the regex fails, return the original content.
+			return $original_post_content;
+		}
+
+		return $post_content;
 	}
 }
