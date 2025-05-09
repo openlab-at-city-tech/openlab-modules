@@ -49,8 +49,12 @@ class Decompressor {
 	 * @param int $id Archive ID.
 	 */
 	public function __construct( $id ) {
-		$this->id      = $id;
-		$this->archive = get_attached_file( $id );
+		$this->id = $id;
+
+		$attached_file = get_attached_file( $id );
+		if ( $attached_file ) {
+			$this->archive = $attached_file;
+		}
 
 		if ( $this->archive ) {
 			$archive_realpath = realpath( $this->archive );
@@ -119,6 +123,10 @@ class Decompressor {
 		$filesystem = $this->get_filesystem();
 
 		foreach ( $rii as $file_info ) {
+			if ( ! ( $file_info instanceof \SplFileInfo ) ) {
+				continue;
+			}
+
 			$file_name = $file_info->getFilename();
 			if ( '.' === $file_name || '..' === $file_name ) {
 				continue;
@@ -146,7 +154,7 @@ class Decompressor {
 	 * @return bool
 	 */
 	public function cleanup() {
-		$filesystem = \OpenLab\ImportExport\openlab_get_filesystem();
+		$filesystem = $this->get_filesystem();
 
 		wp_delete_attachment( $this->id );
 
