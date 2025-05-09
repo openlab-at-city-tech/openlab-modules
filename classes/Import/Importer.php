@@ -63,23 +63,9 @@ class Importer {
 	/**
 	 * Import options.
 	 *
-	 * @var array
+	 * @var array<string, bool|int|null|string>
 	 */
 	protected $options = [];
-
-	/**
-	 * Categories.
-	 *
-	 * @var array
-	 */
-	protected $categories = array();
-
-	/**
-	 * Tags.
-	 *
-	 * @var array
-	 */
-	protected $tags = array();
 
 	/**
 	 * Base URL.
@@ -98,35 +84,35 @@ class Importer {
 	/**
 	 * Processed posts.
 	 *
-	 * @var array
+	 * @var array<int, int>
 	 */
 	protected $processed_posts = array();
 
 	/**
 	 * Mapping of old IDs to new IDs.
 	 *
-	 * @var array
+	 * @var array<string, array<int|bool>>
 	 */
 	protected $mapping = array();
 
 	/**
 	 * Items that need remapping.
 	 *
-	 * @var array
+	 * @var array<string, array<int, bool>>
 	 */
 	protected $requires_remapping = array();
 
 	/**
 	 * Items that exist.
 	 *
-	 * @var array
+	 * @var array<string, array<int|bool>>
 	 */
 	protected $exists = array();
 
 	/**
 	 * User slug override.
 	 *
-	 * @var array
+	 * @var array<string, string>
 	 */
 	protected $user_slug_override = array();
 
@@ -140,7 +126,7 @@ class Importer {
 	/**
 	 * Featured images.
 	 *
-	 * @var array<string, string>
+	 * @var array<int, int>
 	 */
 	protected $featured_images = array();
 
@@ -206,6 +192,7 @@ class Importer {
 	 * Set logger instance.
 	 *
 	 * @param Logger $logger Logger instance.
+	 * @return void
 	 */
 	public function set_logger( $logger ) {
 		$this->logger = $logger;
@@ -276,16 +263,10 @@ class Importer {
 				case 'wp:author':
 					$node = $reader->expand();
 
-					$parsed = $this->parse_author_node( $node );
-					if ( is_wp_error( $parsed ) ) {
-						$this->log_error( $parsed );
-
-						// Skip the rest of this post.
-						$reader->next();
-						break;
+					if ( $node ) {
+						$parsed    = $this->parse_author_node( $node );
+						$authors[] = $parsed;
 					}
-
-					$authors[] = $parsed;
 
 					// Handled everything in this node, move on to the next.
 					$reader->next();
@@ -370,17 +351,15 @@ class Importer {
 					break;
 
 				case 'item':
-					$node   = $reader->expand();
-					$parsed = $this->parse_post_node( $node );
-					if ( is_wp_error( $parsed ) ) {
-						$this->log_error( $parsed );
+					$node = $reader->expand();
 
-						// Skip the rest of this post.
-						$reader->next();
-						break;
+					if ( $node ) {
+						$parsed = $this->parse_post_node( $node );
+
+						if ( ! is_wp_error( $parsed ) ) {
+							$this->process_post( $parsed['data'], $parsed['meta'], $parsed['comments'], $parsed['terms'] );
+						}
 					}
-
-					$this->process_post( $parsed['data'], $parsed['meta'], $parsed['comments'], $parsed['terms'] );
 
 					// Handled everything in this node, move on to the next.
 					$reader->next();
@@ -389,18 +368,9 @@ class Importer {
 				case 'wp:author':
 					$node = $reader->expand();
 
-					$parsed = $this->parse_author_node( $node );
-					if ( is_wp_error( $parsed ) ) {
-						$this->log_error( $parsed );
-
-						// Skip the rest of this post.
-						$reader->next();
-						break;
-					}
-
-					$status = $this->process_author( $parsed['data'], $parsed['meta'] );
-					if ( is_wp_error( $status ) ) {
-						$this->log_error( $status );
+					if ( $node ) {
+						$parsed = $this->parse_author_node( $node );
+						$status = $this->process_author( $parsed['data'], $parsed['meta'] );
 					}
 
 					// Handled everything in this node, move on to the next.
@@ -410,16 +380,10 @@ class Importer {
 				case 'wp:category':
 					$node = $reader->expand();
 
-					$parsed = $this->parse_term_node( $node, 'category' );
-					if ( is_wp_error( $parsed ) ) {
-						$this->log_error( $parsed );
-
-						// Skip the rest of this post.
-						$reader->next();
-						break;
+					if ( $node ) {
+						$parsed = $this->parse_term_node( $node, 'category' );
+						$status = $this->process_term( $parsed['data'], $parsed['meta'] );
 					}
-
-					$status = $this->process_term( $parsed['data'], $parsed['meta'] );
 
 					// Handled everything in this node, move on to the next.
 					$reader->next();
@@ -428,16 +392,10 @@ class Importer {
 				case 'wp:tag':
 					$node = $reader->expand();
 
-					$parsed = $this->parse_term_node( $node, 'tag' );
-					if ( is_wp_error( $parsed ) ) {
-						$this->log_error( $parsed );
-
-						// Skip the rest of this post.
-						$reader->next();
-						break;
+					if ( $node ) {
+						$parsed = $this->parse_term_node( $node, 'tag' );
+						$status = $this->process_term( $parsed['data'], $parsed['meta'] );
 					}
-
-					$status = $this->process_term( $parsed['data'], $parsed['meta'] );
 
 					// Handled everything in this node, move on to the next.
 					$reader->next();
@@ -446,16 +404,10 @@ class Importer {
 				case 'wp:term':
 					$node = $reader->expand();
 
-					$parsed = $this->parse_term_node( $node );
-					if ( is_wp_error( $parsed ) ) {
-						$this->log_error( $parsed );
-
-						// Skip the rest of this post.
-						$reader->next();
-						break;
+					if ( $node ) {
+						$parsed = $this->parse_term_node( $node );
+						$status = $this->process_term( $parsed['data'], $parsed['meta'] );
 					}
-
-					$status = $this->process_term( $parsed['data'], $parsed['meta'] );
 
 					// Handled everything in this node, move on to the next.
 					$reader->next();
@@ -564,6 +516,7 @@ class Importer {
 	 * Set the user mapping.
 	 *
 	 * @param array $mapping List of map arrays (containing `old_slug`, `old_id`, `new_id`).
+	 * @return void
 	 */
 	public function set_user_mapping( $mapping ) {
 		foreach ( $mapping as $map ) {
@@ -589,6 +542,7 @@ class Importer {
 	 * Allows overriding the slug in the import with a custom/renamed version.
 	 *
 	 * @param string[] $overrides Map of old slug to new slug.
+	 * @return void
 	 */
 	public function set_user_slug_overrides( $overrides ) {
 		foreach ( $overrides as $original => $renamed ) {
@@ -599,7 +553,7 @@ class Importer {
 	/**
 	 * Parse a post node into post data.
 	 *
-	 * @param DOMElement $node Parent node of post data (typically `item`).
+	 * @param \DOMNode $node Parent node of post data (typically `item`).
 	 * @return array|WP_Error Post data array on success, error otherwise.
 	 */
 	protected function parse_post_node( $node ) {
@@ -612,7 +566,7 @@ class Importer {
 
 		foreach ( $node->childNodes as $child ) {
 			// We only care about child elements.
-			if ( XML_ELEMENT_NODE !== $child->nodeType ) {
+			if ( XML_ELEMENT_NODE !== $child->nodeType || ! ( $child instanceof \DOMElement ) ) {
 				continue;
 			}
 
@@ -797,7 +751,7 @@ class Importer {
 			do_action( 'wxr_importer.process_already_imported.post', $data );
 
 			// Even though this post already exists, new comments might need importing.
-			$this->process_comments( $comments, $original_id, $data, $post_exists );
+			$this->process_comments( $comments, $original_id, $data, (bool) $post_exists );
 
 			return false;
 		}
@@ -822,9 +776,9 @@ class Importer {
 		$author = sanitize_user( $data['post_author'], true );
 		if ( empty( $author ) ) {
 			// Missing or invalid author, use default if available.
-			$data['post_author'] = $this->options['default_author'];
+			$data['post_author'] = (int) $this->options['default_author'];
 		} elseif ( isset( $this->mapping['user_slug'][ $author ] ) ) {
-			$data['post_author'] = $this->mapping['user_slug'][ $author ];
+			$data['post_author'] = (int) $this->mapping['user_slug'][ $author ];
 		} else {
 			$data['post_author'] = (int) get_current_user_id();
 		}
@@ -988,6 +942,8 @@ class Importer {
 		 * @param array $terms Raw term data, already processed.
 		 */
 		do_action( 'wxr_importer.processed.post', $post_id, $data, $meta, $comments, $terms );
+
+		return true;
 	}
 
 	/**
@@ -1112,9 +1068,6 @@ class Importer {
 		}
 
 		$info = wp_check_filetype( $upload['file'] );
-		if ( ! $info ) {
-			return new WP_Error( 'attachment_processing_error', __( 'Invalid file type', 'openlab-modules' ) );
-		}
 
 		$post['post_mime_type'] = $info['type'];
 
@@ -1126,7 +1079,7 @@ class Importer {
 
 		// As per wp-admin/includes/upload.php.
 		$post_id = wp_insert_attachment( $post, $upload['file'] );
-		if ( is_wp_error( $post_id ) ) {
+		if ( ! $post_id ) {
 			return $post_id;
 		}
 
@@ -1176,7 +1129,7 @@ class Importer {
 		}
 
 		// Add additional image sizes for remapping.
-		if ( preg_match( '!^image/!', $info['type'] ) && ! empty( $post['metadata']['sizes'] ) ) {
+		if ( is_string( $info['type'] ) && preg_match( '!^image/!', $info['type'] ) && ! empty( $post['metadata']['sizes'] ) ) {
 			$name = basename( $upload['url'] );
 
 			foreach ( $post['metadata']['sizes'] as $size => $data ) {
@@ -1196,7 +1149,7 @@ class Importer {
 	/**
 	 * Parse a meta node into meta data.
 	 *
-	 * @param DOMElement $node Parent node of meta data (typically `wp:postmeta` or `wp:commentmeta`).
+	 * @param \DOMElement $node Parent node of meta data (typically `wp:postmeta` or `wp:commentmeta`).
 	 * @return array|null Meta data array on success, or null on error.
 	 */
 	protected function parse_meta_node( $node ) {
@@ -1204,7 +1157,7 @@ class Importer {
 
 		foreach ( $node->childNodes as $child ) {
 			// We only care about child elements.
-			if ( XML_ELEMENT_NODE !== $child->nodeType ) {
+			if ( XML_ELEMENT_NODE !== $child->nodeType || ! ( $child instanceof \DOMElement ) ) {
 				continue;
 			}
 
@@ -1276,7 +1229,7 @@ class Importer {
 				do_action( 'import_post_meta', $post_id, $key, $value );
 
 				// If the post has a featured image, take note of this in case of remap.
-				if ( '_thumbnail_id' === $key ) {
+				if ( '_thumbnail_id' === $key && is_numeric( $value ) ) {
 					$this->featured_images[ $post_id ] = (int) $value;
 				}
 			}
@@ -1288,7 +1241,7 @@ class Importer {
 	/**
 	 * Parse a comment node into comment data.
 	 *
-	 * @param DOMElement $node Parent node of comment data (typically `wp:comment`).
+	 * @param \DOMElement $node Parent node of comment data (typically `wp:comment`).
 	 * @return array Comment data array.
 	 */
 	protected function parse_comment_node( $node ) {
@@ -1300,7 +1253,7 @@ class Importer {
 
 		foreach ( $node->childNodes as $child ) {
 			// We only care about child elements.
-			if ( XML_ELEMENT_NODE !== $child->nodeType ) {
+			if ( XML_ELEMENT_NODE !== $child->nodeType || ! ( $child instanceof \DOMElement ) ) {
 				continue;
 			}
 
@@ -1369,9 +1322,9 @@ class Importer {
 	/**
 	 * Process and import comment data.
 	 *
-	 * @param array $comments List of comment data arrays.
-	 * @param int   $post_id Post to associate with.
-	 * @param array $post Post data.
+	 * @param array $comments    List of comment data arrays.
+	 * @param int   $post_id     Post to associate with.
+	 * @param array $post        Post data.
 	 * @param bool  $post_exists Whether the post already exists.
 	 * @return int|WP_Error Number of comments imported on success, error otherwise.
 	 */
@@ -1396,7 +1349,13 @@ class Importer {
 			 */
 			$comment = apply_filters( 'wxr_importer.pre_process.comment', $comment, $post_id );
 			if ( empty( $comment ) ) {
-				return false;
+				$error = new WP_Error(
+					'wxr_importer.comment.cannot_import',
+					__( 'Cannot import comment', 'openlab-modules' ),
+					$comment
+				);
+
+				return $error;
 			}
 
 			$original_id = isset( $comment['comment_id'] ) ? (int) $comment['comment_id'] : 0;
@@ -1467,6 +1426,18 @@ class Importer {
 			// wp_insert_comment expects slashed data.
 			$comment_id = wp_insert_comment( wp_slash( $comment ) );
 
+			if ( ! $comment_id ) {
+				$this->logger->error(
+					sprintf(
+						// translators: %1$s is the comment content, %2$s is the post title.
+						__( 'Failed to import comment "%1$s" for post "%2$s"', 'openlab-modules' ),
+						$comment['comment_content'],
+						$post['post_title']
+					)
+				);
+				continue;
+			}
+
 			$this->mapping['comment'][ $original_id ] = $comment_id;
 			if ( $requires_remapping ) {
 				$this->requires_remapping['comment'][ $comment_id ] = true;
@@ -1492,10 +1463,10 @@ class Importer {
 			/**
 			 * Post processing completed.
 			 *
-			 * @param int $post_id New post ID.
-			 * @param array $comment Raw data imported for the comment.
-			 * @param array $meta Raw meta data, already processed by {@see process_post_meta}.
-			 * @param array $post_id Parent post ID.
+			 * @param int   $comment_id New post ID.
+			 * @param array $comment    Raw data imported for the comment.
+			 * @param array $meta       Raw meta data, already processed by process_post_meta.
+			 * @param int   $post_id    Parent post ID.
 			 */
 			do_action( 'wxr_importer.processed.comment', $comment_id, $comment, $meta, $post_id );
 
@@ -1566,8 +1537,8 @@ class Importer {
 	/**
 	 * Parse author node
 	 *
-	 * @param \DOMElement $node Parent node of author data (typically `wp:author`).
-	 * @return WP_Error|array
+	 * @param \DOMNode $node Parent node of author data (typically `wp:author`).
+	 * @return array
 	 */
 	protected function parse_author_node( $node ) {
 		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
@@ -1576,7 +1547,7 @@ class Importer {
 		$meta = array();
 		foreach ( $node->childNodes as $child ) {
 			// We only care about child elements.
-			if ( XML_ELEMENT_NODE !== $child->nodeType ) {
+			if ( XML_ELEMENT_NODE !== $child->nodeType || ! ( $child instanceof \DOMElement ) ) {
 				continue;
 			}
 
@@ -1617,7 +1588,7 @@ class Importer {
 	 *
 	 * @param array $data Data from the author node.
 	 * @param array $meta Meta data from the author node.
-	 * @return WP_Error|array
+	 * @return bool
 	 */
 	protected function process_author( $data, $meta ) {
 		/**
@@ -1729,16 +1700,18 @@ class Importer {
 		 * @param array $userdata Raw data imported for the user.
 		 */
 		do_action( 'wxr_importer.processed.user', $user_id, $userdata );
+
+		return true;
 	}
 
 	/**
 	 * Parse term node.
 	 *
-	 * @param \DOMElement $node Parent node of term data (typically `wp:category` or `wp:tag`).
-	 * @param string      $type Type of term (category or tag).
+	 * @param \DOMNode $node Parent node of term data (typically `wp:category` or `wp:tag`).
+	 * @param string   $type Type of term (category or tag).
 	 * @return array Term data and meta data.
 	 */
-	protected function parse_term_node( \DOMElement $node, $type = 'term' ) {
+	protected function parse_term_node( \DOMNode $node, $type = 'term' ) {
 		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 
 		$data = [];
@@ -1814,7 +1787,7 @@ class Importer {
 	 *
 	 * @param array $data Term data.
 	 * @param array $meta Meta data.
-	 * @return bool|int Term ID on success, false otherwise.
+	 * @return bool
 	 */
 	protected function process_term( $data, $meta ) {
 		/**
@@ -1923,6 +1896,8 @@ class Importer {
 		 * @param array $data Raw data imported for the term.
 		 */
 		do_action( 'wxr_importer.processed.term', $term_id, $data );
+
+		return true;
 	}
 
 	/**
@@ -1941,6 +1916,10 @@ class Importer {
 
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		$bits = file_get_contents( $filename );
+		if ( ! $bits ) {
+			$message = sprintf( 'Could not read file %s', $filename );
+			return new WP_Error( 'import_file_error', $message );
+		}
 
 		$upload = wp_upload_bits( $name, null, $bits, $post['upload_date'] );
 		if ( $upload['error'] ) {
@@ -1969,11 +1948,13 @@ class Importer {
 				}
 
 				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-				$bits  = file_get_contents( $path );
-				$thumb = wp_upload_bits( $data['file'], null, $bits, $post['upload_date'] );
+				$bits = file_get_contents( $path );
+				if ( $bits ) {
+					$thumb = wp_upload_bits( $data['file'], null, $bits, $post['upload_date'] );
 
-				if ( ! is_wp_error( $thumb ) ) {
-					$upload['sizes'][ $size ] = $thumb;
+					if ( $thumb['error'] ) {
+						$upload['sizes'][ $size ] = $thumb;
+					}
 				}
 			}
 		}
@@ -2022,10 +2003,10 @@ class Importer {
 			$data = array();
 
 			$parent_id = get_post_meta( $post_id, '_wxr_import_parent', true );
-			if ( ! empty( $parent_id ) ) {
+			if ( ! empty( $parent_id ) && is_scalar( $parent_id ) ) {
 				// Have we imported the parent now?
 				if ( isset( $this->mapping['post'][ $parent_id ] ) ) {
-					$data['post_parent'] = $this->mapping['post'][ $parent_id ];
+					$data['post_parent'] = (int) $this->mapping['post'][ $parent_id ];
 				} else {
 					$this->logger->warning(
 						sprintf(
@@ -2047,10 +2028,10 @@ class Importer {
 			}
 
 			$author_slug = get_post_meta( $post_id, '_wxr_import_user_slug', true );
-			if ( ! empty( $author_slug ) ) {
+			if ( ! empty( $author_slug ) && is_string( $author_slug ) ) {
 				// Have we imported the user now?
 				if ( isset( $this->mapping['user_slug'][ $author_slug ] ) ) {
-					$data['post_author'] = $this->mapping['user_slug'][ $author_slug ];
+					$data['post_author'] = (int) $this->mapping['user_slug'][ $author_slug ];
 				} else {
 					$this->logger->warning(
 						sprintf(
@@ -2131,7 +2112,7 @@ class Importer {
 			$data = array();
 
 			$parent_id = get_comment_meta( $comment_id, '_wxr_import_parent', true );
-			if ( ! empty( $parent_id ) ) {
+			if ( ! empty( $parent_id ) && is_scalar( $parent_id ) ) {
 				// Have we imported the parent now?
 				if ( isset( $this->mapping['comment'][ $parent_id ] ) ) {
 					$data['comment_parent'] = $this->mapping['comment'][ $parent_id ];
@@ -2155,7 +2136,7 @@ class Importer {
 			}
 
 			$author_id = get_comment_meta( $comment_id, '_wxr_import_user', true );
-			if ( ! empty( $author_id ) ) {
+			if ( ! empty( $author_id ) && is_scalar( $author_id ) ) {
 				// Have we imported the user now?
 				if ( isset( $this->mapping['user'][ $author_id ] ) ) {
 					$data['user_id'] = $this->mapping['user'][ $author_id ];
@@ -2466,6 +2447,8 @@ class Importer {
 	 * PHP instead. However, this does use a lot more memory, so for sites doing
 	 * small imports onto a large site, it may be a better tradeoff to use
 	 * on-the-fly checking instead.
+	 *
+	 * @return void
 	 */
 	protected function prefill_existing_posts() {
 		global $wpdb;
@@ -2509,6 +2492,8 @@ class Importer {
 	 *
 	 * @param array $data Post data to mark as existing.
 	 * @param int   $post_id Post ID.
+	 *
+	 * @return void
 	 */
 	protected function mark_post_exists( $data, $post_id ) {
 		$exists_key                          = $data['guid'];
@@ -2519,6 +2504,8 @@ class Importer {
 	 * Prefill existing comment data.
 	 *
 	 * @see self::prefill_existing_posts() for justification of why this exists.
+	 *
+	 * @return void
 	 */
 	protected function prefill_existing_comments() {
 		global $wpdb;
@@ -2552,7 +2539,13 @@ class Importer {
 		}
 
 		// Still nothing, try comment_exists, and cache it.
-		$exists                                 = comment_exists( $data['comment_author'], $data['comment_date'] );
+		$exists = comment_exists( $data['comment_author'], $data['comment_date'] );
+		if ( $exists && is_numeric( $exists ) ) {
+			$exists = (int) $exists;
+		} else {
+			$exists = false;
+		}
+
 		$this->exists['comment'][ $exists_key ] = $exists;
 
 		return $exists;
@@ -2563,6 +2556,8 @@ class Importer {
 	 *
 	 * @param array $data Comment data to mark as existing.
 	 * @param int   $comment_id Comment ID.
+	 *
+	 * @return void
 	 */
 	protected function mark_comment_exists( $data, $comment_id ) {
 		$exists_key                             = sha1( $data['comment_author'] . ':' . $data['comment_date'] );
@@ -2573,6 +2568,8 @@ class Importer {
 	 * Prefill existing term data.
 	 *
 	 * @see self::prefill_existing_posts() for justification of why this exists.
+	 *
+	 * @return void
 	 */
 	protected function prefill_existing_terms() {
 		global $wpdb;
@@ -2610,7 +2607,9 @@ class Importer {
 		// Still nothing, try comment_exists, and cache it.
 		$exists = term_exists( $data['slug'], $data['taxonomy'] );
 		if ( is_array( $exists ) ) {
-			$exists = $exists['term_id'];
+			$exists = (int) $exists['term_id'];
+		} elseif ( ! $exists ) {
+			$exists = false;
 		}
 
 		$this->exists['term'][ $exists_key ] = $exists;
@@ -2623,6 +2622,7 @@ class Importer {
 	 *
 	 * @param array $data Term data to mark as existing.
 	 * @param int   $term_id Term ID.
+	 * @return void
 	 */
 	protected function mark_term_exists( $data, $term_id ) {
 		$exists_key                          = sha1( $data['taxonomy'] . ':' . $data['slug'] );

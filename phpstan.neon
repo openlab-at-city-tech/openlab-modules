@@ -20,5 +20,9 @@ parameters:
       message: '#Function (bp_loggedin_user_id|bp_core_get_user_displayname|bp_core_get_user_domain) not found.#'
 
     - # Can't correct this through library
-      message: 'Method ([^ ]+) has parameter ([^ ]+) with no value type specified in iterable type array.
+      message: '#Method ([^ ]+) has parameter ([^ ]+) with no value type specified in iterable type array.#'
+      path: classes/Import/Importer.php
+
+    - # Can't correct this through library
+      message: '#Method ([^ ]+) return type has no value type specified in iterable type array.#'
       path: classes/Import/Importer.php
