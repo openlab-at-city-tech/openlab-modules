@@ -258,13 +258,25 @@ class Admin {
 			return;
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$selected_module_id = ! empty( $_GET['filter-by-module'] ) && is_numeric( $_GET['filter-by-module'] ) ? (int) $_GET['filter-by-module'] : 0;
+		$selected_module_id = 0;
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		if ( ! empty( $_GET['filter-by-module'] ) ) {
+			// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$filter_by_module = wp_unslash( $_GET['filter-by-module'] );
+
+			if ( '_all' === $filter_by_module ) {
+				$selected_module_id = '_all';
+			} elseif ( is_numeric( $filter_by_module ) ) {
+				$selected_module_id = (int) $filter_by_module;
+			}
+		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		?>
 
 		<select name="filter-by-module">
-			<option value="" <?php selected( ! $selected_module_id ); ?>><?php echo esc_html_e( 'All Modules', 'openlab-modules' ); ?></option>
+			<option value="" <?php selected( ! $selected_module_id ); ?>><?php echo esc_html_e( 'All Pages', 'openlab-modules' ); ?></option>
+			<option value="_all" <?php selected( '_all', $selected_module_id ); ?>><?php echo esc_html_e( 'All Modules', 'openlab-modules' ); ?></option>
 
 			<?php foreach ( $all_modules as $module ) : ?>
 				<option value="<?php echo esc_html( (string) $module->get_id() ); ?>" <?php selected( $selected_module_id, $module->get_id() ); ?>><?php echo esc_html( $module->get_title() ); ?></option>
@@ -287,31 +299,45 @@ class Admin {
 			return;
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		if ( empty( $_GET['filter-by-module'] ) ) {
 			return;
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$module_id = is_numeric( $_GET['filter-by-module'] ) ? (int) $_GET['filter-by-module'] : 0;
-
-		$module = Module::get_instance( $module_id );
-		if ( ! $module ) {
-			return;
-		}
-
-		$module_term_id = $module->get_term_id();
+		$filter_by_module = wp_unslash( $_GET['filter-by-module'] );
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		$tax_query = $query->get( 'tax_query' );
 		if ( ! is_array( $tax_query ) ) {
 			$tax_query = [];
 		}
 
-		$tax_query['module'] = [
-			'taxonomy' => Schema::get_module_taxonomy(),
-			'terms'    => $module_term_id,
-			'field'    => 'term_id',
-		];
+		if ( '_all' === $filter_by_module ) {
+			$tax_query['module'] = [
+				'taxonomy' => Schema::get_module_taxonomy(),
+				'operator' => 'EXISTS',
+			];
+		} else {
+			$module_id = is_numeric( $filter_by_module ) ? (int) $filter_by_module : 0;
+
+			$module = Module::get_instance( $module_id );
+			if ( ! $module ) {
+				return;
+			}
+
+			$module_term_id = $module->get_term_id();
+
+			$tax_query = $query->get( 'tax_query' );
+			if ( ! is_array( $tax_query ) ) {
+				$tax_query = [];
+			}
+
+			$tax_query['module'] = [
+				'taxonomy' => Schema::get_module_taxonomy(),
+				'terms'    => $module_term_id,
+				'field'    => 'term_id',
+			];
+		}
 
 		$query->set( 'tax_query', $tax_query );
 	}
