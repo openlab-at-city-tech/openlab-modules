@@ -131,7 +131,9 @@ export default function Edit({ attributes, isSelected, setAttributes }) {
 			<InspectorControls>
 				<Panel>
 					<PanelBody title={ __( 'Module Order', 'openlab-modules' ) }>
-						<p>{ __( 'Drag and drop Module titles to change the order in which they appear.', 'openlab-modules' ) }</p>
+						<p>
+							{ __( 'To change the order of the modules, drag and drop using the icon.', 'openlab-modules' ) } <span className="dashicons dashicons-move"></span>
+						</p>
 					</PanelBody>
 				</Panel>
 			</InspectorControls>
