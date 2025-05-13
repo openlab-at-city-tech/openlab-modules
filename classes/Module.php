@@ -626,8 +626,8 @@ class Module {
 			// Try the style-based regex as a fallback.
 			$post_content = preg_replace( $style_regex, $attribution_block, $post_content );
 		} elseif ( preg_match( $sharing_regex, $post_content ) ) {
-			// Look for a openlab-modules/sharing block, and put it before that.
-			$post_content = preg_replace( $sharing_regex, $attribution_block . '$0', $post_content );
+			// Look for a openlab-modules/sharing block, and put it after that.
+			$post_content = preg_replace( $sharing_regex, '$0' . $attribution_block, $post_content );
 		} else {
 			// Prepends the new block to the content.
 			$post_content = $attribution_block . $post_content;
