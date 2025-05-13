@@ -11,6 +11,8 @@ import './blocks/module-navigation'
 import './blocks/placeholder-text'
 import './blocks/sharing'
 
+import './components/clone-module.scss';
+
 /**
  * Components.
  */
