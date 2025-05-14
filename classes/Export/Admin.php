@@ -95,7 +95,7 @@ class Admin {
 
 			<?php settings_errors(); ?>
 
-			<p><?php esc_html_e( 'Use this tool to create a Module Archive file (.zip) that will be downloaded to your computer and can be used with the Module Export Import plugin to import into another site.', 'openlab-modules' ); ?></p>
+			<p><?php esc_html_e( 'Use this tool to create a Module Archive file (.zip) that will be downloaded to your computer and can be used with the OpenLab Modules plugin to import into another site.', 'openlab-modules' ); ?></p>
 
 			<p><?php esc_html_e( 'A readme text file will be included with the exported archive file. It will include information on how this archive file can be imported into another site. You can also include your own custom text in the box below. If there are specific plugins or a theme needed to create this module, please include those in your text.', 'openlab-modules' ); ?></p>
 
