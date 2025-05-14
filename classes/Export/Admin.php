@@ -90,12 +90,14 @@ class Admin {
 
 		?>
 
-		<div class="wrap nosubsub">
+		<div class="wrap nosubsub" style="max-width: 1200px">
 			<h1><?php esc_html_e( 'Export', 'openlab-modules' ); ?></h1>
 
 			<?php settings_errors(); ?>
 
 			<p><?php esc_html_e( 'Use this tool to create a Module Archive file (.zip) that will be downloaded to your computer and can be used with the Module Export Import plugin to import into another site.', 'openlab-modules' ); ?></p>
+
+			<p><?php esc_html_e( 'A readme text file will be included with the exported archive file. It will include information on how this archive file can be imported into another site. You can also include your own custom text in the box below. If there are specific plugins or a theme needed to create this module, please include those in your text.', 'openlab-modules' ); ?></p>
 
 			<form method="post" id="export-module" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<h2><?php esc_html_e( 'Choose what to export', 'openlab-modules' ); ?></h2>
