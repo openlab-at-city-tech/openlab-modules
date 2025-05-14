@@ -660,9 +660,10 @@ class Exporter {
 	 * @return string $filename
 	 */
 	protected function filename() {
-		$stripped_url = sanitize_title_with_dashes( get_bloginfo( 'name' ) );
-		$timestamp    = gmdate( 'Y-m-d' );
-		$filename     = "export-{$stripped_url}-{$timestamp}.zip";
+		$post      = get_post( $this->module_id );
+		$post_name = $post ? $post->post_name : 'module';
+		$timestamp = gmdate( 'Y-m-d' );
+		$filename  = "export-module-{$post_name}-{$timestamp}.zip";
 
 		return $filename;
 	}
