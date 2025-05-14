@@ -65,9 +65,11 @@ export default function Edit( { attributes } ) {
 
 	return (
 		<div { ...useCustomBlockProps() }>
-			<button
-				className="clone-module-button clone-module-button-reset"
-			>{ __( 'Clone this Module', 'openlab-modules' ) }</button>
+			<div className="sharing-button-container">
+				<button
+					className="clone-module-button clone-module-button-reset"
+				>{ __( 'Clone this Module', 'openlab-modules' ) }</button>
+			</div>
 
 			{ ! isSharingEnabled && (
 				<p className="sharing-notice">
