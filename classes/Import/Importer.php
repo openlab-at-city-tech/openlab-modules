@@ -1136,7 +1136,7 @@ class Importer {
 
 				$original_filename = isset( $data['original_file'] ) ? $data['original_file'] : $data['file'];
 
-				$remote = str_replace( basename( $remote_url ), $original_filename, $remote_url );
+				$remote = str_replace( basename( $remote_url ), basename( $original_filename ), $remote_url );
 				$local  = str_replace( $name, $data['file'], $upload['url'] );
 
 				$this->url_remap[ $remote ] = $local;
