@@ -335,63 +335,6 @@ class Exporter {
 			$text .= $this->readme_custom_text;
 		}
 
-		$text .= "\n\n";
-
-		$text .= '# ' . esc_html__( 'Theme, Plugins, and Menu', 'openlab-modules' );
-		$text .= "\n\n";
-
-		$text .= esc_html__( 'The exported site uses the theme and plugins listed below. If you want your site to have the same appearance and features, you will need to install (if necessary) and activate the theme and plugins before you import.', 'openlab-modules' );
-
-		$active_theme = wp_get_theme( get_stylesheet() );
-
-		$theme_uri = $this->get_theme_uri( get_stylesheet() );
-		if ( ! $theme_uri ) {
-			$theme_uri = $active_theme->get( 'ThemeURI' );
-		}
-
-		$text .= "\n\n";
-		$text .= esc_html__( 'Theme:', 'openlab-modules' );
-		$text .= "\n";
-		$text .= sprintf(
-			'* %s: %s',
-			esc_html( $active_theme->name ),
-			esc_html( $theme_uri )
-		);
-		$text .= "\n\n";
-
-		$text .= esc_html__( 'Plugins:', 'openlab-modules' );
-		$text .= "\n";
-
-		$all_plugins = get_plugins();
-		foreach ( $all_plugins as $plugin_file => $plugin_data ) {
-			if ( ! is_plugin_active( $plugin_file ) ) {
-				continue;
-			}
-
-			if ( is_plugin_active_for_network( $plugin_file ) ) {
-				continue;
-			}
-
-			$plugin_uri = $this->get_plugin_uri( $plugin_file );
-			if ( ! $plugin_uri && ! empty( $plugin_data['PluginURI'] ) ) {
-				$plugin_uri = $plugin_data['PluginURI'];
-			}
-
-			if ( ! empty( $plugin_uri ) ) {
-				$text .= sprintf(
-					'* %s: %s',
-					esc_html( $plugin_data['Name'] ),
-					esc_html( $plugin_uri )
-				);
-			} else {
-				$text .= sprintf(
-					'* %s',
-					esc_html( $plugin_data['Name'] ),
-				);
-			}
-			$text .= "\n";
-		}
-
 		$this->readme_text = $text;
 	}
 
