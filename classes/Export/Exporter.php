@@ -249,10 +249,6 @@ class Exporter {
 	 * @return void
 	 */
 	protected function delete_acknowledgements_block() {
-		if ( empty( $this->acknowledgements_page_id ) ) {
-			return;
-		}
-
 		if ( empty( $this->original_post_content ) ) {
 			return;
 		}
