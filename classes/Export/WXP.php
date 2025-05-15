@@ -361,7 +361,7 @@ class WXP {
 			$xml .= "\t<wp:term>\n";
 			$xml .= "\t\t<wp:id>{$t->term_id}</wp:id>\n";
 			$xml .= "\t\t<wp:taxonomy>{$t->taxonomy}</wp:taxonomy>\n";
-			$xml .= "\t\t<wp:term_slug>{$t->slug}</wp:term_slug>\n";
+			$xml .= "\t\t<wp:slug>{$t->slug}</wp:slug>\n";
 			$xml .= "\t\t<wp:parent>{$parent_slug}</wp:parent>\n";
 			$xml .= $this->term_name( $t );
 			$xml .= $this->term_description( $t );
