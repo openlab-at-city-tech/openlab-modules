@@ -494,6 +494,29 @@ class Exporter {
 			}
 		}
 
+		// For all identified attachments, get all associated files and add to files array.
+		foreach ( $attachment_ids as $attachment_id ) {
+			$attachment = get_post( $attachment_id );
+			if ( ! $attachment ) {
+				continue;
+			}
+
+			$original_file = get_attached_file( $attachment_id );
+			$this->files[] = $original_file;
+
+			// Get all resized versions of the file.
+			$metadata = wp_get_attachment_metadata( $attachment_id );
+			if ( ! empty( $metadata['sizes'] ) ) {
+				foreach ( $metadata['sizes'] as $size => $data ) {
+					$filename = $data['file'];
+					$filepath = trailingslashit( dirname( $original_file ) ) . $filename;
+					if ( file_exists( $filepath ) ) {
+						$this->files[] = $filepath;
+					}
+				}
+			}
+		}
+
 		return array_unique( $attachment_ids );
 	}
 

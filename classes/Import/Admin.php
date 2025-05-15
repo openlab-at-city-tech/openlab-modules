@@ -378,6 +378,7 @@ class Admin {
 
 		$options = [
 			'fetch_attachments'         => true,
+			'attachment_mode'           => 'local',
 			'prefill_existing_posts'    => false,
 			'prefill_existing_commetns' => false,
 			'prefill_existing_terms'    => false,
