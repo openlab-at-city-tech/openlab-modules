@@ -610,7 +610,7 @@ class WXP {
 			return '';
 		}
 
-		return '<wp:term_name>' . $this->cdata( $term->name ) . '</wp:term_name>';
+		return '<wp:name>' . $this->cdata( $term->name ) . '</wp:name>';
 	}
 
 	/**
@@ -624,7 +624,7 @@ class WXP {
 			return '';
 		}
 
-		return '<wp:term_description>' . $this->cdata( $term->description ) . '</wp:term_description>';
+		return '<wp:description>' . $this->cdata( $term->description ) . '</wp:description>';
 	}
 
 	/**
