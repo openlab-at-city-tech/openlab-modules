@@ -502,6 +502,10 @@ class Exporter {
 			}
 
 			$original_file = get_attached_file( $attachment_id );
+			if ( ! $original_file ) {
+				continue;
+			}
+
 			$this->files[] = $original_file;
 
 			// Get all resized versions of the file.

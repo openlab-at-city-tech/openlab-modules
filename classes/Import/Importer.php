@@ -140,7 +140,7 @@ class Importer {
 	/**
 	 * Constructor.
 	 *
-	 * @param array<string, bool|int|null> $options {
+	 * @param array<string, bool|int|null|string> $options {
 	 *     Options for the importer.
 	 *
 	 *     @type bool      $prefill_existing_posts    Should we prefill `post_exists` calls? Default true.
@@ -153,6 +153,7 @@ class Importer {
 	 *     @type bool      $aggressive_url_search     Whether to aggressively replace old URLs. Default false.
 	 *     @type int|null  $default_author            User ID to use if author is missing or invalid.
 	 *                                                Default null.
+	 *     @type string    $attachment_mode          Attachment mode. Default 'remote'.
 	 * }
 	 * @param string                       $path Path to the import directory.
 	 */
