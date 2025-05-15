@@ -603,6 +603,7 @@ class Exporter {
 
 		$zip->addFile( $this->exports_dir . 'wordpress.xml', 'wordpress.xml' );
 
+		$this->files = array_unique( $this->files );
 		foreach ( $this->files as $file ) {
 			$zip->addFile( $file, $this->normalize_path( $file ) );
 		}
