@@ -359,10 +359,10 @@ class WXP {
 			$parent_slug = $t->parent ? $terms[ $t->parent ]->slug : '';
 
 			$xml .= "\t<wp:term>\n";
-			$xml .= "\t\t<wp:term_id>{$t->term_id}</wp:term_id>\n";
-			$xml .= "\t\t<wp:term_taxonomy>{$t->taxonomy}</wp:term_taxonomy>\n";
+			$xml .= "\t\t<wp:id>{$t->term_id}</wp:id>\n";
+			$xml .= "\t\t<wp:taxonomy>{$t->taxonomy}</wp:taxonomy>\n";
 			$xml .= "\t\t<wp:term_slug>{$t->slug}</wp:term_slug>\n";
-			$xml .= "\t\t<wp:term_parent>{$parent_slug}</wp:term_parent>\n";
+			$xml .= "\t\t<wp:parent>{$parent_slug}</wp:parent>\n";
 			$xml .= $this->term_name( $t );
 			$xml .= $this->term_description( $t );
 			$xml .= $this->get_termmeta_xml( $t->term_id );
