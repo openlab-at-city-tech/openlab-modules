@@ -390,6 +390,21 @@ class Module {
 	}
 
 	/**
+	 * Gets the email subject for completion messages.
+	 *
+	 * @return string
+	 */
+	public function get_completion_message_subject() {
+		$subject = get_post_meta( $this->id, 'completion_message_subject', true );
+
+		if ( ! is_string( $subject ) ) {
+			$subject = '';
+		}
+
+		return $subject;
+	}
+
+	/**
 	 * Is sharing enable for this module?
 	 *
 	 * @return bool
