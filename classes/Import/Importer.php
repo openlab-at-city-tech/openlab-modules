@@ -1872,6 +1872,12 @@ class Importer {
 
 		update_term_meta( $term_id, 'import_id', $original_id );
 
+		if ( ! empty( $meta ) ) {
+			foreach ( $meta as $_m ) {
+				update_term_meta( $term_id, $_m['key'], $_m['value'] );
+			}
+		}
+
 		$this->logger->info(
 			sprintf(
 				// translators: %1$s is the term name, %2$s is the taxonomy name.
@@ -2307,7 +2313,7 @@ class Importer {
 
 		foreach ( $post_map as $old_post_id => $new_post_id ) {
 			// Update post_meta: 'term_id' → new term ID.
-			$old_term_id_raw = get_post_meta( $old_post_id, 'term_id', true );
+			$old_term_id_raw = get_post_meta( $new_post_id, 'term_id', true );
 			$old_term_id     = is_numeric( $old_term_id_raw ) ? (int) $old_term_id_raw : 0;
 			if ( $old_term_id && isset( $term_map[ $old_term_id ] ) ) {
 				update_post_meta( $new_post_id, 'term_id', $term_map[ $old_term_id ] );
@@ -2316,7 +2322,7 @@ class Importer {
 
 		foreach ( $term_map as $old_term_id => $new_term_id ) {
 			// Update term_meta: 'post_id' → new post ID.
-			$old_post_id_raw = get_term_meta( $old_term_id, 'post_id', true );
+			$old_post_id_raw = get_term_meta( $new_term_id, 'post_id', true );
 			$old_post_id     = is_numeric( $old_post_id_raw ) ? (int) $old_post_id_raw : 0;
 			if ( $old_post_id && isset( $post_map[ $old_post_id ] ) ) {
 				update_term_meta( $new_term_id, 'post_id', $post_map[ $old_post_id ] );
