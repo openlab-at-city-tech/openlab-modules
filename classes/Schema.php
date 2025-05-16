@@ -478,23 +478,18 @@ class Schema {
 		);
 
 		register_rest_field(
-			[ 'openlab_module' ],
+			[ 'openlab_module', 'page' ],
 			'completionPopupText',
 			[
 				'get_callback'    => function ( $data_object ) {
 					$module = Module::get_instance( $data_object['id'] );
-					if ( ! $module ) {
-						return '';
+					if ( $module ) {
+						return $module->get_completion_popup_text();
 					}
 
-					return $module->get_completion_popup_text();
+					return Module::get_page_completion_popup_text( $data_object['id'] );
 				},
 				'update_callback' => function ( $value, $data_object ) {
-					$module = Module::get_instance( $data_object->ID );
-					if ( ! $module ) {
-						return;
-					}
-
 					update_post_meta( $data_object->ID, 'completion_popup_text', $value );
 				},
 			]

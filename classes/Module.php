@@ -153,6 +153,35 @@ class Module {
 	}
 
 	/**
+	 * Gets the completion popup text for a module page.
+	 *
+	 * At some point we may move this to a more logical place.
+	 *
+	 * @param int $page_id ID of the page.
+	 * @return string
+	 */
+	public static function get_page_completion_popup_text( $page_id ) {
+		$page_popup_text = get_post_meta( $page_id, 'completion_popup_text', true );
+		if ( $page_popup_text && is_string( $page_popup_text ) ) {
+			return $page_popup_text;
+		}
+
+		// Fall back on the module's popup text.
+		$module_ids = self::get_module_ids_of_page( $page_id );
+		if ( empty( $module_ids ) ) {
+			return '';
+		}
+
+		$module_id = reset( $module_ids );
+		$module    = self::get_instance( $module_id );
+		if ( ! $module ) {
+			return '';
+		}
+
+		return $module->get_completion_popup_text();
+	}
+
+	/**
 	 * Gets the post associated with a module id.
 	 *
 	 * @param int $post_id Post ID.

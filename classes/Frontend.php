@@ -72,9 +72,13 @@ class Frontend {
 		$section_complete_message = '';
 
 		if ( $module_id ) {
-			$module = Module::get_instance( $module_id );
-			if ( $module ) {
-				$section_complete_message = $module->get_completion_popup_text();
+			if ( $module_id === $post_id ) {
+				$module = Module::get_instance( $module_id );
+				if ( $module ) {
+					$section_complete_message = $module->get_completion_popup_text();
+				}
+			} else {
+				$section_complete_message = Module::get_page_completion_popup_text( $post_id );
 			}
 		}
 

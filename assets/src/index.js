@@ -24,6 +24,7 @@ import EditModule from './components/EditModule';
 import ModulePages from './components/ModulePages';
 import PageModules from './components/PageModules';
 import CompletionMessagesModule from './components/CompletionMessagesModule';
+import CompletionMessagesPage from './components/CompletionMessagesPage';
 
 // Create a component that conditionally renders plugins based on the editor context
 const OpenlabModulesRegisterPlugins = () => {
@@ -40,6 +41,7 @@ const OpenlabModulesRegisterPlugins = () => {
 				<ModulePages />
 				<PageModules />
 				<CompletionMessagesModule />
+				<CompletionMessagesPage />
 			</>
 		) }
 		</Fragment>
