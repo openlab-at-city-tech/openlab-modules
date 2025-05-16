@@ -467,7 +467,6 @@ class Importer {
 		// Suspend bunches of stuff in WP core.
 		wp_defer_term_counting( true );
 		wp_defer_comment_counting( true );
-		wp_suspend_cache_invalidation( true );
 
 		// Prefill exists calls if told to.
 		if ( $this->options['prefill_existing_posts'] ) {
@@ -496,7 +495,6 @@ class Importer {
 	 */
 	protected function import_end() {
 		// Re-enable stuff in core.
-		wp_suspend_cache_invalidation( false );
 		wp_cache_flush();
 		foreach ( get_taxonomies() as $tax ) {
 			delete_option( "{$tax}_children" );
