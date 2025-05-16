@@ -11,12 +11,14 @@ import { useEffect, useState } from '@wordpress/element'
 
 export default function CompletionMessagesModule( {} ) {
 	const {
+		completionMessageBodyFormat,
 		completionMessageCcString,
 		completionMessageSubject,
 		postTitle,
 		postType
 	} = useSelect( ( select ) => {
 		return {
+			completionMessageBodyFormat: select( 'core/editor' ).getEditedPostAttribute( 'completionMessageBodyFormat' ),
 			completionMessageCcString: select( 'core/editor' ).getEditedPostAttribute( 'completionMessageCcString' ),
 			completionMessageSubject: select( 'core/editor' ).getEditedPostAttribute( 'completionMessageSubject' ),
 			postTitle: select( 'core/editor' ).getEditedPostAttribute( 'title' ),
@@ -25,20 +27,31 @@ export default function CompletionMessagesModule( {} ) {
 	} )
 
 	const { editPost } = useDispatch( 'core/editor' )
+
 	const [ subjectDirty, setSubjectDirty ] = useState( false )
 	const [ generatedSubject, setGeneratedSubject ] = useState( '' )
+
+	const [ bodyFormatDirty, setBodyFormatDirty ] = useState( false )
+	const [ generatedBodyFormat, setGeneratedBodyFormat ] = useState( '' )
 
 	useEffect( () => {
 		if ( ! subjectDirty && ! completionMessageSubject && postTitle ) {
 			setGeneratedSubject(
 				sprintf(
-					// translation: %s is the title of the post.
+					// translators: %s is the title of the post.
 					__( 'Well done! You have completed a section of the module: %s', 'openlab-modules' ),
 					postTitle
 				)
 			)
 		}
-	}, [ postTitle, completionMessageSubject, subjectDirty ] )
+
+		if ( ! bodyFormatDirty && ! completionMessageBodyFormat ) {
+			setGeneratedBodyFormat(
+				// eslint-disable-next-line
+				__( 'Hi {{display_name}},\n\nYou have completed the following:\n\nModule: {{module_title}} {{module_url}}\nSection: {{section_title}} {{section_url}}\n\nWell done!', 'openlab-modules' ),
+			)
+		}
+	}, [ postTitle, completionMessageSubject, subjectDirty, completionMessageBodyFormat, bodyFormatDirty ] )
 
 	if ( ! postType || 'openlab_module' !== postType ) {
 		return null
@@ -74,6 +87,16 @@ export default function CompletionMessagesModule( {} ) {
 						editPost( { completionMessageSubject: value } )
 					} }
 					placeholder={ __( 'Enter email subject', 'openlab-modules' ) }
+					/>
+
+				<TextareaControl
+					label={ __( 'Email text', 'openlab-modules' ) }
+					value={ bodyFormatDirty || completionMessageBodyFormat ? completionMessageBodyFormat : generatedBodyFormat }
+					onChange={ ( value ) => {
+						setBodyFormatDirty( true )
+						editPost( { completionMessageBodyFormat: value } )
+					} }
+					help={ __( 'Use the following tokens for dynamic values: {{display_name}}, {{module_title}}, {{module_url}}, {{section_title}}, {{section_url}}', 'openlab-modules' ) }
 					/>
 
 			</PluginDocumentSettingPanel>

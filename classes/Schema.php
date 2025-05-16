@@ -407,6 +407,29 @@ class Schema {
 
 		register_rest_field(
 			[ 'openlab_module' ],
+			'completionMessageBodyFormat',
+			[
+				'get_callback'    => function ( $data_object ) {
+					$module = Module::get_instance( $data_object['id'] );
+					if ( ! $module ) {
+						return '';
+					}
+
+					return $module->get_completion_message_body_format();
+				},
+				'update_callback' => function ( $value, $data_object ) {
+					$module = Module::get_instance( $data_object->ID );
+					if ( ! $module ) {
+						return;
+					}
+
+					update_post_meta( $data_object->ID, 'completion_message_body_format', $value );
+				},
+			]
+		);
+
+		register_rest_field(
+			[ 'openlab_module' ],
 			'completionMessageCcString',
 			[
 				'get_callback'    => function ( $data_object ) {

@@ -405,6 +405,21 @@ class Module {
 	}
 
 	/**
+	 * Gets the email body format for completion messages.
+	 *
+	 * @return string
+	 */
+	public function get_completion_message_body_format() {
+		$body_format = get_post_meta( $this->id, 'completion_message_body_format', true );
+
+		if ( ! is_string( $body_format ) ) {
+			$body_format = '';
+		}
+
+		return $body_format;
+	}
+
+	/**
 	 * Is sharing enable for this module?
 	 *
 	 * @return bool
