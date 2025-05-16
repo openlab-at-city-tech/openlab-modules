@@ -38,7 +38,7 @@ export default function CompletionMessagesModule( {} ) {
 		if ( ! subjectDirty && ! completionMessageSubject && postTitle ) {
 			setGeneratedSubject(
 				sprintf(
-					// translators: %s is the title of the post.
+					// translators: %s is the title of the module.
 					__( 'Well done! You have completed a section of the module: %s', 'openlab-modules' ),
 					postTitle
 				)

@@ -288,32 +288,56 @@ class Frontend {
 		}
 
 		$module_id = self::get_module_id_for_post( $post_id );
-
 		if ( ! $module_id ) {
 			return;
 		}
 
-		$is_module = Schema::get_module_post_type() === get_post_type( $post );
-
-		$message_type = self::get_completion_message_type( $module_id, $post_id );
-
-		switch ( $message_type ) {
-			case 'bp_messages':
-				self::send_completion_message_bp_messages( $post_id, $module_id );
-				break;
-
-			default:
-				break;
+		$module = Module::get_instance( $module_id );
+		if ( ! $module ) {
+			return;
 		}
+
+		$current_user = wp_get_current_user();
+		if ( ! $current_user->exists() ) {
+			return;
+		}
+
+		$email_subject = $module->get_completion_message_subject();
+		if ( ! $email_subject ) {
+			$email_subject = sprintf(
+				// translators: %s is the title of the module.
+				__( 'Well done! You have completed a section of the module: %s', 'openlab-modules' ),
+				$module->get_title()
+			);
+		}
+
+		$email_body = $module->get_completion_message_body( $post_id );
+
+		$email_to = $current_user->user_email;
+
+		$email_cc = $module->get_completion_message_cc_list();
+
+		$headers = [];
+		if ( $email_cc ) {
+			foreach ( $email_cc as $cc ) {
+				$headers[] = 'Cc: ' . $cc;
+			}
+		}
+
+		wp_mail(
+			$email_to,
+			$email_subject,
+			$email_body,
+			$headers
+		);
 
 		/**
 		 * Fires after a module section is marked as complete.
 		 *
-		 * @param int    $post_id      Post ID.
-		 * @param int    $module_id    Module ID.
-		 * @param string $message_type Message type.
+		 * @param int $post_id   Post ID.
+		 * @param int $module_id Module ID.
 		 */
-		do_action( 'openlab_modules_section_complete', $post_id, $module_id, $message_type );
+		do_action( 'openlab_modules_section_complete', $post_id, $module_id );
 	}
 
 	/**

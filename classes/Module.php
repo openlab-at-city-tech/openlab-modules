@@ -420,6 +420,54 @@ class Module {
 	}
 
 	/**
+	 * Gets the email body for completion messages.
+	 *
+	 * @param int $post_id ID of the post just marked as complete.
+	 * @return string
+	 */
+	public function get_completion_message_body( $post_id ) {
+		$body_format = $this->get_completion_message_body_format();
+
+		if ( ! $body_format ) {
+			$body_format = __(
+				'Hi {{display_name}},
+
+You have completed the following:
+
+Module: {{module_title}} {{module_url}}
+Section: {{section_title}} {{section_url}}
+
+Well done!',
+				'openlab-modules'
+			);
+		}
+
+		$display_name = '';
+		$user         = wp_get_current_user();
+		if ( $user->exists() ) {
+			$display_name = $user->display_name;
+		}
+
+		if ( function_exists( 'bp_get_loggedin_user_fullname' ) ) {
+			$display_name = bp_get_loggedin_user_fullname();
+		}
+
+		$replacements = [
+			'{{display_name}}'  => $display_name,
+			'{{module_title}}'  => $this->get_title(),
+			'{{module_url}}'    => $this->get_url(),
+			'{{section_title}}' => get_the_title( $post_id ),
+			'{{section_url}}'   => get_permalink( $post_id ),
+		];
+
+		foreach ( $replacements as $key => $value ) {
+			$body_format = str_replace( $key, $value, $body_format );
+		}
+
+		return $body_format;
+	}
+
+	/**
 	 * Is sharing enable for this module?
 	 *
 	 * @return bool
