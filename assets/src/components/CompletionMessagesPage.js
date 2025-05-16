@@ -11,6 +11,7 @@ import { __ } from '@wordpress/i18n'
 export default function CompletionMessagesModule( {} ) {
 	const {
 		completionPopupText,
+		includePopupTextInCompletionEmail,
 		moduleIds,
 		postType,
 		sendCompletionEmail,
@@ -18,6 +19,7 @@ export default function CompletionMessagesModule( {} ) {
 	} = useSelect( ( select ) => {
 		return {
 			completionPopupText: select( 'core/editor' ).getEditedPostAttribute( 'completionPopupText' ),
+			includePopupTextInCompletionEmail: select( 'core/editor' ).getEditedPostAttribute( 'includePopupTextInCompletionEmail' ),
 			moduleIds: select( 'core/editor' ).getEditedPostAttribute( 'moduleIds' ),
 			postType: select( 'core/editor' ).getCurrentPostType(),
 			sendCompletionEmail: select( 'core/editor' ).getEditedPostAttribute( 'sendCompletionEmail' ),
@@ -65,6 +67,14 @@ export default function CompletionMessagesModule( {} ) {
 					checked={ sendCompletionEmail }
 					onChange={ ( newValue ) => {
 						editPost( { sendCompletionEmail: newValue } )
+					} } />
+
+				<CheckboxControl
+					disabled={ ! sendCompletionEmail }
+					label={ __( 'Include popup text in the email', 'openlab-modules' ) }
+					checked={ includePopupTextInCompletionEmail }
+					onChange={ ( newValue ) => {
+						editPost( { includePopupTextInCompletionEmail: newValue } )
 					} } />
 
 			</PluginDocumentSettingPanel>

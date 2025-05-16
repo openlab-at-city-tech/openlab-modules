@@ -216,6 +216,23 @@ class Module {
 	}
 
 	/**
+	 * Gets the 'include popup text in completion email' setting for a page.
+	 *
+	 * @param int $page_id ID of the page.
+	 * @return bool
+	 */
+	public static function get_page_include_popup_text_in_completion_email( $page_id ) {
+		$saved = get_post_meta( $page_id, 'include_popup_text_in_completion_email', true );
+
+		// If not set, default to false.
+		if ( '' === $saved ) {
+			return false;
+		}
+
+		return (bool) $saved;
+	}
+
+	/**
 	 * Gets the post associated with a module id.
 	 *
 	 * @param int $post_id Post ID.

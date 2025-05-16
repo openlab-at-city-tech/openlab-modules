@@ -316,6 +316,20 @@ class Frontend {
 
 			$email_body = $module->get_completion_message_body( $post_id );
 
+			$include_popup_text = false;
+			if ( ! $is_module ) {
+				$include_popup_text = Module::get_page_include_popup_text_in_completion_email( $post_id );
+				if ( $include_popup_text ) {
+					$email_body .= "\n\n";
+					$email_body .= sprintf(
+						'The following popup message was displaed after this episode was completed:
+
+%s',
+						Module::get_page_completion_popup_text( $post_id )
+					);
+				}
+			}
+
 			$email_to = $current_user->user_email;
 
 			$email_cc = $module->get_completion_message_cc_list();

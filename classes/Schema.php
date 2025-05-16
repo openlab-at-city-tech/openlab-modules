@@ -497,6 +497,20 @@ class Schema {
 
 		register_rest_field(
 			[ 'page' ],
+			'includePopupTextInCompletionEmail',
+			[
+				'get_callback'    => function ( $data_object ) {
+					return Module::get_page_include_popup_text_in_completion_email( $data_object['id'] );
+				},
+				'update_callback' => function ( $value, $data_object ) {
+					$value = ! empty( $value ) ? '1' : '0';
+					update_post_meta( $data_object->ID, 'include_popup_text_in_completion_email', $value );
+				},
+			]
+		);
+
+		register_rest_field(
+			[ 'page' ],
 			'sendCompletionEmail',
 			[
 				'get_callback'    => function ( $data_object ) {
