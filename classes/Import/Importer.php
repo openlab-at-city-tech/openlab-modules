@@ -14,6 +14,7 @@ namespace OpenLab\Modules\Import;
 use WP_Error;
 use XMLReader;
 use OpenLab\Modules\Logger\Logger;
+use OpenLab\Modules\Module;
 
 /**
  * Importer class.
@@ -140,7 +141,7 @@ class Importer {
 	/**
 	 * Constructor.
 	 *
-	 * @param array<string, bool|int|null> $options {
+	 * @param array<string, bool|int|null|string> $options {
 	 *     Options for the importer.
 	 *
 	 *     @type bool      $prefill_existing_posts    Should we prefill `post_exists` calls? Default true.
@@ -153,8 +154,9 @@ class Importer {
 	 *     @type bool      $aggressive_url_search     Whether to aggressively replace old URLs. Default false.
 	 *     @type int|null  $default_author            User ID to use if author is missing or invalid.
 	 *                                                Default null.
+	 *     @type string    $attachment_mode          Attachment mode. Default 'remote'.
 	 * }
-	 * @param string                       $path Path to the import directory.
+	 * @param string                              $path Path to the import directory.
 	 */
 	public function __construct( $options = [], $path = '' ) {
 		// Initialize some important variables.
@@ -424,6 +426,8 @@ class Importer {
 		// post-processing and remapping.
 		$this->post_process();
 
+		$this->copy_files();
+
 		if ( $this->options['aggressive_url_search'] ) {
 			$this->replace_attachment_urls_in_content();
 		}
@@ -464,7 +468,6 @@ class Importer {
 		// Suspend bunches of stuff in WP core.
 		wp_defer_term_counting( true );
 		wp_defer_comment_counting( true );
-		wp_suspend_cache_invalidation( true );
 
 		// Prefill exists calls if told to.
 		if ( $this->options['prefill_existing_posts'] ) {
@@ -493,7 +496,6 @@ class Importer {
 	 */
 	protected function import_end() {
 		// Re-enable stuff in core.
-		wp_suspend_cache_invalidation( false );
 		wp_cache_flush();
 		foreach ( get_taxonomies() as $tax ) {
 			delete_option( "{$tax}_children" );
@@ -1060,7 +1062,7 @@ class Importer {
 		if ( 'remote' === $this->options['attachment_mode'] ) {
 			$upload = $this->fetch_remote_file( $remote_url, $post );
 		} else {
-			$upload = $this->copy_local_file( $remote_url, $post );
+			$upload = $this->copy_local_file( $remote_url );
 		}
 
 		if ( is_wp_error( $upload ) ) {
@@ -1136,7 +1138,7 @@ class Importer {
 
 				$original_filename = isset( $data['original_file'] ) ? $data['original_file'] : $data['file'];
 
-				$remote = str_replace( basename( $remote_url ), $original_filename, $remote_url );
+				$remote = str_replace( basename( $remote_url ), basename( $original_filename ), $remote_url );
 				$local  = str_replace( $name, $data['file'], $upload['url'] );
 
 				$this->url_remap[ $remote ] = $local;
@@ -1869,6 +1871,12 @@ class Importer {
 
 		update_term_meta( $term_id, 'import_id', $original_id );
 
+		if ( ! empty( $meta ) ) {
+			foreach ( $meta as $_m ) {
+				update_term_meta( $term_id, $_m['key'], $_m['value'] );
+			}
+		}
+
 		$this->logger->info(
 			sprintf(
 				// translators: %1$s is the term name, %2$s is the taxonomy name.
@@ -1903,61 +1911,38 @@ class Importer {
 	/**
 	 * Copy attachent file to uploads directory.
 	 *
-	 * @param string $url  URL of item to fetch.
-	 * @param array  $post Attachment details.
+	 * @param string $url URL of item to fetch.
 	 * @return array|WP_Error Local file location details on success, WP_Error otherwise
 	 */
-	protected function copy_local_file( $url, $post ) {
+	protected function copy_local_file( $url ) {
+		$wp_upload_dir = wp_upload_dir();
+
 		// extract the file name and extension from the url.
 		$name = basename( $url );
 
 		// Get local file details.
-		$filename = str_replace( $this->base_url, $this->path, $url );
+		$extract_path     = str_replace( $this->base_url, $this->path, $url );
+		$destination_path = str_replace( $this->path . '/files', $wp_upload_dir['basedir'], $extract_path );
 
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-		$bits = file_get_contents( $filename );
-		if ( ! $bits ) {
-			$message = sprintf( 'Could not read file %s', $filename );
-			return new WP_Error( 'import_file_error', $message );
+		// Use WP_Filesystem to copy.
+		$filesystem_is_initialized = WP_Filesystem();
+		if ( ! $filesystem_is_initialized ) {
+			$message = __( 'Could not initialize filesystem', 'openlab-modules' );
+			return new WP_Error( 'filesystem_error', $message );
 		}
 
-		$upload = wp_upload_bits( $name, null, $bits, $post['upload_date'] );
-		if ( $upload['error'] ) {
-			return new WP_Error( 'upload_dir_error', $upload['error'] );
+		global $wp_filesystem;
+		$success = $wp_filesystem->copy( $extract_path, $destination_path, true );
+		if ( ! $success ) {
+			return new WP_Error( 'copy_failed', __( 'Failed to copy file to destination.', 'openlab-modules' ) );
 		}
 
-		$filesize = filesize( $upload['file'] );
-		$max_size = (int) $this->max_attachment_size();
-
-		if ( ! empty( $max_size ) && $filesize > $max_size ) {
-			wp_delete_file( $upload['file'] );
-			$message = sprintf( 'Local file is too large, limit is %s', size_format( $max_size ) );
-			return new WP_Error( 'import_file_error', $message );
-		}
-
-		// Copy thumbnails.
-		if ( ! empty( $post['metadata']['sizes'] ) ) {
-			$upload['sizes'] = [];
-			foreach ( $post['metadata']['sizes'] as $size => $data ) {
-				$path = str_replace( basename( $upload['file'] ), $data['file'], $filename );
-				$file = str_replace( basename( $upload['file'] ), $data['file'], $upload['file'] );
-
-				// Image size with different names might have same size.
-				if ( file_exists( $file ) ) {
-					continue;
-				}
-
-				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-				$bits = file_get_contents( $path );
-				if ( $bits ) {
-					$thumb = wp_upload_bits( $data['file'], null, $bits, $post['upload_date'] );
-
-					if ( $thumb['error'] ) {
-						$upload['sizes'][ $size ] = $thumb;
-					}
-				}
-			}
-		}
+		// Return value should mimic the return value of wp_upload_bits.
+		$upload = array(
+			'file' => $destination_path,
+			'url'  => str_replace( $wp_upload_dir['basedir'], $wp_upload_dir['baseurl'], $destination_path ),
+			'type' => wp_check_filetype( $name, null ),
+		);
 
 		return $upload;
 	}
@@ -1977,9 +1962,9 @@ class Importer {
 			$this->post_process_comments( $this->requires_remapping['comment'] );
 		}
 
+		$this->post_process_cpt_tax_map();
 		$this->post_process_block_attributes();
 		$this->post_process_post_meta();
-		$this->post_process_cpt_tax_map();
 	}
 
 	/**
@@ -2296,6 +2281,25 @@ class Importer {
 
 		$mapping = $this->get_post_id_map();
 
+		// First, loop through and change the inserted_navigation keys to avoid dupes.
+		foreach ( $mapping as $old_post_id => $new_post_id ) {
+			$post_module_ids = Module::get_module_ids_of_page( $new_post_id );
+			foreach ( $post_module_ids as $new_post_module_id ) {
+				$old_post_module_id = array_search( $new_post_module_id, $mapping, true );
+				if ( $old_post_module_id ) {
+					$old_meta_key = 'openlab_modules_inserted_navigation_' . (string) $old_post_module_id;
+					$new_meta_key = 'openlab_modules_inserted_navigation_' . (string) $new_post_module_id;
+
+					$old_meta_value = get_post_meta( $new_post_id, $old_meta_key, true );
+					if ( $old_meta_value ) {
+						delete_post_meta( $new_post_id, $old_meta_key );
+						update_post_meta( $new_post_id, $new_meta_key, '1' );
+					}
+				}
+			}
+		}
+
+		// Next, map module page IDs. Saving 'module_page_ids' will trigger Schema's navigation insertion.
 		foreach ( $mapping as $old_post_id => $new_post_id ) {
 			$module_page_ids_raw = get_post_meta( $new_post_id, 'module_page_ids', true );
 			if ( $module_page_ids_raw && is_string( $module_page_ids_raw ) ) {
@@ -2327,7 +2331,7 @@ class Importer {
 
 		foreach ( $post_map as $old_post_id => $new_post_id ) {
 			// Update post_meta: 'term_id' → new term ID.
-			$old_term_id_raw = get_post_meta( $old_post_id, 'term_id', true );
+			$old_term_id_raw = get_post_meta( $new_post_id, 'term_id', true );
 			$old_term_id     = is_numeric( $old_term_id_raw ) ? (int) $old_term_id_raw : 0;
 			if ( $old_term_id && isset( $term_map[ $old_term_id ] ) ) {
 				update_post_meta( $new_post_id, 'term_id', $term_map[ $old_term_id ] );
@@ -2336,12 +2340,92 @@ class Importer {
 
 		foreach ( $term_map as $old_term_id => $new_term_id ) {
 			// Update term_meta: 'post_id' → new post ID.
-			$old_post_id_raw = get_term_meta( $old_term_id, 'post_id', true );
+			$old_post_id_raw = get_term_meta( $new_term_id, 'post_id', true );
 			$old_post_id     = is_numeric( $old_post_id_raw ) ? (int) $old_post_id_raw : 0;
 			if ( $old_post_id && isset( $post_map[ $old_post_id ] ) ) {
 				update_term_meta( $new_term_id, 'post_id', $post_map[ $old_post_id ] );
 			}
 		}
+	}
+
+	/**
+	 * Copy files from extract path to destination path.
+	 *
+	 * @return bool|WP_Error True on success, WP_Error on failure.
+	 */
+	protected function copy_files() {
+		$filesystem_is_initialized = WP_Filesystem();
+		if ( ! $filesystem_is_initialized ) {
+			return new WP_Error( 'filesystem_error', __( 'Could not initialize filesystem', 'openlab-modules' ) );
+		}
+
+		global $wp_filesystem;
+
+		$source_files_root = trailingslashit( $this->path ) . 'files';
+		$upload_dir        = wp_upload_dir();
+		$dest_files_root   = trailingslashit( $upload_dir['basedir'] );
+
+		if ( ! $wp_filesystem->is_dir( $source_files_root ) ) {
+			return new WP_Error(
+				'missing_files_dir',
+				// translators: %s is the source files directory.
+				sprintf( __( 'Source files directory not found: %s', 'openlab-modules' ), $source_files_root )
+			);
+		}
+
+		// Recursively scan source files dir.
+		$all_files = $this->recursive_list_files( $source_files_root );
+
+		foreach ( $all_files as $source_file ) {
+			// Relative path from files root, e.g., '2025/05/foo.jpg'.
+			$relative_path = ltrim( str_replace( $source_files_root, '', $source_file ), '/\\' );
+
+			$destination_path = $dest_files_root . $relative_path;
+			$destination_dir  = dirname( $destination_path );
+
+			// Make sure destination directory exists.
+			if ( ! $wp_filesystem->is_dir( $destination_dir ) ) {
+				$wp_filesystem->mkdir( $destination_dir, FS_CHMOD_DIR, true );
+			}
+
+			// Copy the file.
+			$success = $wp_filesystem->copy( $source_file, $destination_path, true );
+			if ( ! $success ) {
+				return new WP_Error(
+					'copy_failed',
+					// translators: %1$s is the source file, %2$s is the destination path.
+					sprintf( __( 'Failed to copy %1$s to %2$s', 'openlab-modules' ), $source_file, $destination_path )
+				);
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Recursively list all files in a directory.
+	 *
+	 * @param string $dir Directory to scan.
+	 * @return array List of file paths.
+	 */
+	protected function recursive_list_files( $dir ) {
+		global $wp_filesystem;
+
+		$result = [];
+
+		$entries = $wp_filesystem->dirlist( $dir );
+
+		foreach ( $entries as $name => $entry ) {
+			$full_path = trailingslashit( $dir ) . $name;
+
+			if ( 'f' === $entry['type'] ) {
+				$result[] = $full_path;
+			} elseif ( 'd' === $entry['type'] ) {
+				$result = array_merge( $result, $this->recursive_list_files( $full_path ) );
+			}
+		}
+
+		return $result;
 	}
 
 	/**

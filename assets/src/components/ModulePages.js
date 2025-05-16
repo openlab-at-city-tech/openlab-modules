@@ -115,6 +115,7 @@ export default function EditModule( {} ) {
 			type: 'page'
 		}
 
+console.log( JSON.stringify( postData, null, 2 ) )
 		apiFetch({
 			path: '/wp/v2/pages',
 			method: 'POST',

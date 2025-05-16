@@ -487,10 +487,13 @@ class Schema {
 
 		// Navigation insertion.
 		$nav_block = [
-			'blockName' => 'openlab-modules/module-navigation',
-			'attrs'     => [
+			'blockName'    => 'openlab-modules/module-navigation',
+			'attrs'        => [
 				'moduleId' => $module_id,
 			],
+			'innerContent' => [],
+			'innerBlocks'  => [],
+			'innerHTML'    => '',
 		];
 
 		$nav_block_markup = serialize_block( $nav_block );

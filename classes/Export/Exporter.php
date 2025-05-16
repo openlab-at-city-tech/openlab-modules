@@ -249,10 +249,6 @@ class Exporter {
 	 * @return void
 	 */
 	protected function delete_acknowledgements_block() {
-		if ( empty( $this->acknowledgements_page_id ) ) {
-			return;
-		}
-
 		if ( empty( $this->original_post_content ) ) {
 			return;
 		}
@@ -337,63 +333,6 @@ class Exporter {
 			$text .= '# ' . esc_html__( 'Note from Exporter', 'openlab-modules' );
 			$text .= "\n\n";
 			$text .= $this->readme_custom_text;
-		}
-
-		$text .= "\n\n";
-
-		$text .= '# ' . esc_html__( 'Theme, Plugins, and Menu', 'openlab-modules' );
-		$text .= "\n\n";
-
-		$text .= esc_html__( 'The exported site uses the theme and plugins listed below. If you want your site to have the same appearance and features, you will need to install (if necessary) and activate the theme and plugins before you import.', 'openlab-modules' );
-
-		$active_theme = wp_get_theme( get_stylesheet() );
-
-		$theme_uri = $this->get_theme_uri( get_stylesheet() );
-		if ( ! $theme_uri ) {
-			$theme_uri = $active_theme->get( 'ThemeURI' );
-		}
-
-		$text .= "\n\n";
-		$text .= esc_html__( 'Theme:', 'openlab-modules' );
-		$text .= "\n";
-		$text .= sprintf(
-			'* %s: %s',
-			esc_html( $active_theme->name ),
-			esc_html( $theme_uri )
-		);
-		$text .= "\n\n";
-
-		$text .= esc_html__( 'Plugins:', 'openlab-modules' );
-		$text .= "\n";
-
-		$all_plugins = get_plugins();
-		foreach ( $all_plugins as $plugin_file => $plugin_data ) {
-			if ( ! is_plugin_active( $plugin_file ) ) {
-				continue;
-			}
-
-			if ( is_plugin_active_for_network( $plugin_file ) ) {
-				continue;
-			}
-
-			$plugin_uri = $this->get_plugin_uri( $plugin_file );
-			if ( ! $plugin_uri && ! empty( $plugin_data['PluginURI'] ) ) {
-				$plugin_uri = $plugin_data['PluginURI'];
-			}
-
-			if ( ! empty( $plugin_uri ) ) {
-				$text .= sprintf(
-					'* %s: %s',
-					esc_html( $plugin_data['Name'] ),
-					esc_html( $plugin_uri )
-				);
-			} else {
-				$text .= sprintf(
-					'* %s',
-					esc_html( $plugin_data['Name'] ),
-				);
-			}
-			$text .= "\n";
 		}
 
 		$this->readme_text = $text;
@@ -555,6 +494,33 @@ class Exporter {
 			}
 		}
 
+		// For all identified attachments, get all associated files and add to files array.
+		foreach ( $attachment_ids as $attachment_id ) {
+			$attachment = get_post( $attachment_id );
+			if ( ! $attachment ) {
+				continue;
+			}
+
+			$original_file = get_attached_file( $attachment_id );
+			if ( ! $original_file ) {
+				continue;
+			}
+
+			$this->files[] = $original_file;
+
+			// Get all resized versions of the file.
+			$metadata = wp_get_attachment_metadata( $attachment_id );
+			if ( ! empty( $metadata['sizes'] ) ) {
+				foreach ( $metadata['sizes'] as $size => $data ) {
+					$filename = $data['file'];
+					$filepath = trailingslashit( dirname( $original_file ) ) . $filename;
+					if ( file_exists( $filepath ) ) {
+						$this->files[] = $filepath;
+					}
+				}
+			}
+		}
+
 		return array_unique( $attachment_ids );
 	}
 
@@ -641,6 +607,7 @@ class Exporter {
 
 		$zip->addFile( $this->exports_dir . 'wordpress.xml', 'wordpress.xml' );
 
+		$this->files = array_unique( $this->files );
 		foreach ( $this->files as $file ) {
 			$zip->addFile( $file, $this->normalize_path( $file ) );
 		}
@@ -664,9 +631,10 @@ class Exporter {
 	 * @return string $filename
 	 */
 	protected function filename() {
-		$stripped_url = sanitize_title_with_dashes( get_bloginfo( 'name' ) );
-		$timestamp    = gmdate( 'Y-m-d' );
-		$filename     = "export-{$stripped_url}-{$timestamp}.zip";
+		$post      = get_post( $this->module_id );
+		$post_name = $post ? $post->post_name : 'module';
+		$timestamp = gmdate( 'Y-m-d' );
+		$filename  = "export-module-{$post_name}-{$timestamp}.zip";
 
 		return $filename;
 	}
@@ -685,6 +653,14 @@ class Exporter {
 
 		$abs_path = trailingslashit( str_replace( '\\', '/', $abs_path ) );
 
-		return str_replace( [ '\\', $abs_path ], '/', $file );
+		$file = str_replace( [ '\\', $abs_path ], '/', $file );
+
+		// Remove double slashes.
+		$normalized_file = preg_replace( '#//+#', '/', $file );
+		if ( $normalized_file ) {
+			$file = $normalized_file;
+		}
+
+		return $file;
 	}
 }

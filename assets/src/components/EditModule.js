@@ -44,13 +44,14 @@ export default function EditModule() {
 			const sharingBlock = wp.data.select( 'core/block-editor' ).getBlocks().find( block => block.name === 'openlab-modules/sharing' )
 
 			if ( ! sharingBlock ) {
-				// If not, add one. Ideally after openlab-modules/module-navigation, if it exists.
+				// If not, add one. Ideally before openlab-modules/module-navigation, if it exists.
 				const moduleNavigationBlock = wp.data.select( 'core/block-editor' ).getBlocks().find( block => block.name === 'openlab-modules/module-navigation' )
 				const moduleNavigationClientId = moduleNavigationBlock ? moduleNavigationBlock.clientId : null
 
-				const insertIndex = moduleNavigationClientId ? wp.data.select( 'core/block-editor' ).getBlockIndex( moduleNavigationClientId ) + 1 : 0
+				const moduleNavigationBlockIndex = wp.data.select( 'core/block-editor' ).getBlockIndex( moduleNavigationClientId )
+				const insertIndex = moduleNavigationBlockIndex ? moduleNavigationBlockIndex : 0
 
-				// Insert a test paragraph block after the module navigation block
+				// Insert the block.
 				wp.data.dispatch( 'core/block-editor' ).insertBlocks( wp.blocks.createBlock( 'openlab-modules/sharing' ), insertIndex )
 
 				// Return focus to the Module tab.
