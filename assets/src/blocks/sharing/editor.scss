@@ -3,6 +3,11 @@
 .wp-block-openlab-modules-sharing {
 	pointer-events: none;
 
+	.sharing-button-container {
+		display: flex;
+		justify-content: flex-end;
+	}
+
 	&.sharing-is-disabled {
 		.sharing-notice {
 			padding-left: 20px;

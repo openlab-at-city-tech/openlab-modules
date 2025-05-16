@@ -6,7 +6,7 @@ import '../../components/clone-module.scss';
 
 const App = ( { moduleId, nonce, uniqid } ) => {
     return (
-        <div>
+        <div className="sharing-button-container">
             <CloneModuleFrontend
 							moduleId={ moduleId }
 							nonce={ nonce }
