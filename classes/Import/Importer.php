@@ -2280,6 +2280,19 @@ class Importer {
 
 		$mapping = $this->get_post_id_map();
 
+		// First, loop through and change the inserted_navigation keys to avoid dupes.
+		foreach ( $mapping as $old_post_id => $new_post_id ) {
+			$old_meta_key = 'openlab_modules_inserted_navigation_' . (string) $old_post_id;
+			$new_meta_key = 'openlab_modules_inserted_navigation_' . (string) $new_post_id;
+
+			$old_meta_value = get_post_meta( $new_post_id, $old_meta_key, true );
+			if ( $old_meta_value ) {
+				delete_post_meta( $new_post_id, $old_meta_key );
+				update_post_meta( $new_post_id, $new_meta_key, '1' );
+			}
+		}
+
+		// Next, map module page IDs. Saving 'module_page_ids' will trigger Schema's navigation insertion.
 		foreach ( $mapping as $old_post_id => $new_post_id ) {
 			$module_page_ids_raw = get_post_meta( $new_post_id, 'module_page_ids', true );
 			if ( $module_page_ids_raw && is_string( $module_page_ids_raw ) ) {
