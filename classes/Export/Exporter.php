@@ -653,6 +653,14 @@ class Exporter {
 
 		$abs_path = trailingslashit( str_replace( '\\', '/', $abs_path ) );
 
-		return str_replace( [ '\\', $abs_path ], '/', $file );
+		$file = str_replace( [ '\\', $abs_path ], '/', $file );
+
+		// Remove double slashes.
+		$normalized_file = preg_replace( '#//+#', '/', $file );
+		if ( $normalized_file ) {
+			$file = $normalized_file;
+		}
+
+		return $file;
 	}
 }
