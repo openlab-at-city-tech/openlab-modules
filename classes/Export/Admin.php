@@ -97,8 +97,6 @@ class Admin {
 
 			<p><?php esc_html_e( 'Use this tool to create a Module Archive file (.zip) that will be downloaded to your computer and can be used with the OpenLab Modules plugin to import into another site.', 'openlab-modules' ); ?></p>
 
-			<p><?php esc_html_e( 'A readme text file will be included with the exported archive file. It will include information on how this archive file can be imported into another site. You can also include your own custom text in the box below. If there are specific plugins or a theme needed to create this module, please include those in your text.', 'openlab-modules' ); ?></p>
-
 			<form method="post" id="export-module" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<h2><?php esc_html_e( 'Choose what to export', 'openlab-modules' ); ?></h2>
 
@@ -119,7 +117,7 @@ class Admin {
 
 				<h2><?php esc_html_e( 'Readme file', 'openlab-modules' ); ?></h2>
 
-				<p id="readme-description"><?php esc_html_e( 'A readme text file will be included with the exported archive file. It will include information on how this archive file can be imported into another site. You can also include your own custom text in the box below.', 'openlab-modules' ); ?></p>
+				<p id="readme-description"><?php esc_html_e( 'A readme text file will be included with the exported archive file. It will include information on how this archive file can be imported into another site. You can also include your own custom text in the box below. If there are specific plugins or a theme needed to create this module, please include those in your text.', 'openlab-modules' ); ?></p>
 
 				<label for="readme-additional-text" class="screen-reader-text"><?php esc_html_e( 'Additional text for readme file', 'openlab-modules' ); ?></label>
 
