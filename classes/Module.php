@@ -199,6 +199,23 @@ class Module {
 	}
 
 	/**
+	 * Gets the 'send completion email' setting for a page.
+	 *
+	 * @param int $page_id ID of the page.
+	 * @return bool
+	 */
+	public static function get_page_send_completion_email( $page_id ) {
+		$saved = get_post_meta( $page_id, 'send_completion_email', true );
+
+		// If not set, default to true.
+		if ( '' === $saved ) {
+			return true;
+		}
+
+		return (bool) $saved;
+	}
+
+	/**
 	 * Gets the post associated with a module id.
 	 *
 	 * @param int $post_id Post ID.

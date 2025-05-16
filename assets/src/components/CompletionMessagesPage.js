@@ -13,12 +13,14 @@ export default function CompletionMessagesModule( {} ) {
 		completionPopupText,
 		moduleIds,
 		postType,
+		sendCompletionEmail,
 		showCompletionPopup
 	} = useSelect( ( select ) => {
 		return {
 			completionPopupText: select( 'core/editor' ).getEditedPostAttribute( 'completionPopupText' ),
 			moduleIds: select( 'core/editor' ).getEditedPostAttribute( 'moduleIds' ),
 			postType: select( 'core/editor' ).getCurrentPostType(),
+			sendCompletionEmail: select( 'core/editor' ).getEditedPostAttribute( 'sendCompletionEmail' ),
 			showCompletionPopup: select( 'core/editor' ).getEditedPostAttribute( 'showCompletionPopup' )
 		}
 	} )
@@ -58,6 +60,12 @@ export default function CompletionMessagesModule( {} ) {
 						editPost( { completionPopupText: newValue } )
 					} } />
 
+				<CheckboxControl
+					label={ __( 'Send completion email when activities for this page are completed', 'openlab-modules' ) }
+					checked={ sendCompletionEmail }
+					onChange={ ( newValue ) => {
+						editPost( { sendCompletionEmail: newValue } )
+					} } />
 
 			</PluginDocumentSettingPanel>
 		</>

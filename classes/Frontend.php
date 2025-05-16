@@ -292,39 +292,48 @@ class Frontend {
 			return;
 		}
 
-		$current_user = wp_get_current_user();
-		if ( ! $current_user->exists() ) {
-			return;
+		$is_module = Schema::get_module_post_type() === get_post_type( $post_id );
+
+		$send_completion_email = true;
+		if ( ! $is_module ) {
+			$send_completion_email = Module::get_page_send_completion_email( $post_id );
 		}
 
-		$email_subject = $module->get_completion_message_subject();
-		if ( ! $email_subject ) {
-			$email_subject = sprintf(
-				// translators: %s is the title of the module.
-				__( 'Well done! You have completed a section of the module: %s', 'openlab-modules' ),
-				$module->get_title()
+		if ( $send_completion_email ) {
+			$current_user = wp_get_current_user();
+			if ( ! $current_user->exists() ) {
+				return;
+			}
+
+			$email_subject = $module->get_completion_message_subject();
+			if ( ! $email_subject ) {
+				$email_subject = sprintf(
+					// translators: %s is the title of the module.
+					__( 'Well done! You have completed a section of the module: %s', 'openlab-modules' ),
+					$module->get_title()
+				);
+			}
+
+			$email_body = $module->get_completion_message_body( $post_id );
+
+			$email_to = $current_user->user_email;
+
+			$email_cc = $module->get_completion_message_cc_list();
+
+			$headers = [];
+			if ( $email_cc ) {
+				foreach ( $email_cc as $cc ) {
+					$headers[] = 'Cc: ' . $cc;
+				}
+			}
+
+			wp_mail(
+				$email_to,
+				$email_subject,
+				$email_body,
+				$headers
 			);
 		}
-
-		$email_body = $module->get_completion_message_body( $post_id );
-
-		$email_to = $current_user->user_email;
-
-		$email_cc = $module->get_completion_message_cc_list();
-
-		$headers = [];
-		if ( $email_cc ) {
-			foreach ( $email_cc as $cc ) {
-				$headers[] = 'Cc: ' . $cc;
-			}
-		}
-
-		wp_mail(
-			$email_to,
-			$email_subject,
-			$email_body,
-			$headers
-		);
 
 		/**
 		 * Fires after a module section is marked as complete.
