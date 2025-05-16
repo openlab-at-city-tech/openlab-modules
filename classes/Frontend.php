@@ -66,11 +66,17 @@ class Frontend {
 
 		$current_page_permalink = get_permalink();
 
-		$post_id      = get_queried_object_id();
-		$module_id    = self::get_module_id_for_post( $post_id );
-		$message_type = self::get_completion_message_type( $module_id, $post_id );
+		$post_id   = get_queried_object_id();
+		$module_id = self::get_module_id_for_post( $post_id );
 
-		$section_complete_message = apply_filters( 'openlab_modules_section_complete_message', __( 'You have completed this page. You will receive a private message confirming the completion.', 'openlab-modules' ), $message_type, $module_id, $post_id );
+		$section_complete_message = '';
+
+		if ( $module_id ) {
+			$module = Module::get_instance( $module_id );
+			if ( $module ) {
+				$section_complete_message = $module->get_completion_popup_text();
+			}
+		}
 
 		wp_localize_script(
 			'openlab-modules-frontend',
@@ -241,24 +247,6 @@ class Frontend {
 		wp_enqueue_style( 'openlab-modules-frontend' );
 
 		return $content . $pagination;
-	}
-
-	/**
-	 * Gets the completion message type.
-	 *
-	 * @param int|null $post_id   Post ID.
-	 * @param int|null $module_id Module ID.
-	 * @return string
-	 */
-	public static function get_completion_message_type( $post_id = 0, $module_id = 0 ) {
-		/**
-		 * Filter the completion message type.
-		 *
-		 * @param string   $message_type Message type. Default is 'bp_messages'.
-		 * @param int|null $module_id    Module ID.
-		 * @param int|null $post_id      Post ID.
-		 */
-		return apply_filters( 'openlab_modules_completion_message_type', 'bp_messages', $module_id, $post_id );
 	}
 
 	/**

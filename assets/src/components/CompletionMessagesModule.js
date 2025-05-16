@@ -6,7 +6,12 @@ import { PluginDocumentSettingPanel } from '@wordpress/editor'
 
 import { __, sprintf } from '@wordpress/i18n'
 import { useDispatch, useSelect } from '@wordpress/data'
-import { PanelRow, TextareaControl } from '@wordpress/components'
+import {
+		// eslint-disable-next-line
+		__experimentalDivider as Divider,
+		PanelRow,
+		TextareaControl
+	} from '@wordpress/components'
 import { useEffect, useState } from '@wordpress/element'
 
 export default function CompletionMessagesModule( {} ) {
@@ -14,6 +19,7 @@ export default function CompletionMessagesModule( {} ) {
 		completionMessageBodyFormat,
 		completionMessageCcString,
 		completionMessageSubject,
+		completionPopupText,
 		postTitle,
 		postType
 	} = useSelect( ( select ) => {
@@ -21,6 +27,7 @@ export default function CompletionMessagesModule( {} ) {
 			completionMessageBodyFormat: select( 'core/editor' ).getEditedPostAttribute( 'completionMessageBodyFormat' ),
 			completionMessageCcString: select( 'core/editor' ).getEditedPostAttribute( 'completionMessageCcString' ),
 			completionMessageSubject: select( 'core/editor' ).getEditedPostAttribute( 'completionMessageSubject' ),
+			completionPopupText: select( 'core/editor' ).getEditedPostAttribute( 'completionPopupText' ),
 			postTitle: select( 'core/editor' ).getEditedPostAttribute( 'title' ),
 			postType: select( 'core/editor' ).getCurrentPostType()
 		}
@@ -33,6 +40,8 @@ export default function CompletionMessagesModule( {} ) {
 
 	const [ bodyFormatDirty, setBodyFormatDirty ] = useState( false )
 	const [ generatedBodyFormat, setGeneratedBodyFormat ] = useState( '' )
+
+	const [ popupTextDirty, setPopupTextDirty ] = useState( false )
 
 	useEffect( () => {
 		if ( ! subjectDirty && ! completionMessageSubject && postTitle ) {
@@ -56,6 +65,8 @@ export default function CompletionMessagesModule( {} ) {
 	if ( ! postType || 'openlab_module' !== postType ) {
 		return null
 	}
+
+	const defaultPopupText = __( 'You have completed the activities on this page. You will receive an email confirming your completion.', 'openlab-modules' )
 
 	return (
 		<>
@@ -97,6 +108,26 @@ export default function CompletionMessagesModule( {} ) {
 						editPost( { completionMessageBodyFormat: value } )
 					} }
 					help={ __( 'Use the following tokens for dynamic values: {{display_name}}, {{module_title}}, {{module_url}}, {{section_title}}, {{section_url}}', 'openlab-modules' ) }
+					/>
+
+				<Divider />
+
+				<PanelRow>
+					<h3>{ __( 'Popup', 'openlab-modules' ) }</h3>
+				</PanelRow>
+
+				<PanelRow>
+					<p>{ __( 'Edit the popup message users will see when the interactive activities in a module section are completed. This can also be changed on individual pages.', 'openlab-modules' ) }</p>
+				</PanelRow>
+
+				<TextareaControl
+					label={ __( 'Message text', 'openlab-modules' ) }
+					value={ popupTextDirty || completionPopupText ? completionPopupText : defaultPopupText }
+					onChange={ ( value ) => {
+						setPopupTextDirty( true )
+						editPost( { completionPopupText: value } )
+					} }
+					placeholder={ __( 'Enter popup text', 'openlab-modules' ) }
 					/>
 
 			</PluginDocumentSettingPanel>

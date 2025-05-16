@@ -468,6 +468,21 @@ Well done!',
 	}
 
 	/**
+	 * Gets the completion popup text for the module.
+	 *
+	 * @return string
+	 */
+	public function get_completion_popup_text() {
+		$popup_text = get_post_meta( $this->id, 'completion_popup_text', true );
+
+		if ( ! is_string( $popup_text ) ) {
+			$popup_text = '';
+		}
+
+		return $popup_text;
+	}
+
+	/**
 	 * Is sharing enable for this module?
 	 *
 	 * @return bool
