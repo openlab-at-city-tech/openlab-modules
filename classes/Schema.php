@@ -407,7 +407,7 @@ class Schema {
 
 		register_rest_field(
 			[ 'openlab_module' ],
-			'completionMessageBccString',
+			'completionMessageCcString',
 			[
 				'get_callback'    => function ( $data_object ) {
 					$module = Module::get_instance( $data_object['id'] );
@@ -415,7 +415,7 @@ class Schema {
 						return '';
 					}
 
-					return $module->get_completion_message_bcc_string();
+					return $module->get_completion_message_cc_string();
 				},
 				'update_callback' => function ( $value, $data_object ) {
 					$module = Module::get_instance( $data_object->ID );
@@ -426,7 +426,7 @@ class Schema {
 					$sanitized = array_map( 'trim', explode( ',', $value ) );
 					$string    = implode( ',', $sanitized );
 
-					update_post_meta( $data_object->ID, 'completion_message_bcc', $string );
+					update_post_meta( $data_object->ID, 'completion_message_cc', $string );
 				},
 			]
 		);

@@ -10,11 +10,11 @@ import { PanelRow, TextareaControl } from '@wordpress/components'
 
 export default function CompletionMessagesModule( {} ) {
 	const {
-		completionMessageBccString,
+		completionMessageCcString,
 		postType
 	} = useSelect( ( select ) => {
 		return {
-			completionMessageBccString: select( 'core/editor' ).getEditedPostAttribute( 'completionMessageBccString' ),
+			completionMessageCcString: select( 'core/editor' ).getEditedPostAttribute( 'completionMessageCcString' ),
 			postType: select( 'core/editor' ).getCurrentPostType()
 		}
 	} )
@@ -36,11 +36,11 @@ export default function CompletionMessagesModule( {} ) {
 				</PanelRow>
 
 				<TextareaControl
-					label={ __( 'BCC', 'openlab-modules' ) }
+					label={ __( 'CC', 'openlab-modules' ) }
 					help={ __( 'Enter any addresses to be copied on the email, separated by commas.', 'openlab-modules' ) }
-					value={ completionMessageBccString }
+					value={ completionMessageCcString }
 					onChange={ ( value ) => {
-						wp.data.dispatch( 'core/editor' ).editPost( { completionMessageBccString: value } )
+						wp.data.dispatch( 'core/editor' ).editPost( { completionMessageCcString: value } )
 					} }
 					placeholder={ __( 'Enter email addresses', 'openlab-modules' ) }
 					/>
