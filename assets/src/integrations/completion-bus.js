@@ -72,13 +72,15 @@ const moduleProblemCompletionBus = {
 			return;
 		}
 
-		const { nonce, postId } = openlabModules;
+		const { nonce, postId, showCompletionPopup } = openlabModules;
 
 		this.sendCompleteStatus( nonce, postId ).then( () => {
 			this.completeRequestSent = true;
 		})
 
-		this.createSectionCompleteNotice();
+		if ( showCompletionPopup ) {
+			this.createSectionCompleteNotice();
+		}
 	},
 
 	/**

@@ -182,6 +182,23 @@ class Module {
 	}
 
 	/**
+	 * Gets the 'show completion popup' setting for a page.
+	 *
+	 * @param int $page_id ID of the page.
+	 * @return bool
+	 */
+	public static function get_page_show_completion_popup( $page_id ) {
+		$saved = get_post_meta( $page_id, 'show_completion_popup', true );
+
+		// If not set, default to true.
+		if ( '' === $saved ) {
+			return true;
+		}
+
+		return (bool) $saved;
+	}
+
+	/**
 	 * Gets the post associated with a module id.
 	 *
 	 * @param int $post_id Post ID.

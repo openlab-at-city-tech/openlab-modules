@@ -12,12 +12,14 @@ export default function CompletionMessagesModule( {} ) {
 	const {
 		completionPopupText,
 		moduleIds,
-		postType
+		postType,
+		showCompletionPopup
 	} = useSelect( ( select ) => {
 		return {
 			completionPopupText: select( 'core/editor' ).getEditedPostAttribute( 'completionPopupText' ),
 			moduleIds: select( 'core/editor' ).getEditedPostAttribute( 'moduleIds' ),
-			postType: select( 'core/editor' ).getCurrentPostType()
+			postType: select( 'core/editor' ).getCurrentPostType(),
+			showCompletionPopup: select( 'core/editor' ).getEditedPostAttribute( 'showCompletionPopup' )
 		}
 	} )
 
@@ -39,7 +41,17 @@ export default function CompletionMessagesModule( {} ) {
 				title={ __( 'Completion Messages', 'openlab-modules' ) }
 				>
 
+				<CheckboxControl
+					label={ __( 'Show completion message popup when activities for this page are completed', 'openlab-modules' ) }
+					checked={ showCompletionPopup }
+					onChange={ ( newValue ) => {
+						editPost( { showCompletionPopup: newValue } )
+					} }
+					/>
+
 				<TextareaControl
+					disabled={ ! showCompletionPopup }
+					hideLabelFromVision={ true }
 					label={ __( 'Popup Text', 'openlab-modules' ) }
 					value={ completionPopupText }
 					onChange={ ( newValue ) => {

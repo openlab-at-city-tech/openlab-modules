@@ -497,6 +497,20 @@ class Schema {
 
 		register_rest_field(
 			[ 'page' ],
+			'showCompletionPopup',
+			[
+				'get_callback'    => function ( $data_object ) {
+					return Module::get_page_show_completion_popup( $data_object['id'] );
+				},
+				'update_callback' => function ( $value, $data_object ) {
+					$value = ! empty( $value ) ? '1' : '0';
+					update_post_meta( $data_object->ID, 'show_completion_popup', $value );
+				},
+			]
+		);
+
+		register_rest_field(
+			[ 'page' ],
 			'moduleIds',
 			[
 				'get_callback'    => function ( $data_object ) {

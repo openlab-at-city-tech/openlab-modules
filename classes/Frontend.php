@@ -70,6 +70,7 @@ class Frontend {
 		$module_id = self::get_module_id_for_post( $post_id );
 
 		$section_complete_message = '';
+		$show_completion_popup    = true;
 
 		if ( $module_id ) {
 			if ( $module_id === $post_id ) {
@@ -79,6 +80,7 @@ class Frontend {
 				}
 			} else {
 				$section_complete_message = Module::get_page_completion_popup_text( $post_id );
+				$show_completion_popup    = Module::get_page_show_completion_popup( $post_id );
 			}
 		}
 
@@ -99,11 +101,12 @@ class Frontend {
 			'openlab-modules-frontend',
 			'const openlabModules = ' . wp_json_encode(
 				[
-					'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
-					'isUserLoggedIn' => is_user_logged_in(),
-					'loginUrl'       => wp_login_url( (string) $current_page_permalink ),
-					'nonce'          => wp_create_nonce( 'openlab-modules' ),
-					'postId'         => get_queried_object_id(),
+					'ajaxUrl'             => admin_url( 'admin-ajax.php' ),
+					'isUserLoggedIn'      => is_user_logged_in(),
+					'loginUrl'            => wp_login_url( (string) $current_page_permalink ),
+					'nonce'               => wp_create_nonce( 'openlab-modules' ),
+					'postId'              => get_queried_object_id(),
+					'showCompletionPopup' => $show_completion_popup,
 				]
 			),
 			'before'
