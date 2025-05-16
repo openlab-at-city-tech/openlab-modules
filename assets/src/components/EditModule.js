@@ -48,7 +48,8 @@ export default function EditModule() {
 				const moduleNavigationBlock = wp.data.select( 'core/block-editor' ).getBlocks().find( block => block.name === 'openlab-modules/module-navigation' )
 				const moduleNavigationClientId = moduleNavigationBlock ? moduleNavigationBlock.clientId : null
 
-				const insertIndex = moduleNavigationClientId ? wp.data.select( 'core/block-editor' ).getBlockIndex( moduleNavigationClientId ) - 1 : 0
+				const moduleNavigationBlockIndex = wp.data.select( 'core/block-editor' ).getBlockIndex( moduleNavigationClientId )
+				const insertIndex = moduleNavigationBlockIndex ? moduleNavigationBlockIndex : 0
 
 				// Insert the block.
 				wp.data.dispatch( 'core/block-editor' ).insertBlocks( wp.blocks.createBlock( 'openlab-modules/sharing' ), insertIndex )
