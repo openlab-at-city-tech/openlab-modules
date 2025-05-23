@@ -266,6 +266,8 @@ class Admin {
 
 			if ( '_all' === $filter_by_module ) {
 				$selected_module_id = '_all';
+			} elseif ( '_none' === $filter_by_module ) {
+				$selected_module_id = '_none';
 			} elseif ( is_numeric( $filter_by_module ) ) {
 				$selected_module_id = (int) $filter_by_module;
 			}
@@ -277,6 +279,7 @@ class Admin {
 		<select name="filter-by-module">
 			<option value="" <?php selected( ! $selected_module_id ); ?>><?php echo esc_html_e( 'All Pages / Modules', 'openlab-modules' ); ?></option>
 			<option value="_all" <?php selected( '_all', $selected_module_id ); ?>><?php echo esc_html_e( 'All Pages in Modules', 'openlab-modules' ); ?></option>
+			<option value="_none" <?php selected( '_none', $selected_module_id ); ?>><?php echo esc_html_e( 'All Pages not in Modules', 'openlab-modules' ); ?></option>
 
 			<?php foreach ( $all_modules as $module ) : ?>
 				<option value="<?php echo esc_html( (string) $module->get_id() ); ?>" <?php selected( $selected_module_id, $module->get_id() ); ?>><?php echo esc_html( $module->get_title() ); ?></option>
@@ -316,6 +319,11 @@ class Admin {
 			$tax_query['module'] = [
 				'taxonomy' => Schema::get_module_taxonomy(),
 				'operator' => 'EXISTS',
+			];
+		} elseif ( '_none' === $filter_by_module ) {
+			$tax_query['module'] = [
+				'taxonomy' => Schema::get_module_taxonomy(),
+				'operator' => 'NOT EXISTS',
 			];
 		} else {
 			$module_id = is_numeric( $filter_by_module ) ? (int) $filter_by_module : 0;
