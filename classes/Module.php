@@ -812,9 +812,9 @@ Well done!',
 	public static function insert_attribution_block( $attribution_block, $post_content ) {
 		$original_post_content = $post_content;
 
-		$regex         = '/<!-- wp:group[^>]+className:"openlab-modules-attribution-wrapper".*?<!-- \/wp:group -->/s';
-		$style_regex   = '/<!-- wp:group[^>]+"background":"#efefef"[^>]+padding":"20px"[^>]*--.*?<!-- \/wp:group -->/s';
-		$sharing_regex = '/<!-- wp:openlab-modules\/sharing[^>]*-->/s';
+		$regex            = '/<!-- wp:group[^>]+className:"openlab-modules-attribution-wrapper".*?<!-- \/wp:group -->/s';
+		$style_regex      = '/<!-- wp:group[^>]+"background":"#efefef"[^>]+padding":"20px"[^>]*--.*?<!-- \/wp:group -->/s';
+		$navigation_regex = '/<!-- wp:openlab-modules\/module-navigation[^>]*-->/s';
 
 		if ( preg_match( $regex, $post_content, $matches ) ) {
 			// Replace existing block with new block.
@@ -822,9 +822,9 @@ Well done!',
 		} elseif ( preg_match( $style_regex, $post_content, $matches ) ) {
 			// Try the style-based regex as a fallback.
 			$post_content = preg_replace( $style_regex, $attribution_block, $post_content );
-		} elseif ( preg_match( $sharing_regex, $post_content ) ) {
-			// Look for a openlab-modules/sharing block, and put it after that.
-			$post_content = preg_replace( $sharing_regex, '$0' . $attribution_block, $post_content );
+		} elseif ( preg_match( $navigation_regex, $post_content ) ) {
+			// Look for a openlab-modules/module-navigation block, and put it after that.
+			$post_content = preg_replace( $navigation_regex, '$0' . $attribution_block, $post_content );
 		} else {
 			// Prepends the new block to the content.
 			$post_content = $attribution_block . $post_content;
