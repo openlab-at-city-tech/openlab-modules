@@ -322,7 +322,7 @@ class Frontend {
 				if ( $include_popup_text ) {
 					$email_body .= "\n\n";
 					$email_body .= sprintf(
-						'The following popup message was displaed after this episode was completed:
+						'The following popup message was displayed after this episode was completed:
 
 %s',
 						Module::get_page_completion_popup_text( $post_id )
