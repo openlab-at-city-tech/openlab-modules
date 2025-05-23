@@ -275,8 +275,8 @@ class Admin {
 		?>
 
 		<select name="filter-by-module">
-			<option value="" <?php selected( ! $selected_module_id ); ?>><?php echo esc_html_e( 'All Pages', 'openlab-modules' ); ?></option>
-			<option value="_all" <?php selected( '_all', $selected_module_id ); ?>><?php echo esc_html_e( 'All Modules', 'openlab-modules' ); ?></option>
+			<option value="" <?php selected( ! $selected_module_id ); ?>><?php echo esc_html_e( 'All Pages / Modules', 'openlab-modules' ); ?></option>
+			<option value="_all" <?php selected( '_all', $selected_module_id ); ?>><?php echo esc_html_e( 'All Pages in Modules', 'openlab-modules' ); ?></option>
 
 			<?php foreach ( $all_modules as $module ) : ?>
 				<option value="<?php echo esc_html( (string) $module->get_id() ); ?>" <?php selected( $selected_module_id, $module->get_id() ); ?>><?php echo esc_html( $module->get_title() ); ?></option>
