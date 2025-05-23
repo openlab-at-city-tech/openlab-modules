@@ -80,6 +80,12 @@ export default function CompletionMessagesModule( {} ) {
 					<h3>{ __( 'Email', 'openlab-modules' ) }</h3>
 				</PanelRow>
 
+				<PanelRow>
+					<p>{ __( 'Configure the email sent to users when they complete the interactive elements in a module section.', 'openlab-modules' ) }</p>
+				</PanelRow>
+
+				<Divider />
+
 				<TextareaControl
 					label={ __( 'CC', 'openlab-modules' ) }
 					help={ __( 'Enter any addresses to be copied on the email, separated by commas.', 'openlab-modules' ) }
