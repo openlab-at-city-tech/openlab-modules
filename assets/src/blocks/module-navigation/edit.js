@@ -83,8 +83,8 @@ export default function Edit( {
 		isModule,
 		isNewModule,
 		pageModuleId,
-		thisModulePageIds,
-		thisModulePages
+		rawThisModulePageIds,
+		rawThisModulePages
 	} = useSelect( ( select ) => {
 		const _allModules = select( 'core' ).getEntityRecords(
 			'postType',
@@ -132,10 +132,13 @@ export default function Edit( {
 			isModule: postType && 'openlab_module' === postType,
 			isNewModule: postStatus && 'auto-draft' === postStatus && postType && 'openlab_module' === postType,
 			pageModuleId: thisPageModuleId,
-			thisModulePageIds: select( 'openlab-modules' ).getModulePageIds( thisPageModuleId ) || [],
-			thisModulePages: select( 'openlab-modules' ).getModulePages( thisPageModuleId ) || []
+			rawThisModulePageIds: select( 'openlab-modules' ).getModulePageIds( thisPageModuleId ) || null,
+			rawThisModulePages: select( 'openlab-modules' ).getModulePages( thisPageModuleId ) || null
 		}
 	}, [ moduleId ] )
+
+	const thisModulePageIds = rawThisModulePageIds || []
+	const thisModulePages = rawThisModulePages || {}
 
 	// If a moduleId is passed as an attribute, trust it. Otherwise, fall back
 	// on the contextually correct module ID.

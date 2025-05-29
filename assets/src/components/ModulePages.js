@@ -14,7 +14,7 @@ import { PostPicker } from './PostPicker'
 
 import SortableMultiSelect from './SortableMultiSelect'
 
-import { useState } from '@wordpress/element'
+import { useMemo, useState } from '@wordpress/element'
 
 import apiFetch from '@wordpress/api-fetch'
 
@@ -25,9 +25,17 @@ export default function EditModule( {} ) {
 	const [ createTitle, setCreateTitle ] = useState( '' )
 	const [ createInProgress, setCreateInProgress ] = useState( false )
 
+	const modulePageIdsRaw = useSelect(
+		( select ) => select( 'core/editor' ).getEditedPostAttribute( 'meta' ).module_page_ids,
+		[]
+	);
+
+	const rawModulePageIds = useMemo( () => {
+		return modulePageIdsRaw ? JSON.parse( modulePageIdsRaw ) : null;
+	}, [ modulePageIdsRaw ] );
+
 	const {
-		modulePageIds,
-		modulePages,
+		rawModulePages,
 		postId,
 		postStatus,
 		postType
@@ -36,18 +44,16 @@ export default function EditModule( {} ) {
 
 		const theModulePages = select( 'openlab-modules' ).getModulePages( thePostId )
 
-		const modulePageIdsRaw = select( 'core/editor' ).getEditedPostAttribute( 'meta' ).module_page_ids
-
-		const theModulePageIds = modulePageIdsRaw ? JSON.parse( modulePageIdsRaw ) : []
-
 		return {
-			modulePageIds: theModulePageIds ?? [],
-			modulePages: theModulePages ?? [],
+			rawModulePages: theModulePages ?? null,
 			postId: thePostId,
 			postStatus: select( 'core/editor' ).getEditedPostAttribute( 'status' ),
 			postType: select( 'core/editor' ).getCurrentPostType()
 		}
 	}, [] )
+
+	const modulePageIds = rawModulePageIds || []
+	const modulePages = rawModulePages || {}
 
 	const { editPost } = useDispatch( 'core/editor' )
 
