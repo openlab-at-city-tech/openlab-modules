@@ -325,7 +325,9 @@ class Frontend {
 						'The following popup message was displayed after this episode was completed:
 
 %s',
-						Module::get_page_completion_popup_text( $post_id )
+						self::format_completion_popup_text_for_email(
+							Module::get_page_completion_popup_text( $post_id )
+						)
 					);
 				}
 			}
@@ -356,6 +358,25 @@ class Frontend {
 		 * @param int $module_id Module ID.
 		 */
 		do_action( 'openlab_modules_section_complete', $post_id, $module_id );
+	}
+
+	/**
+	 * Formats popup text for the completion email.
+	 *
+	 * @param string $text The text to format.
+	 * @return string
+	 */
+	protected static function format_completion_popup_text_for_email( $text ) {
+		$wrapped = wordwrap( $text, 80, "\n" );
+
+		$quoted_lines = array_map(
+			function ( $line ) {
+				return '> ' . $line;
+			},
+			explode( "\n", $wrapped )
+		);
+
+		return implode( "\n", $quoted_lines );
 	}
 
 	/**
