@@ -5,7 +5,7 @@ import {
 import { __, _n } from '@wordpress/i18n'
 import { useEffect } from '@wordpress/element'
 import { useDispatch, useSelect } from '@wordpress/data'
-import { PluginDocumentSettingPanel } from '@wordpress/edit-post'
+import { PluginDocumentSettingPanel } from '@wordpress/editor'
 
 export default function PageModules() {
 	const postType = useSelect( ( select ) => select( 'core/editor' ).getCurrentPostType() )

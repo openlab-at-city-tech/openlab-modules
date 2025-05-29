@@ -8,7 +8,7 @@ import {
 
 import { __ } from '@wordpress/i18n'
 import { useDispatch, useSelect } from '@wordpress/data'
-import { PluginDocumentSettingPanel } from '@wordpress/edit-post'
+import { PluginDocumentSettingPanel } from '@wordpress/editor'
 import { useCallback, useEffect } from '@wordpress/element'
 
 export default function EditModule() {

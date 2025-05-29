@@ -6,7 +6,7 @@ import {
 
 import { __ } from '@wordpress/i18n'
 import { dispatch, useDispatch, useSelect } from '@wordpress/data'
-import { PluginDocumentSettingPanel } from '@wordpress/edit-post'
+import { PluginDocumentSettingPanel } from '@wordpress/editor'
 
 import he from 'he'
 
