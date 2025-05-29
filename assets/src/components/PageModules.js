@@ -1,59 +1,49 @@
 import {
-	Button,
-	PanelRow,
-	TextControl,
-	TextareaControl,
-	ToggleControl,
-	__experimentalDivider as Divider
+	PanelRow
 } from '@wordpress/components'
 
 import { __, _n } from '@wordpress/i18n'
+import { useEffect } from '@wordpress/element'
 import { useDispatch, useSelect } from '@wordpress/data'
 import { PluginDocumentSettingPanel } from '@wordpress/edit-post'
 
-import SortableMultiSelect from './SortableMultiSelect'
-
-import { select } from '@wordpress/data'
-
-export default function PageModules( {
-	isSelected
-} ) {
+export default function PageModules() {
 	const postType = useSelect( ( select ) => select( 'core/editor' ).getCurrentPostType() )
 	const { editPost } = useDispatch( 'core/editor' )
 
 	const {
 		isNew,
 		moduleToLink,
-		pageModules,
-		postId
+		rawPageModules
 	} = useSelect( ( select ) => {
 		const postId = select( 'core/editor' ).getCurrentPostId()
 
 		const urlParams = new URLSearchParams( window.location.search )
 		const linkToModule = urlParams.get( 'link-to-module' )
 
-		const pageModules = select( 'openlab-modules' ).getPageModules( postId )
-		const moduleToLink = linkToModule ? select( 'core' ).getEntityRecord( 'postType', 'openlab_module', linkToModule ) : null
+		const fetchedPageModules = select( 'openlab-modules' ).getPageModules( postId )
+		const fetchedModuleToLink = linkToModule ? select( 'core' ).getEntityRecord( 'postType', 'openlab_module', linkToModule ) : null
 
 		return {
 			isNew: select( 'core/editor' ).isEditedPostNew(),
-			moduleToLink: moduleToLink ?? null,
-			pageModules: pageModules ?? [],
-			postId
+			moduleToLink: fetchedModuleToLink ?? null,
+			rawPageModules: fetchedPageModules ?? null
 		}
 	}, [] )
+
+	const pageModules = rawPageModules || []
 
 	const isExistingPostWithModules = ! isNew && pageModules.length
 	const isNewPostWithLinkToModule = isNew && moduleToLink
 
-	React.useEffect(() => {
+	useEffect(() => {
 		// We send as postmeta and handle on the server, to work around restrictive caps.
 		if ( isNewPostWithLinkToModule ) {
 			editPost( {
 				meta: { 'link_to_module': moduleToLink.id }
 			} )
 		}
-	}, [isNewPostWithLinkToModule, moduleToLink]);
+	}, [editPost, isNewPostWithLinkToModule, moduleToLink]);
 
 	// @todo Should this be dynamic?
 	if ( 'page' !== postType ) {
@@ -72,6 +62,7 @@ export default function PageModules( {
 	return (
 		<PluginDocumentSettingPanel
 			name="openlab-modules-page-modules"
+			className="openlab-modules-page-modules"
 			title={ __( 'Modules', 'openlab-modules' ) }
 			>
 
