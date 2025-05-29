@@ -71,20 +71,14 @@ export default function CompletionMessagesModule( {} ) {
 	return (
 		<>
 			<PluginDocumentSettingPanel
-				className="openlab-module-completion-messages"
-				name="openlab-module-completion-messages"
-				title={ __( 'Completion Messages', 'openlab-modules' ) }
+				className="openlab-module-email-completion-message"
+				name="openlab-module-email-completion-message"
+				title={ __( 'Email Completion Message', 'openlab-modules' ) }
 				>
-
-				<PanelRow>
-					<h3>{ __( 'Email', 'openlab-modules' ) }</h3>
-				</PanelRow>
 
 				<PanelRow>
 					<p>{ __( 'Configure the email sent to users when they complete the interactive elements in a module section.', 'openlab-modules' ) }</p>
 				</PanelRow>
-
-				<Divider />
 
 				<TextareaControl
 					label={ __( 'CC', 'openlab-modules' ) }
@@ -116,11 +110,13 @@ export default function CompletionMessagesModule( {} ) {
 					help={ __( 'Use the following tokens for dynamic values: {{display_name}}, {{module_title}}, {{module_url}}, {{section_title}}, {{section_url}}', 'openlab-modules' ) }
 					/>
 
-				<Divider />
+			</PluginDocumentSettingPanel>
 
-				<PanelRow>
-					<h3>{ __( 'Popup', 'openlab-modules' ) }</h3>
-				</PanelRow>
+			<PluginDocumentSettingPanel
+				className="openlab-module-popup-completion-message"
+				name="openlab-module-popup-completion-message"
+				title={ __( 'Popup Completion Message', 'openlab-modules' ) }
+				>
 
 				<PanelRow>
 					<p>{ __( 'Edit the popup message users will see when the interactive activities in a module section are completed. This can also be changed on individual pages.', 'openlab-modules' ) }</p>
@@ -135,7 +131,6 @@ export default function CompletionMessagesModule( {} ) {
 					} }
 					placeholder={ __( 'Enter popup text', 'openlab-modules' ) }
 					/>
-
 			</PluginDocumentSettingPanel>
 		</>
 	)
