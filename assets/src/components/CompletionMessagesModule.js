@@ -123,7 +123,7 @@ export default function CompletionMessagesModule( {} ) {
 				</PanelRow>
 
 				<TextareaControl
-					label={ __( 'Message text', 'openlab-modules' ) }
+					label={ __( 'Default popup text', 'openlab-modules' ) }
 					value={ popupTextDirty || completionPopupText ? completionPopupText : defaultPopupText }
 					onChange={ ( value ) => {
 						setPopupTextDirty( true )
