@@ -119,7 +119,7 @@ export default function CompletionMessagesModule( {} ) {
 				>
 
 				<PanelRow>
-					<p>{ __( 'Edit the popup message users will see when the interactive activities in a module section are completed. This can also be changed on individual pages.', 'openlab-modules' ) }</p>
+					<p>{ __( 'Edit the popup message users will see when the interactive activities in a module section are completed. The default popup text below can also be customized on individual pages.', 'openlab-modules' ) }</p>
 				</PanelRow>
 
 				<TextareaControl
