@@ -59,7 +59,6 @@ export default function CompletionMessagesModule( {} ) {
 
 				<TextareaControl
 					disabled={ ! showCompletionPopup }
-					hideLabelFromVision={ true }
 					label={ __( 'Popup Text', 'openlab-modules' ) }
 					value={ completionPopupText }
 					onChange={ ( newValue ) => {
