@@ -4,7 +4,7 @@
 
 import { PluginDocumentSettingPanel } from '@wordpress/editor'
 
-import { CheckboxControl, TextareaControl } from '@wordpress/components'
+import { CheckboxControl, PanelRow, TextareaControl } from '@wordpress/components'
 import { useDispatch, useSelect } from '@wordpress/data'
 import { __ } from '@wordpress/i18n'
 
@@ -44,6 +44,10 @@ export default function CompletionMessagesModule( {} ) {
 				name="openlab-module-completion-messages"
 				title={ __( 'Completion Messages', 'openlab-modules' ) }
 				>
+
+				<PanelRow>
+					<p>{ __( 'Completion message settings can be configured for the entire module when editing the Module Home.', 'openlab-modules' ) }</p>
+				</PanelRow>
 
 				<CheckboxControl
 					label={ __( 'Show completion message popup when activities for this page are completed', 'openlab-modules' ) }
