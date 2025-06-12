@@ -213,11 +213,15 @@ export default function Edit( {
 		return selectedModuleObject ? selectedModuleObject.moduleNavTitle : ''
 	}
 
+	const selectedModuleUrl = () => {
+		return selectedModuleObject ? selectedModuleObject.link : ''
+	}
+
 	modulePagesForDisplay.push( {
 		editUrl: selectedModuleObject ? selectedModuleObject.editUrl.replace( '&amp;', '&' ) : '',
 		excerpt: selectedModuleObject ? he.decode( selectedModuleObject.excerptForPopover ) : '',
 		id: selectedModuleId,
-		url: '',
+		url: selectedModuleUrl(),
 		title: selectedModuleNavTitle(),
 		statusCode: 'publish',
 		statusEl: <></>
