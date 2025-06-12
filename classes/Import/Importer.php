@@ -2318,6 +2318,14 @@ class Importer {
 				}
 			}
 		}
+
+		// Delete all 'import_id' keys, so we don't interfere with future imports.
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->postmeta} WHERE meta_key = %s",
+				'import_id'
+			)
+		);
 	}
 
 	/**
