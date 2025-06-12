@@ -2320,6 +2320,7 @@ class Importer {
 		}
 
 		// Delete all 'import_id' keys, so we don't interfere with future imports.
+		// phpcs:ignore
 		$wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM {$wpdb->postmeta} WHERE meta_key = %s",
