@@ -2246,7 +2246,7 @@ class Importer {
 
 			// Block attribute for module-navigation can be found with string manipulation - no block parsing required.
 			$new_post_content = preg_replace_callback(
-				'#<!-- wp:openlab-modules/module-navigation\s+\{"moduleId":\s*(\d+)\}\s*/-->#',
+				'#<!-- wp:openlab-modules/module-navigation\s+\{"moduleId":\s*"?(\d+)"?\}\s*/-->#',
 				function ( $matches ) use ( $mapping ) {
 					$old_module_id = (int) $matches[1];
 					$new_module_id = $mapping[ $old_module_id ] ?? null;
