@@ -2327,6 +2327,14 @@ class Importer {
 				'import_id'
 			)
 		);
+
+		// phpcs:ignore
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->termmeta} WHERE meta_key = %s",
+				'import_id'
+			)
+		);
 	}
 
 	/**
