@@ -16,7 +16,11 @@
       }
     },
     "textdomain": "openlab-modules",
-    "editorScript": "file:./index.js",
+    "editorScript": {
+      "handle": "openlab-modules-module-navigation-editor-script",
+      "path": "index.js",
+      "module": true
+    },
     "editorStyle": "file:./index.css",
     "style": "file:./style-index.css"
 }
