@@ -86,57 +86,36 @@ class Editor {
 	 * @return void
 	 */
 	public function register_dynamic_blocks() {
-		register_block_type(
-			'openlab-modules/module-list',
+		$blocks_dir = ROOT_DIR . '/assets/src/blocks/';
+
+		register_block_type_from_metadata(
+			$blocks_dir . 'module-list',
 			[
-				'api_version'     => '2',
-				'attributes'      => [
-					'orderedIds' => [
-						'type'    => 'array',
-						'default' => [],
-					],
-				],
 				'render_callback' => function ( $attributes, $content ) {
 					return $this->render_block( 'module-list', $attributes, $content );
 				},
 			]
 		);
 
-		register_block_type(
-			'openlab-modules/module-navigation',
+		register_block_type_from_metadata(
+			$blocks_dir . 'module-navigation',
 			[
-				'api_version'     => '2',
-				'attributes'      => [
-					'moduleId' => [
-						'type'    => 'integer',
-						'default' => 0,
-					],
-				],
 				'render_callback' => function ( $attributes, $content ) {
 					return $this->render_block( 'module-navigation', $attributes, $content );
 				},
 			]
 		);
 
-		register_block_type(
-			'openlab-modules/placeholder-text',
+		register_block_type_from_metadata(
+			$blocks_dir . 'placeholder-text',
 			[
-				'api_version'     => '2',
-				'attributes'      => [
-					'textContent' => [
-						'type'    => 'string',
-						'default' => '',
-					],
-				],
 				'render_callback' => '__return_empty_string',
 			]
 		);
 
-		register_block_type(
-			'openlab-modules/sharing',
+		register_block_type_from_metadata(
+			$blocks_dir . 'sharing',
 			[
-				'api_version'     => '2',
-				'attributes'      => [],
 				'render_callback' => function ( $attributes, $content ) {
 					return $this->render_block( 'sharing', $attributes, $content );
 				},
