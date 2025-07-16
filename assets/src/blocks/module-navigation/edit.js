@@ -9,8 +9,10 @@ import {
 
 import {
 	Button,
+	CheckboxControl,
 	Panel,
 	PanelBody,
+	PanelRow,
 	Popover,
 	SelectControl
 } from '@wordpress/components'
@@ -36,7 +38,7 @@ export default function Edit( {
 	isSelected,
 	setAttributes,
 } ) {
-	const { moduleId } = attributes
+	const { moduleId, showModuleDescription } = attributes
 	const [ activePopover, setActivePopover ] = useState( null );
 
 	const closePopoverOnClick = ( event ) => {
@@ -287,14 +289,25 @@ export default function Edit( {
 		<>
 			<InspectorControls>
 				<Panel>
-					<PanelBody title={ __( 'Navigation Settings', 'openlab-modules' ) }>
-						<SelectControl
-							help={ __( 'Select the module to display in the TOC.', 'openlab-modules' ) }
-							label={ __( 'Module', 'openlab-modules' ) }
-							onChange={ ( newModuleId ) => setAttributes( { moduleId: parseInt( newModuleId, 10 ) } ) }
-							options={ moduleOptions }
-							value={ selectedModuleId.toString() }
-						/>
+					<PanelBody title={ __( 'Settings', 'openlab-modules' ) }>
+						<PanelRow>
+							<SelectControl
+								help={ __( 'Select the module to display in the TOC.', 'openlab-modules' ) }
+								label={ __( 'Module', 'openlab-modules' ) }
+								onChange={ ( newModuleId ) => setAttributes( { moduleId: parseInt( newModuleId, 10 ) } ) }
+								options={ moduleOptions }
+								value={ selectedModuleId.toString() }
+							/>
+						</PanelRow>
+
+						<PanelRow>
+							<CheckboxControl
+								label={ __( 'Module Description', 'openlab-modules' ) }
+								help={ __( 'Include the Module Description in the TOC. This can be edited on the Module Settings.', 'openlab-modules' ) }
+								checked={ showModuleDescription }
+								onChange={ ( newShowModuleDescription ) => setAttributes( { showModuleDescription: newShowModuleDescription } ) }
+							/>
+						</PanelRow>
 					</PanelBody>
 				</Panel>
 			</InspectorControls>
@@ -304,6 +317,12 @@ export default function Edit( {
 					<p className="openlab-modules-module-navigation-heading">
 						{ sprintf( __( 'MODULE: %s' ), selectedModuleTitle() ) }
 					</p>
+
+					{ showModuleDescription && selectedModuleObject && selectedModuleObject.meta.module_description && (
+						<p className="openlab-modules-module-description">
+							{ he.decode( selectedModuleObject.meta.module_description ) }
+						</p>
+					) }
 
 					<ul className="openlab-modules-module-navigation-list">
 						{ modulePagesForDisplay.map( (module) => {

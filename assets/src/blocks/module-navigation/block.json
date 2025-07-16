@@ -30,6 +30,10 @@
       "moduleId": {
         "type": "integer",
         "default": 0
+      },
+      "showModuleDescription": {
+        "type": "boolean",
+        "default": false
       }
     },
     "textdomain": "openlab-modules",

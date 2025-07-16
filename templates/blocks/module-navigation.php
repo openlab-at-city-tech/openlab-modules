@@ -7,6 +7,8 @@
 
 $module_id = (int) $args['moduleId'];
 
+$show_module_description = isset( $args['showModuleDescription'] ) ? (bool) $args['showModuleDescription'] : false;
+
 if ( ! $module_id ) {
 	return;
 }
@@ -43,6 +45,12 @@ wp_enqueue_style( 'openlab-modules-frontend' );
 			);
 			?>
 		</p>
+
+		<?php if ( $show_module_description && $module->get_description() ) : ?>
+			<p class="openlab-modules-module-description">
+				<?php echo esc_html( $module->get_description() ); ?>
+			</p>
+		<?php endif; ?>
 
 		<ul class="openlab-modules-module-navigation-list">
 			<?php
