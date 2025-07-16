@@ -25,7 +25,7 @@ wp_enqueue_style( 'openlab-modules-frontend' );
 ?>
 
 <?php if ( 'publish' === $module_post_status || current_user_can( 'edit_others_posts' ) ) : ?>
-	<div class="wp-block-openlab-modules-module-navigation">
+	<div <?php echo get_block_wrapper_attributes(); ?>>
 		<?php if ( 'publish' !== $module_post_status ) : ?>
 			<p><strong><?php esc_html_e( 'The module associated with this navigation block is not published, and the navigation will not be visible to normal users.', 'openlab-modules' ); ?></strong></p>
 		<?php endif; ?>

@@ -5,9 +5,26 @@
     "title": "Module TOC",
     "category": "openlab-modules",
     "icon": "menu",
-    "description": "Shows the table of contents for a Module.",
+    "description": "This Table of Contents (TOC) is dynamically generated based on the pages belonging to the module.",
     "supports": {
-      "anchor": true
+      "anchor": true,
+      "color": {
+        "text": true,
+        "background": true,
+        "gradients": true,
+        "link": true
+      },
+      "spacing": {
+        "margin": true,
+        "padding": true
+      },
+      "typography": {
+        "fontSize": true,
+        "lineHeight": true,
+        "fontFamily": true,
+        "textTransform": true
+      },
+      "shadow": true
     },
     "attributes": {
       "moduleId": {
