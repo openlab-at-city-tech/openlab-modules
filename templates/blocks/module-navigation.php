@@ -34,7 +34,7 @@ wp_enqueue_style( 'openlab-modules-frontend' );
 			<?php
 			printf(
 				// translators: Module link or title.
-				esc_html__( 'Contents for Module: %s', 'openlab-modules' ),
+				esc_html__( 'MODULE: %s', 'openlab-modules' ),
 				sprintf(
 					'<a href="%s">%s</a>',
 					esc_url( $module->get_url() ),

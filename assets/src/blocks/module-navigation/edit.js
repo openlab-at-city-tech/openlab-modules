@@ -302,7 +302,7 @@ export default function Edit( {
 			<div { ...useBlockProps() }>
 				<div className="openlab-modules-module-navigation">
 					<p className="openlab-modules-module-navigation-heading">
-						{ sprintf( __( 'Contents for Module: %s' ), selectedModuleTitle() ) }
+						{ sprintf( __( 'MODULE: %s' ), selectedModuleTitle() ) }
 					</p>
 
 					<ul className="openlab-modules-module-navigation-list">
@@ -360,7 +360,7 @@ export default function Edit( {
 
 				{ isSelected && (
 					<>
-						<p className="openlab-modules-gloss">{ __( 'This navigation is dynamically generated based on the pages belonging to the Module.', 'openlab-modules' ) }</p>
+						<p className="openlab-modules-gloss">{ __( 'This Table of Contents (TOC) is dynamically generated based on the pages belonging to the module.', 'openlab-modules' ) }</p>
 
 						<p className="openlab-modules-gloss">
 							<button
