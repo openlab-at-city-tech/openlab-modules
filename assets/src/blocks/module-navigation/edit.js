@@ -289,7 +289,7 @@ export default function Edit( {
 				<Panel>
 					<PanelBody title={ __( 'Navigation Settings', 'openlab-modules' ) }>
 						<SelectControl
-							help={ __( 'Select the Module whose navigation should be displayed.', 'openlab-modules' ) }
+							help={ __( 'Select the module to display in the TOC.', 'openlab-modules' ) }
 							label={ __( 'Module', 'openlab-modules' ) }
 							onChange={ ( newModuleId ) => setAttributes( { moduleId: parseInt( newModuleId, 10 ) } ) }
 							options={ moduleOptions }
