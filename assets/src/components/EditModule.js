@@ -98,7 +98,7 @@ export default function EditModule() {
 			<PanelRow>
 				<TextControl
 					label={ __( 'Navigation Title', 'openlab-modules' ) }
-					help={ __( 'The title of the module home page, for use in the Module Navigation block', 'openlab-modules' ) }
+					help={ __( 'The title of the module home page, for use in the Module TOC block', 'openlab-modules' ) }
 					onChange={ ( newNavTitle ) => editPost( { moduleNavTitle: newNavTitle } ) }
 					value={ moduleNavTitle }
 				/>
