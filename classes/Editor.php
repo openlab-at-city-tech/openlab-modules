@@ -47,6 +47,8 @@ class Editor {
 		add_filter( 'use_block_editor_for_post', [ $this, 'use_block_editor_for_module' ], 200, 2 );
 
 		add_action( 'after_setup_theme', [ $this, 'register_custom_font_sizes' ], 20 );
+
+		add_filter( 'block_categories_all', [ $this, 'add_block_category' ] );
 	}
 
 	/**
@@ -333,5 +335,22 @@ class Editor {
 				</style>';
 			}
 		);
+	}
+
+	/**
+	 * Adds a custom block category for OpenLab Modules.
+	 *
+	 * @param array<array{slug: string, title: string, icon: string}> $categories Existing block categories.
+	 * @return array<array{slug: string, title: string, icon: string}>
+	 */
+	public function add_block_category( $categories ) {
+		// Add a new category for OpenLab Modules.
+		$categories[] = [
+			'slug'  => 'openlab-modules',
+			'title' => __( 'OpenLab Modules', 'openlab-modules' ),
+			'icon'  => 'grid-view',
+		];
+
+		return $categories;
 	}
 }
