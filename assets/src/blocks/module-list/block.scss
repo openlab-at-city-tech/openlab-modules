@@ -25,13 +25,14 @@
 		gap: 1.5rem;
 	}
 
-	.module-list-item {
-		border-radius: 10px 10px 70px 10px;
-	}
-
-	&.has-card-background-color .module-list-item {
-	  background-color: var(--card-background-color);
-	  padding: 1.5rem;
+	&.has-card-background-color {
+		&:not(.is-style-text-list) {
+			.module-list-item {
+				background-color: var(--card-background-color);
+				border-radius: 10px 10px 70px 10px;
+				padding: 1.5rem;
+			}
+		}
 	}
 
 	.image-ratio-box {
@@ -53,9 +54,15 @@
 	/* === Text List === */
 	&.is-style-text-list {
 		.module-list-item {
+			background: url('./bullet.svg') no-repeat left top;
+			background-size: auto 30px;
 			display: block;
-			border-bottom: 1px solid #ccc;
 			padding-bottom: 1rem;
+			padding-left: 50px;
+		}
+
+		h2 {
+			margin-top: 0;
 		}
 
 		.module-list-item-image {
