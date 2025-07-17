@@ -226,8 +226,8 @@ class Exporter {
 
 		$this->original_post_content = $module_post->post_content;
 
-		$block_markup = Module::generate_attribution_block( $this->acknowledgements_text );
-		$new_content  = Module::insert_attribution_block( $block_markup, $module_post->post_content );
+		$block_markup = Module::generate_module_acknowledgements_block( $this->acknowledgements_text );
+		$new_content  = Module::insert_module_acknowledgements_block( $block_markup, $module_post->post_content );
 
 		$module_post->post_content = $new_content;
 
