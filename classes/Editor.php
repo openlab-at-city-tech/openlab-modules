@@ -326,7 +326,7 @@ class Editor {
 		// Add a new category for OpenLab Modules.
 		$categories[] = [
 			'slug'  => 'openlab-modules',
-			'title' => __( 'OpenLab Modules', 'openlab-modules' ),
+			'title' => __( 'Module Blocks', 'openlab-modules' ),
 			'icon'  => 'grid-view',
 		];
 
