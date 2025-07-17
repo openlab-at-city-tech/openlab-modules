@@ -448,12 +448,20 @@ class Module {
 	/**
 	 * Gets the name of the module author.
 	 *
+	 * Prefers the usermeta 'openlab_modules_author_name' if it exists,
+	 * falls back to the post author display name.
+	 *
 	 * @return string
 	 */
 	public function get_author_name() {
 		$post = get_post( $this->id );
 		if ( ! $post ) {
 			return '';
+		}
+
+		$saved = get_post_meta( $this->id, 'author_name', true );
+		if ( $saved && is_string( $saved ) ) {
+			return $saved;
 		}
 
 		$user = get_user_by( 'id', $post->post_author );

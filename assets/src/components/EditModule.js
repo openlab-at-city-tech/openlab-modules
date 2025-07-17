@@ -17,6 +17,7 @@ export default function EditModule() {
 	const {
 		isSharingEnabled,
 		moduleAcknowledgements,
+		moduleAuthorName,
 		moduleDescription,
 		moduleNavTitle,
 		postId,
@@ -27,6 +28,7 @@ export default function EditModule() {
 		return {
 			isSharingEnabled: select( 'core/editor' ).getEditedPostAttribute( 'enableSharing' ),
 			moduleAcknowledgements: select( 'core/editor' ).getEditedPostAttribute( 'meta' ).module_acknowledgements,
+			moduleAuthorName: select( 'core/editor' ).getEditedPostAttribute( 'authorName' ),
 			moduleDescription: select( 'core/editor' ).getEditedPostAttribute( 'meta' ).module_description,
 			moduleNavTitle: select( 'core/editor' ).getEditedPostAttribute( 'moduleNavTitle' ),
 			postId: select( 'core/editor' ).getCurrentPostId(),
@@ -111,6 +113,15 @@ export default function EditModule() {
 					label={ __( 'Description', 'openlab-modules' ) }
 					onChange={ ( newDescription ) => editPostMeta( { module_description: newDescription } ) }
 					value={ moduleDescription }
+				/>
+			</PanelRow>
+
+			<PanelRow>
+				<TextControl
+					label={ __( 'Author Name', 'openlab-modules' ) }
+					help={ __( 'Used in the Module List block.', 'openlab-modules' ) }
+					onChange={ ( newAuthorName ) => editPost( { authorName: newAuthorName } ) }
+					value={ moduleAuthorName || '' }
 				/>
 			</PanelRow>
 

@@ -23,7 +23,7 @@ import { CSS } from '@dnd-kit/utilities';
 
 import './editor.scss';
 
-const SortableItem = ({ id, title, link, author, description, image }) => {
+const SortableItem = ({ id, title, link, authorName, description, image }) => {
   const {
     listeners,
     setNodeRef,
@@ -59,7 +59,7 @@ const SortableItem = ({ id, title, link, author, description, image }) => {
 					id={id}
 					title={title}
 					link={link}
-					author={author}
+					authorName={authorName}
 					description={description}
 					image={image}
 				/>
@@ -75,8 +75,8 @@ const CARD_COLOR_CLASS_SUFFIX = '-card-background-color';
 const getCardBackgroundClass = (slug) =>
 	slug ? `has-card-background-color ${CARD_COLOR_CLASS_PREFIX}${slug}${CARD_COLOR_CLASS_SUFFIX}` : '';
 
-const ModuleListItem = ({ id, title, link, author, description, image }) => {
-	const showAuthor      = null !== author;
+const ModuleListItem = ({ id, title, link, authorName, description, image }) => {
+	const showAuthor      = null !== authorName;
 	const showDescription = null !== description;
 	const showImage       = null !== image;
 
@@ -94,7 +94,7 @@ const ModuleListItem = ({ id, title, link, author, description, image }) => {
 				<h2><a href={link}>{title}</a></h2>
 
 				{showAuthor && (
-					<p className="module-list-item-author">{author}</p>
+					<p className="module-list-item-author">{authorName}</p>
 				)}
 
 				{showDescription && (
@@ -270,7 +270,7 @@ export default function Edit({ attributes, isSelected, setAttributes }) {
 												id={module.id}
 												title={module.title.rendered}
 												link={module.link}
-												author={showModuleAuthor ? module.author : null}
+												authorName={showModuleAuthor ? module.authorName : null}
 												description={showModuleDescription ? module.meta.module_description : null}
 												image={showModuleImage ? module.featuredImage : null}
 											/>
@@ -288,7 +288,7 @@ export default function Edit({ attributes, isSelected, setAttributes }) {
 										id={module.id}
 										title={module.title.rendered}
 										link={module.link}
-										author={showModuleAuthor ? module.author : null}
+										authorName={showModuleAuthor ? module.authorName : null}
 										description={showModuleDescription ? module.meta.module_description : null}
 										image={showModuleImage ? module.featuredImage : null}
 									/>
