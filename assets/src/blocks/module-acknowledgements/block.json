@@ -1,0 +1,21 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 2,
+    "name": "openlab-modules/module-acknowledgements",
+    "title": "Module Acknowledgements",
+    "category": "openlab-modules",
+    "icon": "menu",
+    "description": "This block presents the Module attribution and acknowledgments. It appears at the bottom of the Module Home automatically. You can delete this block or add it to other areas of the Module or Site.",
+    "supports": {
+      "anchor": true
+    },
+    "attributes": {},
+    "textdomain": "openlab-modules",
+    "editorScript": {
+      "handle": "openlab-modules-module-acknowledgements-editor-script",
+      "path": "index.js",
+      "module": true
+    },
+    "editorStyle": "file:./index.css",
+    "style": "file:./style-index.css"
+}
