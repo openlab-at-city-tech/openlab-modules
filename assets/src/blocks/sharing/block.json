@@ -5,7 +5,7 @@
     "title": "Module Sharing",
     "category": "openlab-modules",
     "icon": "menu",
-    "description": "Sharing tools for modules",
+    "description": "This block enables others to clone the module. It will appear at the top of the Module Home automatically when you select Clone in the Module Settings. You can remove this block, if you don’t want to enable shared cloning. You can also add it to other areas of the Module.",
     "supports": {
       "inserter": true
     },
