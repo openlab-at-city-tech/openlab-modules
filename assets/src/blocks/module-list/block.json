@@ -2,10 +2,10 @@
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 2,
     "name": "openlab-modules/module-list",
-    "title": "Module List",
+    "title": "All Modules List",
     "category": "openlab-modules",
     "icon": "menu",
-    "description": "Shows the table of contents for a Module.",
+    "description": "This block is dynamically generated to display a list of all of the published Modules on your site. To change the order of the modules, drag and drop using the icon.",
     "supports": {
       "anchor": true
     },
