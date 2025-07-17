@@ -7,7 +7,21 @@
     "icon": "menu",
     "description": "This block is dynamically generated to display a list of all of the published Modules on your site. To change the order of the modules, drag and drop using the icon.",
     "supports": {
-      "anchor": true
+      "anchor": true,
+      "color": {
+        "text": true,
+        "background": true,
+        "link": true
+      },
+      "typography": {
+        "fontSize": true
+      },
+      "spacing": {
+        "margin": true,
+        "padding": true,
+        "minHeight": true
+      },
+      "shadow": true
     },
     "attributes": {
       "orderedIds": {

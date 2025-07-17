@@ -23,7 +23,8 @@ wp_enqueue_style( 'openlab-modules-frontend' );
 
 ?>
 
-<div class="wp-block-openlab-modules-module-list">
+<?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+<div <?php echo get_block_wrapper_attributes(); ?>>
 	<?php if ( $ordered_modules ) : ?>
 	<ul class="openlab-modules-module-list">
 		<?php foreach ( $ordered_modules as $module ) : ?>
