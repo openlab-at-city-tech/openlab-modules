@@ -379,8 +379,6 @@ export default function Edit( {
 
 				{ isSelected && (
 					<>
-						<p className="openlab-modules-gloss">{ __( 'This Table of Contents (TOC) is dynamically generated based on the pages belonging to the module.', 'openlab-modules' ) }</p>
-
 						<p className="openlab-modules-gloss">
 							<button
 								className="add-a-page-link"
@@ -388,6 +386,8 @@ export default function Edit( {
 							>{ __( 'Add Page to Module (in the module settings panel)', 'openlab-modules' ) }
 							</button>
 						</p>
+
+						<p className="openlab-modules-gloss">{ __( 'This Table of Contents (TOC) is dynamically generated based on the pages belonging to the module.', 'openlab-modules' ) }</p>
 					</>
 				) }
 			</div>
