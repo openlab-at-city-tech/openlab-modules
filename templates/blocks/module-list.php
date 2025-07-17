@@ -45,11 +45,15 @@ $block_wrapper_attributes = get_block_wrapper_attributes( $additional_attributes
 			<div class="module-list-item">
 				<?php if ( $show_image ) : ?>
 				<div class="module-list-item-image">
-					<a href="<?php echo esc_url( $module->get_url() ); ?>">
-						<div class="image-ratio-box">
-							<img alt="<?php echo esc_attr( $module->get_title() ); ?>" src="<?php echo esc_url( $module->get_featured_image_url() ); ?>" />
-						</div>
-					</a>
+					<?php if ( $module->get_featured_image_url() ) : ?>
+						<a href="<?php echo esc_url( $module->get_url() ); ?>">
+							<div class="image-ratio-box">
+								<img alt="<?php echo esc_attr( $module->get_title() ); ?>" src="<?php echo esc_url( $module->get_featured_image_url() ); ?>" />
+							</div>
+						</a>
+					<?php else : ?>
+						<div class="image-ratio-box">&nbsp;</div>
+					<?php endif; ?>
 				</div>
 				<?php endif; ?>
 

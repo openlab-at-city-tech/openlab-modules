@@ -85,7 +85,13 @@ const ModuleListItem = ({ id, title, link, authorName, description, image }) => 
 			{ showImage && (
 				<div className="module-list-item-image">
 					<div className="image-ratio-box">
-						<img src={image} alt={title} />
+						{image && (
+							<img src={image} alt={title} />
+						)}
+
+						{!image && (
+							<span>&nbsp;</span>
+						)}
 					</div>
 				</div>
 			)}
