@@ -268,27 +268,26 @@ class Cloner {
 	}
 
 	/**
-	 * Insert an attribution block, replacing existing ones if necessary.
+	 * Inserts a module attribution block (as a module-acknowledgements block), replacing existing ones if necessary.
 	 *
 	 * @param string $post_content Post content.
-	 * @param int    $module_id    ID of the newly created module.
-	 * @return string
+	 * @param int    $module_id    ID of the module.
+	 * @return string Modified post content.
 	 */
 	public static function swap_module_attribution_block( $post_content, $module_id ) {
-		// Get the attribution text for the module.
 		$module = \OpenLab\Modules\Module::get_instance( $module_id );
 		if ( ! $module ) {
 			return $post_content;
 		}
 
 		$attribution_text = $module->get_attribution_text();
+		if ( ! $attribution_text ) {
+			return $post_content;
+		}
 
-		$original_post_content = $post_content;
+		$block_markup = Module::generate_module_acknowledgements_block( $attribution_text );
 
-		$block_markup = Module::generate_attribution_block( $attribution_text );
-		$post_content = Module::insert_attribution_block( $block_markup, $post_content );
-
-		return $post_content;
+		return Module::insert_module_acknowledgements_block( $block_markup, $post_content );
 	}
 
 	/**

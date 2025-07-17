@@ -781,106 +781,88 @@ Well done!',
 	}
 
 	/**
-	 * Generates the markup for an attribution block.
+	 * Generates the markup for the module acknowledgements block.
 	 *
-	 * @param string $attribution_text Attribution text.
-	 * @return string
+	 * @param string $acknowledgements Attribution or acknowledgement text.
+	 * @return string Serialized block markup.
 	 */
-	public static function generate_attribution_block( $attribution_text ) {
-		// Create a paragraph block with the attribution prefix and text.
-		$paragraph_block = [
-			'blockName'    => 'core/paragraph',
-			'attrs'        => [
-				'fontSize' => '14-px',
-				'style'    => [
-					'spacing' => [
-						'margin'  => '0',
-						'padding' => '0',
+	public static function generate_module_acknowledgements_block( $acknowledgements ) {
+		if ( ! $acknowledgements ) {
+			return '';
+		}
+
+		$escaped = wp_kses_post( $acknowledgements );
+
+		$paragraph_html = sprintf(
+			'<p>%s</p>',
+			$escaped
+		);
+
+		$block = [
+			'blockName'    => 'openlab-modules/module-acknowledgements',
+			'attrs'        => [],
+			'innerBlocks'  => [
+				[
+					'blockName'    => 'core/details',
+					'attrs'        => [
+						'summary' => 'Module Acknowledgements',
+					],
+					'innerBlocks'  => [
+						[
+							'blockName'    => 'core/paragraph',
+							'attrs'        => [
+								'content' => $escaped,
+							],
+							'innerBlocks'  => [],
+							'innerContent' => [ $paragraph_html ],
+						],
+					],
+					'innerContent' => [
+						'<details class="wp-block-details"><summary>Module Acknowledgements</summary>',
+						null, // paragraph inserted here
+						'</details>',
 					],
 				],
 			],
-			'innerBlocks'  => [],
-			'innerHTML'    => [
-				'<p class="has-14-px-font-size" style="margin:0;padding:0"><strong class="openlab-module-attribution-prefix" style="font-weight:700">Attribution:</strong> %s</p>',
-				wp_kses_post( $attribution_text ),
-			],
 			'innerContent' => [
-				sprintf(
-					'<p class="has-14-px-font-size" style="margin:0;padding:0"><strong class="openlab-module-attribution-prefix" style="font-weight:700">Attribution:</strong> %s</p>',
-					wp_kses_post( $attribution_text )
-				),
-			],
-		];
-
-		// Create an inner group block to hold the paragraph (with the attribution text class).
-		$inner_group_block = [
-			'blockName'    => 'core/group',
-			'attrs'        => [
-				'className' => 'openlab-modules-attribution-text',
-			],
-			'innerBlocks'  => [ $paragraph_block ],
-			'innerContent' => [
-				'<div class="wp-block-group openlab-modules-attribution-text">',
-				null, // This will be replaced by the paragraph block.
+				'<div class="wp-block-openlab-modules-module-acknowledgements openlab-module-acknowledgments">',
+				null, // details block inserted here
 				'</div>',
 			],
 		];
 
-		// Create the outer group block with styling.
-		$outer_group_block = [
-			'blockName'    => 'core/group',
-			'attrs'        => [
-				'className' => 'openlab-modules-attribution-wrapper',
-				'style'     => [
-					'color'   => [
-						'background' => '#efefef',
-					],
-					'spacing' => [
-						'padding' => '20px',
-					],
-				],
-			],
-			'innerBlocks'  => [ $inner_group_block ],
-			'innerContent' => [
-				'<div class="wp-block-group openlab-modules-attribution-wrapper has-background" style="background-color:#efefef;padding:20px">',
-				null, // This will be replaced by the inner group block.
-				'</div>',
-			],
-		];
-
-		return serialize_block( $outer_group_block );
+		return serialize_block( $block );
 	}
 
 	/**
-	 * Inserts an attribution block, swapping with existing ones if found.
+	 * Inserts a module acknowledgements block, swapping with existing ones if found.
 	 *
-	 * @param string $attribution_block Serialized block.
-	 * @param string $post_content      Post content.
-	 * @return string
+	 * @param string $ack_block     Serialized module acknowledgements block.
+	 * @param string $post_content  Post content.
+	 * @return string Modified post content.
 	 */
-	public static function insert_attribution_block( $attribution_block, $post_content ) {
+	public static function insert_module_acknowledgements_block( $ack_block, $post_content ) {
 		$original_post_content = $post_content;
 
-		$regex            = '/<!-- wp:group[^>]+className:"openlab-modules-attribution-wrapper".*?<!-- \/wp:group -->/s';
-		$style_regex      = '/<!-- wp:group[^>]+"background":"#efefef"[^>]+padding":"20px"[^>]*--.*?<!-- \/wp:group -->/s';
-		$navigation_regex = '/<!-- wp:openlab-modules\/module-navigation[^>]*-->/s';
+		$ack_block_regex       = '/<!-- wp:openlab-modules\/module-acknowledgements[^>]*-->.*?<!-- \/wp:openlab-modules\/module-acknowledgements -->/s';
+		$legacy_wrapper_regex  = '/<!-- wp:group[^>]+className:"openlab-modules-attribution-wrapper".*?<!-- \/wp:group -->/s';
+		$navigation_block_regex = '/<!-- wp:openlab-modules\/module-navigation[^>]*-->/s';
 
-		if ( preg_match( $regex, $post_content, $matches ) ) {
-			// Replace existing block with new block.
-			$post_content = preg_replace( $regex, $attribution_block, $post_content );
-		} elseif ( preg_match( $style_regex, $post_content, $matches ) ) {
-			// Try the style-based regex as a fallback.
-			$post_content = preg_replace( $style_regex, $attribution_block, $post_content );
-		} elseif ( preg_match( $navigation_regex, $post_content ) ) {
-			// Look for a openlab-modules/module-navigation block, and put it after that.
-			$post_content = preg_replace( $navigation_regex, '$0' . $attribution_block, $post_content );
+		if ( preg_match( $ack_block_regex, $post_content ) ) {
+			// Replace existing module-acknowledgements block.
+			$post_content = preg_replace( $ack_block_regex, $ack_block, $post_content );
+		} elseif ( preg_match( $legacy_wrapper_regex, $post_content ) ) {
+			// Replace legacy attribution wrapper.
+			$post_content = preg_replace( $legacy_wrapper_regex, $ack_block, $post_content );
+		} elseif ( preg_match( $navigation_block_regex, $post_content ) ) {
+			// Insert after module-navigation block.
+			$post_content = preg_replace( $navigation_block_regex, '$0' . $ack_block, $post_content );
 		} else {
-			// Prepends the new block to the content.
-			$post_content = $attribution_block . $post_content;
+			// Prepend as fallback.
+			$post_content = $ack_block . $post_content;
 		}
 
 		if ( null === $post_content ) {
-			// If the regex fails, return the original content.
 			return $original_post_content;
 		}
 
