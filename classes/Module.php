@@ -819,14 +819,14 @@ Well done!',
 					],
 					'innerContent' => [
 						'<details class="wp-block-details"><summary>Module Acknowledgements</summary>',
-						null, // paragraph inserted here
+						null, // paragraph inserted here.
 						'</details>',
 					],
 				],
 			],
 			'innerContent' => [
 				'<div class="wp-block-openlab-modules-module-acknowledgements openlab-module-acknowledgments">',
-				null, // details block inserted here
+				null, // details block inserted here.
 				'</div>',
 			],
 		];
@@ -844,8 +844,8 @@ Well done!',
 	public static function insert_module_acknowledgements_block( $ack_block, $post_content ) {
 		$original_post_content = $post_content;
 
-		$ack_block_regex       = '/<!-- wp:openlab-modules\/module-acknowledgements[^>]*-->.*?<!-- \/wp:openlab-modules\/module-acknowledgements -->/s';
-		$legacy_wrapper_regex  = '/<!-- wp:group[^>]+className:"openlab-modules-attribution-wrapper".*?<!-- \/wp:group -->/s';
+		$ack_block_regex        = '/<!-- wp:openlab-modules\/module-acknowledgements[^>]*-->.*?<!-- \/wp:openlab-modules\/module-acknowledgements -->/s';
+		$legacy_wrapper_regex   = '/<!-- wp:group[^>]+className:"openlab-modules-attribution-wrapper".*?<!-- \/wp:group -->/s';
 		$navigation_block_regex = '/<!-- wp:openlab-modules\/module-navigation[^>]*-->/s';
 
 		if ( preg_match( $ack_block_regex, $post_content ) ) {

@@ -228,7 +228,7 @@ class Cloner {
 
 				$data = json_decode( $original_json, true );
 				if ( ! is_array( $data ) ) {
-					// Fallback: don't modify
+					// Fallback: don't modify.
 					return $matches[0];
 				}
 
@@ -236,7 +236,7 @@ class Cloner {
 
 				$new_json = wp_json_encode( $data );
 
-				// Preserve self-closing format if present
+				// Preserve self-closing format if present.
 				$is_self_closing = preg_match( '/\/-->$/', $matches[0] );
 
 				return sprintf(
