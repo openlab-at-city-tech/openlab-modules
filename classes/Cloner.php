@@ -221,9 +221,30 @@ class Cloner {
 		$source_module_id      = (string) $source_module_id;
 		$destination_module_id = (string) $destination_module_id;
 
-		$content = preg_replace(
-			'|wp:openlab-modules/module-navigation \{"moduleId":(\d+)\}|',
-			'wp:openlab-modules/module-navigation {"moduleId":' . $destination_module_id . '}',
+		$content = preg_replace_callback(
+			'/<!-- wp:openlab-modules\/module-navigation\s+({.*?})\s*\/?-->/',
+			function ( $matches ) use ( $destination_module_id ) {
+				$original_json = $matches[1];
+
+				$data = json_decode( $original_json, true );
+				if ( ! is_array( $data ) ) {
+					// Fallback: don't modify
+					return $matches[0];
+				}
+
+				$data['moduleId'] = (int) $destination_module_id;
+
+				$new_json = wp_json_encode( $data );
+
+				// Preserve self-closing format if present
+				$is_self_closing = preg_match( '/\/-->$/', $matches[0] );
+
+				return sprintf(
+					'<!-- wp:openlab-modules/module-navigation %s%s-->',
+					$new_json,
+					$is_self_closing ? ' /' : ''
+				);
+			},
 			$content
 		);
 
