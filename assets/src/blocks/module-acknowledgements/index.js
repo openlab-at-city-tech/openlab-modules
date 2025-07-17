@@ -1,6 +1,8 @@
 import { registerBlockType } from '@wordpress/blocks';
-import { InnerBlocks } from '@wordpress/block-editor';
+import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
+import { useSelect, select } from '@wordpress/data';
+import { useEffect, useMemo } from '@wordpress/element';
 
 const ALLOWED_BLOCKS = [ 'core/details' ];
 
@@ -13,46 +15,91 @@ const ackIcon = (
 registerBlockType( 'openlab-modules/module-acknowledgements', {
 	title: __( 'Module Acknowledgments', 'openlab-modules' ),
 	icon: ackIcon,
+	attributes: {
+		hasContent: {
+			type: 'boolean',
+			default: true,
+		},
+	},
 	category: 'layout',
 	supports: {
 		html: false,
 	},
-	edit() {
-		// Get default text from module_acknowledgements meta for current post.
-		const moduleAcknowledgements = wp.data.select( 'core/editor' ).getEditedPostAttribute( 'meta' )?.module_acknowledgements || '';
+	edit( { attributes, setAttributes, clientId, isSelected } ) {
+		const blockProps = useBlockProps();
 
-		const moduleAttributionData = wp.data.select( 'core/editor' ).getEditedPostAttribute( 'attributionData' ) || {};
-		const moduleAttributionText = moduleAttributionData.text || '';
+		// 1. Static content from post meta (only used on initial insert)
+		const initialParagraphContent = useMemo( () => {
+			const meta = select( 'core/editor' ).getEditedPostAttribute( 'meta' ) || {};
+			const attributionData = select( 'core/editor' ).getEditedPostAttribute( 'attributionData' ) || {};
+			const lines = [ meta.module_acknowledgements, attributionData.text ].filter( Boolean );
+			return lines.join( '<br />' );
+		}, [] );
 
-		const detailLines = [ moduleAcknowledgements, moduleAttributionText ].filter( Boolean );
-		const innerContent = detailLines.join( '<br />' );
+		// 2. Generate template (only once on initial block insert)
+		const TEMPLATE = useMemo( () => [
+			[
+				'core/details',
+				{
+					summary: __( 'Module Acknowledgments', 'openlab-modules' ),
+				},
+				[
+					[
+						'core/paragraph',
+						{
+							content: initialParagraphContent,
+						}
+					]
+				]
+			],
+		], [ initialParagraphContent ] );
+
+		// 3. Reactively check if inner content is empty
+		const isEmpty = useSelect( ( select ) => {
+			const children = select( 'core/block-editor' ).getBlocks( clientId );
+			if ( ! children.length ) {
+				return true;
+			}
+
+			const detailsBlock = children.find( ( block ) => block.name === 'core/details' );
+			if ( ! detailsBlock ) {
+				return true;
+			}
+
+			// Consider the details content empty if all children are empty/whitespace
+			const innerBlocks = detailsBlock.innerBlocks || [];
+			return innerBlocks.every( ( block ) => {
+				if ( block.name === 'core/paragraph' ) {
+					return ! block.attributes?.content?.trim();
+				}
+				// optionally treat all other blocks as non-empty
+				return false;
+			} );
+		}, [ clientId ] );
+
+		useEffect( () => {
+			if ( attributes.hasContent !== !isEmpty ) {
+				setAttributes( { hasContent: !isEmpty } );
+			}
+		}, [ isEmpty ] );
 
 		return (
-			<div className="openlab-module-acknowledgments">
+			<div { ...blockProps }>
 				<InnerBlocks
 					allowedBlocks={ ALLOWED_BLOCKS }
-					template={ [
-						[
-							'core/details',
-							{
-									summary: __( 'Module Acknowledgments', 'openlab-modules' ),
-							},
-							[
-								[
-									'core/paragraph',
-									{
-										content: innerContent
-									}
-								]
-							]
-						]
-					] }
+					template={ TEMPLATE }
 					templateLock="all"
 				/>
 			</div>
 		);
 	},
-	save() {
+	save( { attributes } ) {
+		const { hasContent } = attributes;
+
+		if ( ! hasContent ) {
+			return null; // Don't output anything at all
+		}
+
 		return (
 			<div className="openlab-module-acknowledgments">
 				<InnerBlocks.Content />
