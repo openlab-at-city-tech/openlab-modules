@@ -24,11 +24,42 @@
       "shadow": true
     },
     "attributes": {
+      "cardBackgroundColor": {
+        "type": "string",
+        "default": "#f5f5f5"
+      },
       "orderedIds": {
         "type": "array",
         "default": []
+      },
+      "showModuleAuthor": {
+        "type": "boolean",
+        "default": true
+      },
+      "showModuleDescription": {
+        "type": "boolean",
+        "default": true
+      },
+      "showModuleImage": {
+        "type": "boolean",
+        "default": true
       }
     },
+    "styles": [
+      {
+        "name": "text-list",
+        "label": "Text List",
+        "isDefault": true
+      },
+      {
+        "name": "image-list",
+        "label": "Image List"
+      },
+      {
+        "name": "image-grid",
+        "label": "Image Grid"
+      }
+    ],
     "textdomain": "openlab-modules",
     "editorScript": {
       "handle": "openlab-modules-module-list-editor-script",

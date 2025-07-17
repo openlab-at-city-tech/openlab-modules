@@ -1,5 +1,6 @@
 .wp-block-openlab-modules-module-list {
 	h2 {
+		font-size: 1.4em;
 		margin-bottom: .5em;
 	}
 
@@ -11,5 +12,88 @@
 
 	.openlab-modules-module-list li {
 		margin-bottom: 2em;
+	}
+
+	/* Base layout */
+	.openlab-modules-module-list {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	.module-list-item {
+		border-radius: 10px 10px 70px 10px;
+	}
+
+	&.has-card-background-color .module-list-item {
+	  background-color: var(--card-background-color);
+	  padding: 1.5rem;
+	}
+
+	.image-ratio-box {
+	  aspect-ratio: 4 / 3; /* or 16 / 9 */
+	  width: 100%;
+	  overflow: hidden;
+	  position: relative;
+	}
+
+	.image-ratio-box img {
+	  width: 100%;
+	  height: 100%;
+	  object-fit: cover;
+	  position: absolute;
+	  top: 0;
+	  left: 0;
+	}
+
+	/* === Text List === */
+	&.is-style-text-list {
+		.module-list-item {
+			display: block;
+			border-bottom: 1px solid #ccc;
+			padding-bottom: 1rem;
+		}
+
+		.module-list-item-image {
+			display: none;
+		}
+	}
+
+	/* === Image List === */
+	&.is-style-image-list {
+		.module-list-item {
+			display: flex;
+			gap: 1rem;
+			align-items: flex-start;
+		}
+
+		.module-list-item-image {
+			width: 150px;
+			flex-shrink: 0;
+		}
+
+		.module-list-item-image img {
+			object-fit: cover;
+			display: block;
+		}
+	}
+
+	/* === Image Grid === */
+	&.is-style-image-grid {
+		.openlab-modules-module-list {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+			gap: 1.5rem;
+		}
+
+		.module-list-item {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.module-list-item-image img {
+			object-fit: cover;
+			display: block;
+		}
 	}
 }

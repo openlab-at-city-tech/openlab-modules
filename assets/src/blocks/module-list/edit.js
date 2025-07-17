@@ -1,6 +1,20 @@
 import { __ } from '@wordpress/i18n';
-import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
-import { Button, Panel, PanelBody, Spinner } from '@wordpress/components';
+
+import {
+	PanelColorSettings,
+	InspectorControls,
+	useBlockProps
+} from '@wordpress/block-editor';
+
+import {
+	Button,
+	CheckboxControl,
+	ColorPicker,
+	Panel,
+	PanelBody,
+	PanelRow,
+	Spinner
+} from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
@@ -9,9 +23,8 @@ import { CSS } from '@dnd-kit/utilities';
 
 import './editor.scss';
 
-const SortableItem = ({ id, title, link, description }) => {
+const SortableItem = ({ id, title, link, author, description, image }) => {
   const {
-    attributes,
     listeners,
     setNodeRef,
     transform,
@@ -41,13 +54,56 @@ const SortableItem = ({ id, title, link, description }) => {
         <span className="screen-reader-text">Drag</span>
       </Button>
 
-      <div className="item-content">
-        <h2><a href={link}>{title}</a></h2>
-        <p className="module-description">{description}</p>
-      </div>
+			<div className="draggable-content">
+				<ModuleListItem
+					id={id}
+					title={title}
+					link={link}
+					author={author}
+					description={description}
+					image={image}
+				/>
+			</div>
     </li>
   );
 };
+
+
+const CARD_COLOR_CLASS_PREFIX = 'has-';
+const CARD_COLOR_CLASS_SUFFIX = '-card-background-color';
+
+const getCardBackgroundClass = (slug) =>
+	slug ? `has-card-background-color ${CARD_COLOR_CLASS_PREFIX}${slug}${CARD_COLOR_CLASS_SUFFIX}` : '';
+
+const ModuleListItem = ({ id, title, link, author, description, image }) => {
+	const showAuthor      = null !== author;
+	const showDescription = null !== description;
+	const showImage       = null !== image;
+
+	return (
+		<div key={'module-' + id} className="module-list-item">
+			{ showImage && (
+				<div className="module-list-item-image">
+					<div className="image-ratio-box">
+						<img src={image} alt={title} />
+					</div>
+				</div>
+			)}
+
+			<div className="module-list-item-info">
+				<h2><a href={link}>{title}</a></h2>
+
+				{showAuthor && (
+					<p className="module-list-item-author">{author}</p>
+				)}
+
+				{showDescription && (
+					<p className="module-list-item-description">{description}</p>
+				)}
+			</div>
+		</div>
+	)
+}
 
 /**
  * Edit function.
@@ -58,7 +114,13 @@ const SortableItem = ({ id, title, link, description }) => {
  * @param {boolean}  props.isSelected    Whether the block is currently selected.
  */
 export default function Edit({ attributes, isSelected, setAttributes }) {
-  const { orderedIds } = attributes;
+  const {
+		cardBackgroundColor,
+		orderedIds,
+		showModuleAuthor,
+		showModuleDescription,
+		showModuleImage
+	} = attributes;
 
   const { allModules } = useSelect((select) => {
     const rawModules = select('core').getEntityRecords(
@@ -126,19 +188,69 @@ export default function Edit({ attributes, isSelected, setAttributes }) {
     }
   };
 
+	const blockProps = useBlockProps({
+		className: getCardBackgroundClass(cardBackgroundColor),
+		style: {
+			'--card-background-color': cardBackgroundColor || 'transparent',
+		}
+	})
+
   return (
 		<>
 			<InspectorControls>
+				<PanelColorSettings
+					title="Card Background Color"
+					colorSettings={[
+						{
+							value: attributes.cardBackgroundColor,
+							onChange: (color) => setAttributes({ cardBackgroundColor: color }),
+							label: 'Card Background',
+						},
+					]}
+				/>
+			</InspectorControls>
+
+			<InspectorControls>
+
 				<Panel>
 					<PanelBody title={ __( 'Module Order', 'openlab-modules' ) }>
 						<p>
 							{ __( 'To change the order of the modules, drag and drop using the icon.', 'openlab-modules' ) } <span className="dashicons dashicons-move"></span>
 						</p>
 					</PanelBody>
+
+					<PanelBody title={ __( 'Layout Settings', 'openlab-modules' ) }>
+						<PanelRow>
+							<CheckboxControl
+								label={ __( 'Module Description', 'openlab-modules' ) }
+								help={ __( 'Include each Module\'s Description in the list. This can be edited in the Module Settings', 'openlab-modules' ) }
+								checked={ showModuleDescription }
+								onChange={ (value) => setAttributes({ showModuleDescription: value }) }
+							/>
+						</PanelRow>
+
+						<PanelRow>
+							<CheckboxControl
+								label={ __( 'Module Author', 'openlab-modules' ) }
+								help={ __( 'Include each Module\'s Author in the list.', 'openlab-modules' ) }
+								checked={ showModuleAuthor }
+								onChange={ (value) => setAttributes({ showModuleAuthor: value }) }
+							/>
+						</PanelRow>
+
+						<PanelRow>
+							<CheckboxControl
+								label={ __( 'Module Featured Image', 'openlab-modules' ) }
+								help={ __( 'Include each Module\'s featured image in the list. This can be edited in the Module Settings', 'openlab-modules' ) }
+								checked={ showModuleImage }
+								onChange={ (value) => setAttributes({ showModuleImage: value }) }
+							/>
+						</PanelRow>
+					</PanelBody>
 				</Panel>
 			</InspectorControls>
 
-			<div { ...useBlockProps() }>
+			<div { ...blockProps }>
 				{ null !== allModules && allModules.length > 0 && (
 					<ul className="openlab-modules-module-list">
 						{ isSelected && (
@@ -151,15 +263,19 @@ export default function Edit({ attributes, isSelected, setAttributes }) {
 									items={orderedModules.map(module => module.id)}
 									strategy={verticalListSortingStrategy}
 								>
-									{ orderedModules.map((module) => (
-										<SortableItem
-											key={'module-' + module.id}
-											id={module.id}
-											title={module.title.rendered}
-											link={module.link}
-											description={module.meta.module_description}
-										/>
-									)) }
+									{ orderedModules.map((module) => {
+										return (
+											<SortableItem
+												key={'module-' + module.id}
+												id={module.id}
+												title={module.title.rendered}
+												link={module.link}
+												author={showModuleAuthor ? module.author : null}
+												description={showModuleDescription ? module.meta.module_description : null}
+												image={showModuleImage ? module.featuredImage : null}
+											/>
+										)
+									}) }
 								</SortableContext>
 							</DndContext>
 						) }
@@ -167,10 +283,15 @@ export default function Edit({ attributes, isSelected, setAttributes }) {
 						{ ! isSelected && (
 							<>
 								{ orderedModules.map((module) => (
-									<li key={'module-' + module.id}>
-										<h2><a href={module.link}>{module.title.rendered}</a></h2>
-										<p className="module-description">{module.meta.module_description}</p>
-									</li>
+									<ModuleListItem
+										key={'module-' + module.id}
+										id={module.id}
+										title={module.title.rendered}
+										link={module.link}
+										author={showModuleAuthor ? module.author : null}
+										description={showModuleDescription ? module.meta.module_description : null}
+										image={showModuleImage ? module.featuredImage : null}
+									/>
 								)) }
 							</>
 						) }

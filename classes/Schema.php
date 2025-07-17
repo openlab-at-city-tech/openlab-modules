@@ -132,7 +132,7 @@ class Schema {
 				'hierarchical'      => false,
 				'show_ui'           => true,
 				'show_in_nav_menus' => true,
-				'supports'          => [ 'title', 'editor', 'custom-fields' ],
+				'supports'          => [ 'title', 'editor', 'custom-fields', 'thumbnail' ],
 				'has_archive'       => false,
 				'rewrite'           => [
 					'slug' => 'modules',
@@ -371,6 +371,36 @@ class Schema {
 
 					$to_save = ! empty( $value ) ? '1' : '0';
 					update_post_meta( $data_object->ID, 'enable_sharing', $to_save );
+				},
+			]
+		);
+
+		register_rest_field(
+			[ 'openlab_module' ],
+			'author',
+			[
+				'get_callback' => function ( $data_object ) {
+					$module = Module::get_instance( $data_object['id'] );
+					if ( ! $module ) {
+						return '';
+					}
+
+					return $module->get_author_name();
+				},
+			]
+		);
+
+		register_rest_field(
+			[ 'openlab_module' ],
+			'featuredImage',
+			[
+				'get_callback' => function ( $data_object ) {
+					$module = Module::get_instance( $data_object['id'] );
+					if ( ! $module ) {
+						return '';
+					}
+
+					return $module->get_featured_image_url();
 				},
 			]
 		);

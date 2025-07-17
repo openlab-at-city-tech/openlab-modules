@@ -446,6 +446,47 @@ class Module {
 	}
 
 	/**
+	 * Gets the name of the module author.
+	 *
+	 * @return string
+	 */
+	public function get_author_name() {
+		$post = get_post( $this->id );
+		if ( ! $post ) {
+			return '';
+		}
+
+		$user = get_user_by( 'id', $post->post_author );
+		if ( ! $user ) {
+			return '';
+		}
+
+		return $user->display_name;
+	}
+
+	/**
+	 * Gets the URL of the module post's featured image.
+	 *
+	 * @return string
+	 */
+	public function get_featured_image_url() {
+		$post = $this->get_post();
+
+		if ( ! $post ) {
+			return '';
+		}
+
+		$thumbnail_id = get_post_thumbnail_id( $post->ID );
+		if ( ! $thumbnail_id ) {
+			return '';
+		}
+
+		$url = wp_get_attachment_url( $thumbnail_id );
+
+		return is_string( $url ) ? $url : '';
+	}
+
+	/**
 	 * Gets the completion message CC string, for use in the editor.
 	 *
 	 * @return string
