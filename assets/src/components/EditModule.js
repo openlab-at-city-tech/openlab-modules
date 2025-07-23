@@ -129,6 +129,7 @@ export default function EditModule() {
 
 			<PanelRow>
 				<TextareaControl
+					help={ __( 'Acknowledgements appear in a block at the bottom of the module home.', 'openlab-modules' ) }
 					label={ __( 'Acknowledgements', 'openlab-modules' ) }
 					onChange={ ( newAcknowledgements ) => editPostMeta( { module_acknowledgements: newAcknowledgements } ) }
 					value={ moduleAcknowledgements }
