@@ -25,22 +25,6 @@
 		gap: 1.5rem;
 	}
 
-	.image-ratio-box {
-	  aspect-ratio: 4 / 3; /* or 16 / 9 */
-	  width: 100%;
-	  overflow: hidden;
-	  position: relative;
-	}
-
-	.image-ratio-box img {
-	  width: 100%;
-	  height: 100%;
-	  object-fit: cover;
-	  position: absolute;
-	  top: 0;
-	  left: 0;
-	}
-
 	/* === Text List === */
 	.module-list-item {
 		background: url('./bullet.svg') no-repeat left top;
@@ -67,22 +51,39 @@
 			}
 		}
 
+		.image-ratio-box {
+		  width: 100%;
+		  height: 100%;
+		}
+
+		.image-ratio-box img {
+		  width: 100%;
+		  height: 100%;
+		  object-fit: cover;
+		  display: block;
+		}
+
 		.module-list-item {
-			background: none;
 			display: flex;
 			gap: 1rem;
-			align-items: flex-start;
+		    align-items: stretch;
+			background: none;
+			align-items: stretch;
 			padding: 0;
 		}
 
 		.module-list-item-info {
+			flex: 1;
 			padding: 1.5rem;
 		}
 
 		.module-list-item-image {
-			display: block;
-			width: 150px;
-			flex-shrink: 0;
+		  flex: 0 0 auto;
+		  width: 150px;
+		  height: auto;
+		  overflow: hidden;
+		  display: flex;
+		  align-items: stretch;
 		}
 
 		.module-list-item-image img {
@@ -99,6 +100,22 @@
 				border-radius: 10px 10px 70px 10px;
 				padding: 1.5rem;
 			}
+		}
+
+		.image-ratio-box {
+		  aspect-ratio: 4 / 3; /* or 16 / 9 */
+		  width: 100%;
+		  overflow: hidden;
+		  position: relative;
+		}
+
+		.image-ratio-box img {
+		  width: 100%;
+		  height: 100%;
+		  object-fit: cover;
+		  position: absolute;
+		  top: 0;
+		  left: 0;
 		}
 
 		.openlab-modules-module-list {
