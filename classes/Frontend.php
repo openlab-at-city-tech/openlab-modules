@@ -213,42 +213,36 @@ class Frontend {
 			];
 		}
 
-		$prev_link = '';
+		$prev_el = '';
 		if ( $links['prev'] ) {
-			$prev_link = sprintf(
-				// translators: Title of previous post.
-				esc_html__( 'Previous: %s', 'openlab-modules' ),
-				sprintf(
-					'<a href="%s">%s</a>',
-					esc_url( $links['prev']['url'] ),
-					esc_html( $links['prev']['title'] )
-				)
+			$prev_el = sprintf(
+				'<div class="module-pagination-link"><a href="%s">%s</a></div><div class="module-pagination-title">%s</div>',
+				esc_url( $links['prev']['url'] ),
+				__( '← Previous', 'openlab-modules' ),
+				esc_html( $links['prev']['title'] )
 			);
 		}
 
-		$next_link = '';
+		$next_el = '';
 		if ( $links['next'] ) {
-			$next_link = sprintf(
-				// translators: Title of next post.
-				esc_html__( 'Next: %s', 'openlab-modules' ),
-				sprintf(
-					'<a href="%s">%s</a>',
-					esc_url( $links['next']['url'] ),
-					esc_html( $links['next']['title'] )
-				)
+			$next_el = sprintf(
+				'<div class="module-pagination-link"><a href="%s">%s</a></div><div class="module-pagination-title">%s</div>',
+				esc_url( $links['next']['url'] ),
+				__( 'Next →', 'openlab-modules' ),
+				esc_html( $links['next']['title'] )
 			);
 		}
 
 		$pagination = sprintf(
 			'
 			<div class="module-pagination">
-				<div class="module-pagination-previous">%s</div>
+				<div class="module-pagination-side module-pagination-previous">%s</div>
 
-				<div class="module-pagination-next">%s</div>
+				<div class="module-pagination-side module-pagination-next">%s</div>
 			</div>
 			',
-			$prev_link,
-			$next_link
+			$prev_el,
+			$next_el
 		);
 
 		wp_enqueue_style( 'openlab-modules-frontend' );

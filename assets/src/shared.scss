@@ -1,5 +1,14 @@
 .module-pagination {
 	display: flex;
+	gap: 16px;
 	justify-content: space-between;
 	margin-top: 10px;
+
+	.module-pagination-side {
+		flex: 1 0 50%;
+	}
+
+	.module-pagination-next {
+		text-align: right;
+	}
 }
