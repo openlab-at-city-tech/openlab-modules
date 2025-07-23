@@ -21,7 +21,7 @@ registerBlockType( 'openlab-modules/module-acknowledgements', {
 			default: true,
 		},
 	},
-	category: 'layout',
+	category: 'openlab-modules',
 	supports: {
 		html: false,
 	},
