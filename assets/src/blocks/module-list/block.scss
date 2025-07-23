@@ -64,7 +64,6 @@
 			.module-list-item {
 				background-color: var(--card-background-color);
 				border-radius: 10px 10px 70px 10px;
-				padding: 1.5rem;
 			}
 		}
 
@@ -74,6 +73,10 @@
 			gap: 1rem;
 			align-items: flex-start;
 			padding: 0;
+		}
+
+		.module-list-item-info {
+			padding: 1.5rem;
 		}
 
 		.module-list-item-image {
