@@ -33,7 +33,7 @@ wp_enqueue_style( 'openlab-modules-frontend' );
 			<p><strong><?php esc_html_e( 'The module associated with this navigation block is not published, and the navigation will not be visible to normal users.', 'openlab-modules' ); ?></strong></p>
 		<?php endif; ?>
 
-		<p class="openlab-modules-module-navigation-heading">
+		<h2 class="openlab-modules-module-navigation-heading">
 			<?php
 			printf(
 				// translators: Module link or title.
@@ -45,7 +45,7 @@ wp_enqueue_style( 'openlab-modules-frontend' );
 				)
 			);
 			?>
-		</p>
+		</h2>
 
 		<?php if ( $show_module_description && $module->get_description() ) : ?>
 			<p class="openlab-modules-module-description">
