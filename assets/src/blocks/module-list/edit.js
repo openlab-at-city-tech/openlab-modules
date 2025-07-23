@@ -219,12 +219,6 @@ export default function Edit({ attributes, isSelected, setAttributes }) {
 			<InspectorControls>
 
 				<Panel>
-					<PanelBody title={ __( 'Module Order', 'openlab-modules' ) }>
-						<p>
-							{ __( 'To change the order of the modules, drag and drop using the icon.', 'openlab-modules' ) } <span className="dashicons dashicons-move"></span>
-						</p>
-					</PanelBody>
-
 					<PanelBody title={ __( 'Layout Settings', 'openlab-modules' ) }>
 						<PanelRow>
 							<CheckboxControl
