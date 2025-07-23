@@ -205,12 +205,12 @@ export default function Edit({ attributes, isSelected, setAttributes }) {
 		<>
 			<InspectorControls>
 				<PanelColorSettings
-					title="Card Background Color"
+					title="Image List/Grid Color"
 					colorSettings={[
 						{
 							value: attributes.cardBackgroundColor,
 							onChange: (color) => setAttributes({ cardBackgroundColor: color }),
-							label: 'Card Background',
+							label: 'Background Color',
 						},
 					]}
 				/>
