@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 
 import he from 'he'
 
+import { useCallback } from '@wordpress/element'
+
 import {
 	closestCenter,
 	DndContext,
@@ -80,13 +82,22 @@ const SortableMultiSelect = (props) => {
 		return clone;
 	};
 
-	const handleRemoveClick = (itemHandle) => {
-		const itemId = Number( itemHandle.substr( 9 ) )
-		const itemIndex = findSelectedOptionIndexById( itemId )
+	const handleRemoveClick = useCallback(
+		(itemHandle) => {
+			const realOptions = Array.from(options);
+			const itemId = Number(itemHandle.substr(9));
+			const itemIndex = realOptions.findIndex(opt => opt.id === itemId);
 
-		const newSelectedOptions = [...options.slice(0, itemIndex), ...options.slice(itemIndex + 1 )]
-		onChange( newSelectedOptions )
-	}
+			if (itemIndex === -1) return;
+
+			const before = realOptions.slice(0, itemIndex);
+			const after = realOptions.slice(itemIndex + 1);
+
+			const newSelectedOptions = [...before, ...after];
+			onChange(newSelectedOptions);
+		},
+		[options, onChange]
+	);
 
 	const items = options.map( option => 'sortable-' + option.id )
 
