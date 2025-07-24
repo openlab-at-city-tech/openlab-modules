@@ -100,6 +100,15 @@ const CloneModuleModal = ( { moduleId, nonce, uniqid, isOpen, onClose } ) => {
 			return;
 		}
 
+		// Only match those with a title that exactly matches.
+		const matchingModules = response2.filter( ( module ) => {
+			return module.title.rendered === title;
+		} );
+
+		if ( matchingModules.length === 0 ) {
+			return;
+		}
+
 		setModuleWithSameNameExistsOnTargetSite( true );
 	};
 
