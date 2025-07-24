@@ -1,0 +1,3 @@
+!function(){const{i18n:e}=wp,{__,sprintf:n}=e,t=document.getElementById("module-select"),o=document.getElementById("acknowledgements-text");t.addEventListener("change",(e=>{const t=(e=>{const t=parseInt(e),o=openlabModulesExport.modules.find((e=>e.id===t));return o?n(
+// Translators: %1$s is a URL, %2$s is a module name, %3$s is an author name.
+__('This module is based on <a href="%1$s">%2$s</a> by %3$s.',"openlab-modules"),o.url,o.title,o.author_name):""})(e.target.value);o.innerHTML=t}))}();
