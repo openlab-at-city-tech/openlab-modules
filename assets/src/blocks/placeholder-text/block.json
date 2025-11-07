@@ -7,7 +7,7 @@
     "icon": "menu",
     "description": "Placeholder text for use in the editor.",
     "supports": {
-      "inserter": true
+      "inserter": false
     },
     "attributes": {
       "textContent": {
