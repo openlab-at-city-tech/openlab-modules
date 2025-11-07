@@ -9,6 +9,8 @@ $module_id = (int) $args['moduleId'];
 
 $show_module_description = isset( $args['showModuleDescription'] ) ? (bool) $args['showModuleDescription'] : false;
 
+$list_style = isset( $args['listStyle'] ) ? $args['listStyle'] : 'unordered';
+
 if ( ! $module_id ) {
 	return;
 }
@@ -53,7 +55,8 @@ wp_enqueue_style( 'openlab-modules-frontend' );
 			</p>
 		<?php endif; ?>
 
-		<ul class="openlab-modules-module-navigation-list">
+		<?php $list_tag = 'ordered' === $list_style ? 'ol' : 'ul'; ?>
+		<<?php echo esc_html( $list_tag ); ?> class="openlab-modules-module-navigation-list">
 			<?php
 			$module_home_current_class = get_queried_object_id() === $module_id ? 'is-current' : '';
 			?>
@@ -72,6 +75,6 @@ wp_enqueue_style( 'openlab-modules-frontend' );
 					<a href="<?php the_permalink( $module_page_id ); ?>"><?php echo esc_html( get_the_title( $module_page_id ) ); ?></a>
 				</li>
 			<?php endforeach; ?>
-		</ul>
+		</<?php echo esc_html( $list_tag ); ?>>
 	</div>
 <?php endif; ?>

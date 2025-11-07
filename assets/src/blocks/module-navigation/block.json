@@ -24,7 +24,13 @@
         "fontFamily": true,
         "textTransform": true
       },
-      "shadow": true
+      "shadow": true,
+      "__experimentalBorder": {
+        "color": true,
+        "radius": true,
+        "style": true,
+        "width": true
+      }
     },
     "attributes": {
       "moduleId": {
@@ -34,6 +40,10 @@
       "showModuleDescription": {
         "type": "boolean",
         "default": false
+      },
+      "listStyle": {
+        "type": "string",
+        "default": "unordered"
       }
     },
     "textdomain": "openlab-modules",
