@@ -26,6 +26,64 @@ import { useEffect, useState } from '@wordpress/element'
 import './editor.scss';
 
 /**
+ * Module Page List Item Component.
+ *
+ * @param {Object}   props                Component props.
+ * @param {Object}   props.module         Module data.
+ * @param {number}   props.activePopover  Active popover ID.
+ * @param {Function} props.togglePopover  Function to toggle popover.
+ */
+const ModulePageListItem = ( { module, activePopover, togglePopover } ) => {
+	const pageClassName = 'publish' !== module.statusCode ? 'module-page-has-non-publish-status module-page-has-status-' + module.statusCode : 'module-page-has-publish-status';
+
+	return (
+		<li key={'module-page-' + module.id} className={ pageClassName }>
+			<a
+				className="module-navigation-editor-link"
+				onClick={() => togglePopover( module.id )}
+				href="#"
+			>
+				{module.title}
+
+				{activePopover === module.id && (
+					<Popover>
+						<div className="module-navigation-link-popover">
+							<div className="module-navigation-link-popover-title">
+								<span className="dashicons dashicons-excerpt-view"></span>
+								<a href={module.url} target="_blank">{module.title}</a>
+							</div>
+
+							<div className="module-navigation-link-popover-excerpt">
+								{module.excerpt}
+							</div>
+
+							<div className="module-navigation-link-popover-actions">
+								<Button
+									className="module-navigation-link-edit"
+									href={module.editUrl}
+									variant="secondary"
+									target="_blank"
+								>{ __( 'Edit Page', 'openlab-modules' ) }</Button>
+
+								<Button
+									className="module-navigation-link-visit"
+									href={module.url}
+									variant="secondary"
+									target="_blank"
+								>{ __( 'Visit Page', 'openlab-modules' ) }</Button>
+
+							</div>
+						</div>
+					</Popover>
+				)}
+			</a>
+
+			{module.statusEl}
+		</li>
+	);
+};
+
+/**
  * Edit function.
  *
  * @param {Object}   props               Props.
@@ -38,7 +96,7 @@ export default function Edit( {
 	isSelected,
 	setAttributes,
 } ) {
-	const { moduleId, showModuleDescription } = attributes
+	const { moduleId, showModuleDescription, listStyle } = attributes
 	const [ activePopover, setActivePopover ] = useState( null );
 
 	const closePopoverOnClick = ( event ) => {
@@ -154,6 +212,30 @@ export default function Edit( {
 			setAttributes( { moduleId: selectedModuleId } )
 		}
 	}, [ selectedModuleId, moduleId, setAttributes ] )
+
+	// Set default styles on mount if not already set
+  useEffect(() => {
+    if (!attributes.style) {
+      setAttributes({
+        style: {
+          border: {
+            color: "#eee",
+            radius: "2px",
+            style: "solid",
+            width: "2px"
+          },
+          spacing: {
+            padding: {
+              top: "20px",
+              right: "20px",
+              bottom: "20px",
+              left: "20px"
+            }
+          }
+        }
+      });
+    }
+  }, []);
 
 	const optionLabel = ( title, status ) => {
 			switch ( status ) {
@@ -308,6 +390,19 @@ export default function Edit( {
 								onChange={ ( newShowModuleDescription ) => setAttributes( { showModuleDescription: newShowModuleDescription } ) }
 							/>
 						</PanelRow>
+
+						<PanelRow>
+							<SelectControl
+								label={ __( 'List Style', 'openlab-modules' ) }
+								help={ __( 'Choose between an unordered or ordered list.', 'openlab-modules' ) }
+								value={ listStyle }
+								options={ [
+									{ label: __( 'Unordered List', 'openlab-modules' ), value: 'unordered' },
+									{ label: __( 'Ordered List', 'openlab-modules' ), value: 'ordered' }
+								] }
+								onChange={ ( newListStyle ) => setAttributes( { listStyle: newListStyle } ) }
+							/>
+						</PanelRow>
 					</PanelBody>
 				</Panel>
 			</InspectorControls>
@@ -324,57 +419,29 @@ export default function Edit( {
 						</p>
 					) }
 
-					<ul className="openlab-modules-module-navigation-list">
-						{ modulePagesForDisplay.map( (module) => {
-							const pageClassName = 'publish' !== module.statusCode ? 'module-page-has-non-publish-status module-page-has-status-' + module.StatusCode : 'module-page-has-publish-status'
-
-							return (
-								<li key={'module-page-' + module.id} className={ pageClassName }>
-									<a
-										className="module-navigation-editor-link"
-										onClick={() => togglePopover( module.id )}
-										href="#"
-									>
-										{module.title}
-
-										{activePopover === module.id && (
-											<Popover>
-												<div className="module-navigation-link-popover">
-													<div className="module-navigation-link-popover-title">
-														<span className="dashicons dashicons-excerpt-view"></span>
-														<a href={module.url} target="_blank">{module.title}</a>
-													</div>
-
-													<div className="module-navigation-link-popover-excerpt">
-														{module.excerpt}
-													</div>
-
-													<div className="module-navigation-link-popover-actions">
-														<Button
-															className="module-navigation-link-edit"
-															href={module.editUrl}
-															variant="secondary"
-															target="_blank"
-														>{ __( 'Edit Page', 'openlab-modules' ) }</Button>
-
-														<Button
-															className="module-navigation-link-visit"
-															href={module.url}
-															variant="secondary"
-															target="_blank"
-														>{ __( 'Visit Page', 'openlab-modules' ) }</Button>
-
-													</div>
-												</div>
-											</Popover>
-										)}
-									</a>
-
-									{module.statusEl}
-								</li>
-							)
-						} ) }
-					</ul>
+					{ 'ordered' === listStyle ? (
+						<ol className="openlab-modules-module-navigation-list">
+							{ modulePagesForDisplay.map( (module) => (
+								<ModulePageListItem
+									key={'module-page-' + module.id}
+									module={module}
+									activePopover={activePopover}
+									togglePopover={togglePopover}
+								/>
+							) ) }
+						</ol>
+					) : (
+						<ul className="openlab-modules-module-navigation-list">
+							{ modulePagesForDisplay.map( (module) => (
+								<ModulePageListItem
+									key={'module-page-' + module.id}
+									module={module}
+									activePopover={activePopover}
+									togglePopover={togglePopover}
+								/>
+							) ) }
+						</ul>
+					) }
 				</div>
 
 				{ isSelected && (
