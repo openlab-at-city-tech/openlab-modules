@@ -363,9 +363,11 @@ class Admin {
 	 * @return string
 	 */
 	public function add_modules_to_page_on_front_dropdown( $output, $r ) {
-		if ( 'page_on_front' !== $r['name'] ) {
+		if ( 'page_on_front' !== $r['name'] && '_customize-dropdown-pages-page_on_front' !== $r['name'] ) {
 			return $output;
 		}
+
+		$is_customizer = '_customize-dropdown-pages-page_on_front' === $r['name'];
 
 		// Get a list of modules.
 		$modules = Module::get();
@@ -376,8 +378,9 @@ class Admin {
 			$module_optgroup = '<optgroup label="' . esc_attr__( 'Modules', 'openlab-modules' ) . '">';
 			foreach ( $modules as $module ) {
 				$module_optgroup .= sprintf(
-					'<option value="%d"%s>%s</option>',
+					'<option value="%d"%s%s>%s</option>',
 					$module->get_id(),
+					$is_customizer ? ' class="level-0"' : '',
 					selected( get_option( 'page_on_front' ), $module->get_id(), false ),
 					esc_html( $module->get_title() )
 				);

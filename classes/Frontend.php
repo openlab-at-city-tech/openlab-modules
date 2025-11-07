@@ -46,6 +46,8 @@ class Frontend {
 		add_filter( 'the_content', [ __CLASS__, 'append_pagination' ], 15 );
 
 		add_action( 'wp_ajax_mark_module_section_complete', [ __CLASS__, 'ajax_mark_module_section_complete' ] );
+
+		add_action( 'pre_get_posts', [ __CLASS__, 'fix_custom_post_type_front_page_in_customizer' ] );
 	}
 
 	/**
@@ -596,5 +598,43 @@ class Frontend {
 		}
 
 		return $swapped;
+	}
+
+
+	/**
+	 * Fix front page queries in the Customizer when the front page is a custom post type.
+	 *
+	 * @param \WP_Query $q The WP_Query instance (passed by reference).
+	 * @return void
+	 */
+	public static function fix_custom_post_type_front_page_in_customizer( $q ) {
+		if ( ! $q->is_main_query() || ! is_customize_preview() ) {
+			return;
+		}
+
+		$home_path = wp_parse_url( home_url(), PHP_URL_PATH );
+		if ( ! $home_path ) {
+			$home_path = '/';
+		}
+
+		// phpcs:ignore WordPress.Security
+		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+		if ( is_string( $request_uri ) ) {
+			$request_path = wp_parse_url( $request_uri, PHP_URL_PATH );
+			if ( untrailingslashit( $home_path ) === untrailingslashit( $request_path ) ) {
+				$front_id = get_option( 'page_on_front' );
+				if ( is_numeric( $front_id ) && 'page' === get_option( 'show_on_front' ) ) {
+					$front_id  = intval( $front_id );
+					$post_type = get_post_type( $front_id );
+					if ( $post_type && 'page' !== $post_type ) {
+						$q->set( 'p', $front_id );
+						$q->set( 'post_type', $post_type );
+						$q->is_page     = true;
+						$q->is_singular = true;
+						$q->is_home     = false;
+					}
+				}
+			}
+		}
 	}
 }
