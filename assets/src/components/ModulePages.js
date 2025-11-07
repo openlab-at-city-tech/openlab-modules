@@ -279,7 +279,7 @@ console.log( JSON.stringify( postData, null, 2 ) )
 					) }
 
 					{ sortedOptions.length === 0 && (
-						<p>{ __( 'This module has no pages yet. Add or create a new page using the tools below.', 'openlab-modules' ) }</p>
+						<p>{ __( 'This module has no pages yet. Add or create a new page using the tools above.', 'openlab-modules' ) }</p>
 					) }
 				</PanelRow>
 			</PluginDocumentSettingPanel>
