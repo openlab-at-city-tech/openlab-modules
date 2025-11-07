@@ -52,7 +52,7 @@ class Sites extends WP_REST_Controller {
 
 		$page = isset( $params['page'] ) && is_scalar( $params['page'] ) ? (int) $params['page'] : 1;
 
-		$per_page = 25;
+		$per_page = 100;
 
 		$blogs_of_user = get_blogs_of_user( get_current_user_id() );
 		$user_blog_ids = wp_list_pluck( $blogs_of_user, 'userblog_id' );
