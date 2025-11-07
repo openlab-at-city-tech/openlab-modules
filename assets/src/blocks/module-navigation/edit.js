@@ -34,7 +34,7 @@ import './editor.scss';
  * @param {Function} props.togglePopover  Function to toggle popover.
  */
 const ModulePageListItem = ( { module, activePopover, togglePopover } ) => {
-	const pageClassName = 'publish' !== module.statusCode ? 'module-page-has-non-publish-status module-page-has-status-' + module.statusCode : 'module-page-has-publish-status'
+	const pageClassName = 'publish' !== module.statusCode ? 'module-page-has-non-publish-status module-page-has-status-' + module.statusCode : 'module-page-has-publish-status';
 
 	return (
 		<li key={'module-page-' + module.id} className={ pageClassName }>
@@ -80,8 +80,8 @@ const ModulePageListItem = ( { module, activePopover, togglePopover } ) => {
 
 			{module.statusEl}
 		</li>
-	)
-}
+	);
+};
 
 /**
  * Edit function.
