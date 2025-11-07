@@ -213,6 +213,30 @@ export default function Edit( {
 		}
 	}, [ selectedModuleId, moduleId, setAttributes ] )
 
+	// Set default styles on mount if not already set
+  useEffect(() => {
+    if (!attributes.style) {
+      setAttributes({
+        style: {
+          border: {
+            color: "#eee",
+            radius: "2px",
+            style: "solid",
+            width: "2px"
+          },
+          spacing: {
+            padding: {
+              top: "20px",
+              right: "20px",
+              bottom: "20px",
+              left: "20px"
+            }
+          }
+        }
+      });
+    }
+  }, []);
+
 	const optionLabel = ( title, status ) => {
 			switch ( status ) {
 				case 'publish' :

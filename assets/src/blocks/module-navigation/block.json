@@ -45,17 +45,6 @@
       "listStyle": {
         "type": "string",
         "default": "unordered"
-      },
-      "style": {
-        "type": "object",
-        "default": {
-          "border": {
-            "color": "#eee",
-            "radius": 0,
-            "style": "solid",
-            "width": 2
-          }
-        }
       }
     },
     "textdomain": "openlab-modules",
