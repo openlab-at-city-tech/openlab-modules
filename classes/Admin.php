@@ -200,7 +200,9 @@ class Admin {
 
 			$module = Module::get_instance( $post_id );
 			if ( $module ) {
-				$enable_sharing = $module->is_sharing_enabled();
+				// Users should be able to clone their own modules even when sharing is disabled.
+				$is_my_module   = $post && get_current_user_id() === (int) $post->post_author;
+				$enable_sharing = $module->is_sharing_enabled() || $is_my_module;
 
 				printf(
 					'<input class="enable-sharing" type="hidden" id="enable-sharing-%s" value="%s" />',
