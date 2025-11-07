@@ -16,7 +16,8 @@
       },
       "spacing": {
         "margin": true,
-        "padding": true
+        "padding": true,
+        "blockGap": true
       },
       "typography": {
         "fontSize": true,
@@ -25,7 +26,7 @@
         "textTransform": true
       },
       "shadow": true,
-      "__experimentalBorder": {
+      "border": {
         "color": true,
         "radius": true,
         "style": true,
