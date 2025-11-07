@@ -26,6 +26,64 @@ import { useEffect, useState } from '@wordpress/element'
 import './editor.scss';
 
 /**
+ * Module Page List Item Component.
+ *
+ * @param {Object}   props                Component props.
+ * @param {Object}   props.module         Module data.
+ * @param {number}   props.activePopover  Active popover ID.
+ * @param {Function} props.togglePopover  Function to toggle popover.
+ */
+const ModulePageListItem = ( { module, activePopover, togglePopover } ) => {
+	const pageClassName = 'publish' !== module.statusCode ? 'module-page-has-non-publish-status module-page-has-status-' + module.statusCode : 'module-page-has-publish-status'
+
+	return (
+		<li key={'module-page-' + module.id} className={ pageClassName }>
+			<a
+				className="module-navigation-editor-link"
+				onClick={() => togglePopover( module.id )}
+				href="#"
+			>
+				{module.title}
+
+				{activePopover === module.id && (
+					<Popover>
+						<div className="module-navigation-link-popover">
+							<div className="module-navigation-link-popover-title">
+								<span className="dashicons dashicons-excerpt-view"></span>
+								<a href={module.url} target="_blank">{module.title}</a>
+							</div>
+
+							<div className="module-navigation-link-popover-excerpt">
+								{module.excerpt}
+							</div>
+
+							<div className="module-navigation-link-popover-actions">
+								<Button
+									className="module-navigation-link-edit"
+									href={module.editUrl}
+									variant="secondary"
+									target="_blank"
+								>{ __( 'Edit Page', 'openlab-modules' ) }</Button>
+
+								<Button
+									className="module-navigation-link-visit"
+									href={module.url}
+									variant="secondary"
+									target="_blank"
+								>{ __( 'Visit Page', 'openlab-modules' ) }</Button>
+
+							</div>
+						</div>
+					</Popover>
+				)}
+			</a>
+
+			{module.statusEl}
+		</li>
+	)
+}
+
+/**
  * Edit function.
  *
  * @param {Object}   props               Props.
@@ -339,107 +397,25 @@ export default function Edit( {
 
 					{ 'ordered' === listStyle ? (
 						<ol className="openlab-modules-module-navigation-list">
-							{ modulePagesForDisplay.map( (module) => {
-								const pageClassName = 'publish' !== module.statusCode ? 'module-page-has-non-publish-status module-page-has-status-' + module.StatusCode : 'module-page-has-publish-status'
-
-								return (
-									<li key={'module-page-' + module.id} className={ pageClassName }>
-										<a
-											className="module-navigation-editor-link"
-											onClick={() => togglePopover( module.id )}
-											href="#"
-										>
-											{module.title}
-
-											{activePopover === module.id && (
-												<Popover>
-													<div className="module-navigation-link-popover">
-														<div className="module-navigation-link-popover-title">
-															<span className="dashicons dashicons-excerpt-view"></span>
-															<a href={module.url} target="_blank">{module.title}</a>
-														</div>
-
-														<div className="module-navigation-link-popover-excerpt">
-															{module.excerpt}
-														</div>
-
-														<div className="module-navigation-link-popover-actions">
-															<Button
-																className="module-navigation-link-edit"
-																href={module.editUrl}
-																variant="secondary"
-																target="_blank"
-															>{ __( 'Edit Page', 'openlab-modules' ) }</Button>
-
-															<Button
-																className="module-navigation-link-visit"
-																href={module.url}
-																variant="secondary"
-																target="_blank"
-															>{ __( 'Visit Page', 'openlab-modules' ) }</Button>
-
-														</div>
-													</div>
-												</Popover>
-											)}
-										</a>
-
-										{module.statusEl}
-									</li>
-								)
-							} ) }
+							{ modulePagesForDisplay.map( (module) => (
+								<ModulePageListItem
+									key={'module-page-' + module.id}
+									module={module}
+									activePopover={activePopover}
+									togglePopover={togglePopover}
+								/>
+							) ) }
 						</ol>
 					) : (
 						<ul className="openlab-modules-module-navigation-list">
-							{ modulePagesForDisplay.map( (module) => {
-								const pageClassName = 'publish' !== module.statusCode ? 'module-page-has-non-publish-status module-page-has-status-' + module.StatusCode : 'module-page-has-publish-status'
-
-								return (
-									<li key={'module-page-' + module.id} className={ pageClassName }>
-										<a
-											className="module-navigation-editor-link"
-											onClick={() => togglePopover( module.id )}
-											href="#"
-										>
-											{module.title}
-
-											{activePopover === module.id && (
-												<Popover>
-													<div className="module-navigation-link-popover">
-														<div className="module-navigation-link-popover-title">
-															<span className="dashicons dashicons-excerpt-view"></span>
-															<a href={module.url} target="_blank">{module.title}</a>
-														</div>
-
-														<div className="module-navigation-link-popover-excerpt">
-															{module.excerpt}
-														</div>
-
-														<div className="module-navigation-link-popover-actions">
-															<Button
-																className="module-navigation-link-edit"
-																href={module.editUrl}
-																variant="secondary"
-																target="_blank"
-															>{ __( 'Edit Page', 'openlab-modules' ) }</Button>
-
-															<Button
-																className="module-navigation-link-visit"
-																href={module.url}
-																variant="secondary"
-																target="_blank"
-															>{ __( 'Visit Page', 'openlab-modules' ) }</Button>
-
-														</div>
-													</div>
-												</Popover>
-											)}
-										</a>
-
-										{module.statusEl}
-									</li>
-								)
-							} ) }
+							{ modulePagesForDisplay.map( (module) => (
+								<ModulePageListItem
+									key={'module-page-' + module.id}
+									module={module}
+									activePopover={activePopover}
+									togglePopover={togglePopover}
+								/>
+							) ) }
 						</ul>
 					) }
 				</div>

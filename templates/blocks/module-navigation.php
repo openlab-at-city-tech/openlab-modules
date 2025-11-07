@@ -55,26 +55,48 @@ wp_enqueue_style( 'openlab-modules-frontend' );
 			</p>
 		<?php endif; ?>
 
-		<?php $list_tag = 'ordered' === $list_style ? 'ol' : 'ul'; ?>
-		<<?php echo esc_html( $list_tag ); ?> class="openlab-modules-module-navigation-list">
-			<?php
-			$module_home_current_class = get_queried_object_id() === $module_id ? 'is-current' : '';
-			?>
-			<li class="<?php echo esc_attr( $module_home_current_class ); ?>">
-				<a href="<?php the_permalink( $module_id ); ?>"><?php echo esc_html( $module->get_nav_title() ); ?></a>
-			</li>
-
-			<?php foreach ( $module_page_ids as $module_page_id ) : ?>
+		<?php if ( 'ordered' === $list_style ) : ?>
+			<ol class="openlab-modules-module-navigation-list">
 				<?php
-				$module_page = get_post( $module_page_id );
-
-				$is_current_class = get_queried_object_id() === $module_page_id ? 'is-current' : '';
-
+				$module_home_current_class = get_queried_object_id() === $module_id ? 'is-current' : '';
 				?>
-				<li class="<?php echo esc_attr( $is_current_class ); ?>">
-					<a href="<?php the_permalink( $module_page_id ); ?>"><?php echo esc_html( get_the_title( $module_page_id ) ); ?></a>
+				<li class="<?php echo esc_attr( $module_home_current_class ); ?>">
+					<a href="<?php the_permalink( $module_id ); ?>"><?php echo esc_html( $module->get_nav_title() ); ?></a>
 				</li>
-			<?php endforeach; ?>
-		</<?php echo esc_html( $list_tag ); ?>>
+
+				<?php foreach ( $module_page_ids as $module_page_id ) : ?>
+					<?php
+					$module_page = get_post( $module_page_id );
+
+					$is_current_class = get_queried_object_id() === $module_page_id ? 'is-current' : '';
+
+					?>
+					<li class="<?php echo esc_attr( $is_current_class ); ?>">
+						<a href="<?php the_permalink( $module_page_id ); ?>"><?php echo esc_html( get_the_title( $module_page_id ) ); ?></a>
+					</li>
+				<?php endforeach; ?>
+			</ol>
+		<?php else : ?>
+			<ul class="openlab-modules-module-navigation-list">
+				<?php
+				$module_home_current_class = get_queried_object_id() === $module_id ? 'is-current' : '';
+				?>
+				<li class="<?php echo esc_attr( $module_home_current_class ); ?>">
+					<a href="<?php the_permalink( $module_id ); ?>"><?php echo esc_html( $module->get_nav_title() ); ?></a>
+				</li>
+
+				<?php foreach ( $module_page_ids as $module_page_id ) : ?>
+					<?php
+					$module_page = get_post( $module_page_id );
+
+					$is_current_class = get_queried_object_id() === $module_page_id ? 'is-current' : '';
+
+					?>
+					<li class="<?php echo esc_attr( $is_current_class ); ?>">
+						<a href="<?php the_permalink( $module_page_id ); ?>"><?php echo esc_html( get_the_title( $module_page_id ) ); ?></a>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+		<?php endif; ?>
 	</div>
 <?php endif; ?>
