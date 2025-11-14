@@ -1,8 +1,9 @@
 import { registerBlockType } from '@wordpress/blocks';
-import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
+import { InnerBlocks, useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { useSelect, select } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
+import { PanelBody } from '@wordpress/components';
 
 const ALLOWED_BLOCKS = [ 'core/details' ];
 
@@ -84,13 +85,25 @@ registerBlockType( 'openlab-modules/module-acknowledgements', {
 		}, [ isEmpty ] );
 
 		return (
-			<div { ...blockProps }>
-				<InnerBlocks
-					allowedBlocks={ ALLOWED_BLOCKS }
-					template={ TEMPLATE }
-					templateLock="all"
-				/>
-			</div>
+			<>
+				<InspectorControls>
+					<PanelBody
+						title={ __( 'Module Acknowledgements', 'openlab-modules' ) }
+						icon="menu"
+					>
+						<p>
+							{ __( 'Add text in the acknowledgements section of the module settings panel to create reusable text that can be used in the Module Acknowledgements block.', 'openlab-modules' ) }
+						</p>
+					</PanelBody>
+				</InspectorControls>
+				<div { ...blockProps }>
+					<InnerBlocks
+						allowedBlocks={ ALLOWED_BLOCKS }
+						template={ TEMPLATE }
+						templateLock="all"
+					/>
+				</div>
+			</>
 		);
 	},
 	save( { attributes } ) {
