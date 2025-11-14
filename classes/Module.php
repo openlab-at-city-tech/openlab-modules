@@ -825,7 +825,7 @@ Well done!',
 				],
 			],
 			'innerContent' => [
-				'<div class="wp-block-openlab-modules-module-acknowledgements openlab-module-acknowledgments">',
+				'<div class="wp-block-openlab-modules-module-acknowledgements openlab-module-acknowledgements">',
 				null, // details block inserted here.
 				'</div>',
 			],

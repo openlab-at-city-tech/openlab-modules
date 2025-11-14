@@ -13,7 +13,7 @@ const ackIcon = (
 )
 
 registerBlockType( 'openlab-modules/module-acknowledgements', {
-	title: __( 'Module Acknowledgments', 'openlab-modules' ),
+	title: __( 'Module Acknowledgements', 'openlab-modules' ),
 	icon: ackIcon,
 	attributes: {
 		hasContent: {
@@ -41,7 +41,7 @@ registerBlockType( 'openlab-modules/module-acknowledgements', {
 			[
 				'core/details',
 				{
-					summary: __( 'Module Acknowledgments', 'openlab-modules' ),
+					summary: __( 'Module Acknowledgements', 'openlab-modules' ),
 				},
 				[
 					[
@@ -101,7 +101,7 @@ registerBlockType( 'openlab-modules/module-acknowledgements', {
 		}
 
 		return (
-			<div className="openlab-module-acknowledgments">
+			<div className="openlab-module-acknowledgements">
 				<InnerBlocks.Content />
 			</div>
 		);
