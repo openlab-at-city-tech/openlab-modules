@@ -5,7 +5,7 @@
     "title": "Module Acknowledgements",
     "category": "openlab-modules",
     "icon": "menu",
-    "description": "This block presents the Module attribution and acknowledgments. It appears at the bottom of the Module Home automatically. You can delete this block or add it to other areas of the Module or Site.",
+    "description": "This block presents the Module attribution and acknowledgements. It appears at the bottom of the Module Home automatically. You can delete this block or add it to other areas of the Module or Site.",
     "supports": {
       "anchor": true
     },
