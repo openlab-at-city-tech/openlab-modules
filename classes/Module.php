@@ -825,7 +825,7 @@ Well done!',
 				],
 			],
 			'innerContent' => [
-				'<div class="wp-block-openlab-modules-module-acknowledgements openlab-module-acknowledgments">',
+				'<div class="wp-block-openlab-modules-module-acknowledgements openlab-module-acknowledgements">',
 				null, // details block inserted here.
 				'</div>',
 			],
@@ -844,9 +844,8 @@ Well done!',
 	public static function insert_module_acknowledgements_block( $ack_block, $post_content ) {
 		$original_post_content = $post_content;
 
-		$ack_block_regex        = '/<!-- wp:openlab-modules\/module-acknowledgements[^>]*-->.*?<!-- \/wp:openlab-modules\/module-acknowledgements -->/s';
-		$legacy_wrapper_regex   = '/<!-- wp:group[^>]+className:"openlab-modules-attribution-wrapper".*?<!-- \/wp:group -->/s';
-		$navigation_block_regex = '/<!-- wp:openlab-modules\/module-navigation[^>]*-->/s';
+		$ack_block_regex      = '/<!-- wp:openlab-modules\/module-acknowledgements[^>]*-->.*?<!-- \/wp:openlab-modules\/module-acknowledgements -->/s';
+		$legacy_wrapper_regex = '/<!-- wp:group[^>]+className:"openlab-modules-attribution-wrapper".*?<!-- \/wp:group -->/s';
 
 		if ( preg_match( $ack_block_regex, $post_content ) ) {
 			// Replace existing module-acknowledgements block.
@@ -854,12 +853,9 @@ Well done!',
 		} elseif ( preg_match( $legacy_wrapper_regex, $post_content ) ) {
 			// Replace legacy attribution wrapper.
 			$post_content = preg_replace( $legacy_wrapper_regex, $ack_block, $post_content );
-		} elseif ( preg_match( $navigation_block_regex, $post_content ) ) {
-			// Insert after module-navigation block.
-			$post_content = preg_replace( $navigation_block_regex, '$0' . $ack_block, $post_content );
 		} else {
-			// Prepend as fallback.
-			$post_content = $ack_block . $post_content;
+			// Append to end of content.
+			$post_content = $post_content . $ack_block;
 		}
 
 		if ( null === $post_content ) {

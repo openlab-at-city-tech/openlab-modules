@@ -125,7 +125,7 @@ class Admin {
 
 				<h2><?php esc_html_e( 'Acknowledgements', 'openlab-modules' ); ?></h2>
 
-				<p id="acknowledgements-description"><?php esc_html_e( 'The text below will be included in an acknowledgments block on the module home on any site that imports your module’s contents. You can edit the acknowledgments below, if necessary.', 'openlab-modules' ); ?></p>
+				<p id="acknowledgements-description"><?php esc_html_e( 'The text below will be included in an acknowledgments block on the module home on any site that imports your module’s contents. You can edit the acknowledgements below, if necessary.', 'openlab-modules' ); ?></p>
 
 				<label for="acknowledgements-text" class="screen-reader-text"><?php esc_html_e( 'Acknowledgments text', 'openlab-modules' ); ?></label>
 
