@@ -117,14 +117,14 @@ registerBlockType( 'openlab-modules/module-acknowledgements', {
 const withCustomDetailsInspector = createHigherOrderComponent( ( BlockEdit ) => {
 	return ( props ) => {
 		const { name, clientId } = props;
-		
+
 		// Only modify core/details blocks
 		if ( name !== 'core/details' ) {
 			return <BlockEdit { ...props } />;
 		}
-		
+
 		// Check if this details block is inside a module-acknowledgements block
-		const parentBlockName = useSelect( 
+		const parentBlockName = useSelect(
 			( select ) => {
 				const { getBlockParentsByBlockName } = select( 'core/block-editor' );
 				const parents = getBlockParentsByBlockName( clientId, 'openlab-modules/module-acknowledgements' );
@@ -132,12 +132,12 @@ const withCustomDetailsInspector = createHigherOrderComponent( ( BlockEdit ) => 
 			},
 			[ clientId ]
 		);
-		
+
 		// If not inside module-acknowledgements, render normally
 		if ( parentBlockName !== 'openlab-modules/module-acknowledgements' ) {
 			return <BlockEdit { ...props } />;
 		}
-		
+
 		// Add custom inspector controls for details blocks inside module-acknowledgements
 		return (
 			<>
