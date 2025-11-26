@@ -805,7 +805,8 @@ Well done!',
 				[
 					'blockName'    => 'core/details',
 					'attrs'        => [
-						'summary' => 'Module Acknowledgements',
+						'summary'   => 'Module Acknowledgements',
+						'className' => 'is-style-module-acknowledgements-detail',
 					],
 					'innerBlocks'  => [
 						[
@@ -818,7 +819,7 @@ Well done!',
 						],
 					],
 					'innerContent' => [
-						'<details class="wp-block-details"><summary>Module Acknowledgements</summary>',
+						'<details class="wp-block-details is-style-module-acknowledgements-detail"><summary>Module Acknowledgements</summary>',
 						null, // paragraph inserted here.
 						'</details>',
 					],

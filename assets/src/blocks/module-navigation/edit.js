@@ -19,6 +19,7 @@ import {
 
 import { useSelect } from '@wordpress/data'
 import { useEffect, useState } from '@wordpress/element'
+import { addFilter } from '@wordpress/hooks';
 
 /**
  * Editor styles.
@@ -461,3 +462,33 @@ export default function Edit( {
 		</>
 	)
 }
+
+addFilter(
+    'blocks.registerBlockType',
+    'openlab-modules/details-navigator-label',
+    (settings, name) => {
+        if (name !== 'core/details') {
+            return settings;
+        }
+
+        return {
+            ...settings,
+            __experimentalLabel: (attributes, { context }) => {
+                // Only modify the label in the list view/navigator
+                if (context === 'list-view') {
+                    // Check for your custom label attribute
+                    if (attributes.label) {
+                        return attributes.label;
+                    }
+                    // Or always return 'Details' when we have class
+										// 'is-style-module-acknowledgements-detail'
+                    if (attributes.className?.includes('is-style-module-acknowledgements-detail')) {
+                        return 'Details';
+                    }
+                }
+                // Default behavior for other contexts
+                return attributes.summary || '';
+            }
+        };
+    }
+);
