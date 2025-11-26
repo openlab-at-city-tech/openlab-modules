@@ -92,6 +92,14 @@ class Sites extends WP_REST_Controller {
 			}
 		}
 
+		// Order by blogname.
+		usort(
+			$ordered_sites,
+			function ( $a, $b ) {
+				return strcasecmp( $a->blogname, $b->blogname );
+			}
+		);
+
 		$ordered_sites = array_merge( $first_sites, $ordered_sites );
 
 		foreach ( $ordered_sites as $site ) {
