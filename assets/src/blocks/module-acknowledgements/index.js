@@ -1,11 +1,8 @@
 import { registerBlockType } from '@wordpress/blocks';
-import { InnerBlocks, useBlockProps, InspectorControls } from '@wordpress/block-editor';
+import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { useSelect, select } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
-import { PanelBody } from '@wordpress/components';
-import { addFilter } from '@wordpress/hooks';
-import { createHigherOrderComponent } from '@wordpress/compose';
 
 const ALLOWED_BLOCKS = [ 'core/details' ];
 
@@ -17,6 +14,7 @@ const ackIcon = (
 
 registerBlockType( 'openlab-modules/module-acknowledgements', {
 	title: __( 'Module Acknowledgements', 'openlab-modules' ),
+	description: __( 'Add text in the acknowledgements section of the module settings panel to create reusable text that can be used in the Module Acknowledgements block.', 'openlab-modules' ),
 	icon: ackIcon,
 	attributes: {
 		hasContent: {
@@ -28,7 +26,7 @@ registerBlockType( 'openlab-modules/module-acknowledgements', {
 	supports: {
 		html: false,
 	},
-	edit( { attributes, setAttributes, clientId, isSelected } ) {
+	edit( { attributes, setAttributes, clientId } ) {
 		const blockProps = useBlockProps();
 
 		// 1. Static content from post meta (only used on initial insert)
@@ -87,13 +85,15 @@ registerBlockType( 'openlab-modules/module-acknowledgements', {
 		}, [ isEmpty ] );
 
 		return (
-			<div { ...blockProps }>
-				<InnerBlocks
-					allowedBlocks={ ALLOWED_BLOCKS }
-					template={ TEMPLATE }
-					templateLock="all"
-				/>
-			</div>
+			<>
+				<div { ...blockProps }>
+					<InnerBlocks
+						allowedBlocks={ ALLOWED_BLOCKS }
+						template={ TEMPLATE }
+						templateLock="all"
+					/>
+				</div>
+			</>
 		);
 	},
 	save( { attributes } ) {
@@ -110,55 +110,3 @@ registerBlockType( 'openlab-modules/module-acknowledgements', {
 		);
 	},
 } );
-
-/**
- * Filter to add custom inspector controls to core/details block when it's inside module-acknowledgements.
- */
-const withCustomDetailsInspector = createHigherOrderComponent( ( BlockEdit ) => {
-	return ( props ) => {
-		const { name, clientId } = props;
-
-		// Only modify core/details blocks
-		if ( name !== 'core/details' ) {
-			return <BlockEdit { ...props } />;
-		}
-
-		// Check if this details block is inside a module-acknowledgements block
-		const parentBlockName = useSelect(
-			( select ) => {
-				const { getBlockParentsByBlockName } = select( 'core/block-editor' );
-				const parents = getBlockParentsByBlockName( clientId, 'openlab-modules/module-acknowledgements' );
-				return parents && parents.length > 0 ? 'openlab-modules/module-acknowledgements' : null;
-			},
-			[ clientId ]
-		);
-
-		// If not inside module-acknowledgements, render normally
-		if ( parentBlockName !== 'openlab-modules/module-acknowledgements' ) {
-			return <BlockEdit { ...props } />;
-		}
-
-		// Add custom inspector controls for details blocks inside module-acknowledgements
-		return (
-			<>
-				<BlockEdit { ...props } />
-				<InspectorControls>
-					<PanelBody
-						title={ __( 'Module Acknowledgements', 'openlab-modules' ) }
-						initialOpen={ true }
-					>
-						<p>
-							{ __( 'Add text in the acknowledgements section of the module settings panel to create reusable text that can be used in the Module Acknowledgements block.', 'openlab-modules' ) }
-						</p>
-					</PanelBody>
-				</InspectorControls>
-			</>
-		);
-	};
-}, 'withCustomDetailsInspector' );
-
-addFilter(
-	'editor.BlockEdit',
-	'openlab-modules/with-custom-details-inspector',
-	withCustomDetailsInspector
-);
