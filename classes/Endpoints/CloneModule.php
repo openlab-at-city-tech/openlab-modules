@@ -78,7 +78,7 @@ class CloneModule extends WP_REST_Controller {
 		}
 
 		$module_post        = get_post( $module_id );
-		$is_my_module       = $module_post && $module_post instanceof WP_Post && get_current_user_id() === (int) $module_post->post_author;
+		$is_my_module       = $module_post instanceof WP_Post && get_current_user_id() === (int) $module_post->post_author;
 		$is_sharing_enabled = $module->is_sharing_enabled();
 		if ( ! $is_my_module && ! $is_sharing_enabled ) {
 			return new WP_Error( 'module_not_shared', __( 'Module is not shared.', 'openlab-modules' ), [ 'status' => 400 ] );
