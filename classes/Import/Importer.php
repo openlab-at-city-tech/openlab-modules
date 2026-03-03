@@ -1731,8 +1731,10 @@ class Importer {
 					continue;
 				}
 
-				$data_key          = preg_replace( '#^wp:#', '', $child->nodeName );
-				$data[ $data_key ] = $child->textContent;
+				$data_key = preg_replace( '#^wp:#', '', $child->nodeName );
+				if ( $data_key ) {
+					$data[ $data_key ] = $child->textContent;
+				}
 			}
 		} elseif ( 'tag' === $type ) {
 			$data['taxonomy'] = 'post_tag';
@@ -1742,8 +1744,10 @@ class Importer {
 					continue;
 				}
 
-				$data_key          = preg_replace( '#^wp:#', '', $child->nodeName );
-				$data[ $data_key ] = $child->textContent;
+				$data_key = preg_replace( '#^wp:#', '', $child->nodeName );
+				if ( $data_key ) {
+					$data[ $data_key ] = $child->textContent;
+				}
 			}
 		} else {
 			foreach ( $node->childNodes as $child ) {
@@ -1774,8 +1778,10 @@ class Importer {
 						];
 					}
 				} else {
-					$data_key          = preg_replace( '#^wp:#', '', $child->nodeName );
-					$data[ $data_key ] = $child->textContent;
+					$data_key = preg_replace( '#^wp:#', '', $child->nodeName );
+					if ( $data_key ) {
+						$data[ $data_key ] = $child->textContent;
+					}
 				}
 			}
 		}
@@ -1993,6 +1999,8 @@ class Importer {
 
 			$parent_id = get_post_meta( $post_id, '_wxr_import_parent', true );
 			if ( ! empty( $parent_id ) && is_scalar( $parent_id ) ) {
+				$parent_id = (int) $parent_id;
+
 				// Have we imported the parent now?
 				if ( isset( $this->mapping['post'][ $parent_id ] ) ) {
 					$data['post_parent'] = (int) $this->mapping['post'][ $parent_id ];
@@ -2102,6 +2110,8 @@ class Importer {
 
 			$parent_id = get_comment_meta( $comment_id, '_wxr_import_parent', true );
 			if ( ! empty( $parent_id ) && is_scalar( $parent_id ) ) {
+				$parent_id = (int) $parent_id;
+
 				// Have we imported the parent now?
 				if ( isset( $this->mapping['comment'][ $parent_id ] ) ) {
 					$data['comment_parent'] = $this->mapping['comment'][ $parent_id ];
@@ -2126,6 +2136,8 @@ class Importer {
 
 			$author_id = get_comment_meta( $comment_id, '_wxr_import_user', true );
 			if ( ! empty( $author_id ) && is_scalar( $author_id ) ) {
+				$author_id = (int) $author_id;
+
 				// Have we imported the user now?
 				if ( isset( $this->mapping['user'][ $author_id ] ) ) {
 					$data['user_id'] = $this->mapping['user'][ $author_id ];
@@ -2312,6 +2324,7 @@ class Importer {
 				if ( is_array( $module_page_ids ) ) {
 					$new_module_page_ids = [];
 					foreach ( $module_page_ids as $old_module_page_id ) {
+						$old_module_page_id = is_numeric( $old_module_page_id ) ? (int) $old_module_page_id : 0;
 						$new_module_page_id = $mapping[ $old_module_page_id ] ?? null;
 						if ( $new_module_page_id ) {
 							$new_module_page_ids[] = $new_module_page_id;

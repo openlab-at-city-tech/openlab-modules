@@ -98,6 +98,7 @@ class ArchiveUpload {
 			return new WP_Error( 'import.upload.handle', $file['error'] );
 		}
 
+		// @phpstan-ignore-next-line
 		$this->filename = sanitize_text_field( wp_unslash( $_FILES[ $this->form ]['name'] ) );
 		$this->package  = $file['file'];
 

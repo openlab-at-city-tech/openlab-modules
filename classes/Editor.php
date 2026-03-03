@@ -210,11 +210,12 @@ class Editor {
 	/**
 	 * Recursive version of serialize_block().
 	 *
-	 * @param array<string,mixed> $block Block definition. See `serialize_block()`.
+	 * @param array{blockName?: string, attrs?: array, innerBlocks?: array<array>, innerHTML?: string, innerContent?: array} $block Block.
 	 * @return string
+	 * @phpstan-ignore-next-line
 	 */
 	public static function serialize_block_recursive( $block ) {
-		if ( empty( $block['innerBlocks'] ) || ! is_array( $block['innerBlocks'] ) ) {
+		if ( empty( $block['innerBlocks'] ) ) {
 			return serialize_block( $block );
 		}
 
