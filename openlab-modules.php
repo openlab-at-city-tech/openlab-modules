@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       OpenLab Modules
  * Plugin URI:        https://openlab.citytech.cuny.edu/
- * Description:
+ * Description:       A plugin to manage and display OpenLab Modules.
  * Version:           1.0.0-alpha
  * Requires at least: 5.4
  * Requires PHP:      7.3
@@ -17,6 +17,8 @@
  */
 
 namespace OpenLab\Modules;
+
+defined( 'ABSPATH' ) || exit;
 
 const ROOT_DIR  = __DIR__;
 const ROOT_FILE = __FILE__;
