@@ -411,6 +411,8 @@ class WXP {
 					$post_time = '';
 				}
 
+				// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+
 				$xml .= "\t<item>\n";
 				$xml .= "\t\t<title>" . apply_filters( 'the_title_rss', $post->post_title ) . "</title>\n";
 				$xml .= "\t\t<link>" . esc_url( apply_filters( 'the_permalink_rss', get_permalink( $post ) ) ) . "</link>\n";
@@ -432,6 +434,8 @@ class WXP {
 				$xml .= "\t\t<wp:post_type>" . $post->post_type . "</wp:post_type>\n";
 				$xml .= "\t\t<wp:post_password>" . $post->post_password . "</wp:post_password>\n";
 				$xml .= "\t\t<wp:is_sticky>" . $is_sticky . "</wp:is_sticky>\n";
+
+				// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
 				if ( 'attachment' === $post->post_type ) {
 					$xml .= "\t\t<wp:attachment_url>" . wp_get_attachment_url( $post->ID ) . "</wp:attachment_url>\n";
