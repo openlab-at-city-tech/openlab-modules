@@ -9,6 +9,8 @@
  * @package openlab-modules
  */
 
+// We intentionally reuse hook names used by the WordPress Importer plugin.
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 namespace OpenLab\Modules\Import;
 
 use WP_Error;

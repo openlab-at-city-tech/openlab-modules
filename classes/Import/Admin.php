@@ -321,6 +321,7 @@ class Admin {
 		echo ':' . str_repeat( ' ', 2048 ) . "\n\n";
 
 		// Time to run the import!
+		// phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged
 		set_time_limit( 0 );
 
 		// Ensure we're not buffered.
