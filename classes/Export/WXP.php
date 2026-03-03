@@ -539,7 +539,7 @@ class WXP {
 	 */
 	protected function cdata( $str ) {
 		// phpcs:ignore WordPress.WP.DeprecatedFunctions.seems_utf8Found
-		$is_utf8 = function_exists( 'wp_is_valid_utf8' ) ? wp_is_valid_utf( $str ) : seems_utf8( $str );
+		$is_utf8 = function_exists( 'wp_is_valid_utf8' ) ? wp_is_valid_utf8( $str ) : seems_utf8( $str );
 		if ( ! $is_utf8 ) {
 			$str = mb_convert_encoding( $str, 'UTF-8', 'ISO-8859-1' );
 		}
