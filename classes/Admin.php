@@ -10,6 +10,8 @@ namespace OpenLab\Modules;
 use OpenLab\Modules\Export\Admin as ExportAdmin;
 use OpenLab\Modules\Import\Admin as ImportAdmin;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Admin module.
  */

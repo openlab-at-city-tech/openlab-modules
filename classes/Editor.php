@@ -7,6 +7,8 @@
 
 namespace OpenLab\Modules;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Handles editor functionality.
  */

@@ -5,6 +5,8 @@
  * @package openlab-modules
  */
 
+defined( 'ABSPATH' ) || exit;
+
 // Only show to users who are logged in.
 if ( ! is_user_logged_in() ) {
 	return;

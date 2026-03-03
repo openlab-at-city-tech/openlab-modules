@@ -18,6 +18,8 @@ use XMLReader;
 use OpenLab\Modules\Logger\Logger;
 use OpenLab\Modules\Module;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Importer class.
  */

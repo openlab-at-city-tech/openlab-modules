@@ -13,6 +13,8 @@ use OpenLab\Modules\Logger\ServerSentEventsLogger;
 
 use WP_Error;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Admin class.
  */

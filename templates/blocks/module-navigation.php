@@ -5,6 +5,8 @@
  * @package openlab-modules
  */
 
+defined( 'ABSPATH' ) || exit;
+
 $openlab_modules_module_id = (int) $args['moduleId'];
 
 $openlab_modules_show_module_description = isset( $args['showModuleDescription'] ) ? (bool) $args['showModuleDescription'] : false;

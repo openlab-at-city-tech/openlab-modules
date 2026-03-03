@@ -5,6 +5,8 @@
  * @package openlab-modules
  */
 
+defined( 'ABSPATH' ) || exit;
+
 $openlab_modules_ordered_ids = isset( $args['orderedIds'] ) ? $args['orderedIds'] : [];
 
 $openlab_modules_show_author      = isset( $args['showModuleAuthor'] ) ? $args['showModuleAuthor'] : false;

@@ -11,6 +11,8 @@ use OpenLab\Modules\Editor;
 use OpenLab\Modules\Module;
 use OpenLab\Modules\Schema;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Integration for webwork-problem-embed.
  */
