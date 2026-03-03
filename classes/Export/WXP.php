@@ -538,7 +538,9 @@ class WXP {
 	 * @return string
 	 */
 	protected function cdata( $str ) {
-		if ( ! seems_utf8( $str ) ) {
+		// phpcs:ignore WordPress.WP.DeprecatedFunctions.seems_utf8Found
+		$is_utf8 = function_exists( 'wp_is_valid_utf8' ) ? wp_is_valid_utf( $str ) : seems_utf8( $str );
+		if ( ! $is_utf8 ) {
 			$str = mb_convert_encoding( $str, 'UTF-8', 'ISO-8859-1' );
 		}
 
