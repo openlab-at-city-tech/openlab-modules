@@ -42,4 +42,4 @@ if ( ! $openlab_modules_module || ! $openlab_modules_module->is_sharing_enabled(
 
 ?>
 
-<div id="clone-module-container-<?php echo esc_attr( $openlab_modules_block_unique_id ); ?>" class="clone-module-container" data-uniqid="<?php echo esc_attr( $openlab_modules_block_unique_id ); ?>" data-module-id="<?php echo esc_attr( (string) $module_id ); ?>" data-nonce="<?php echo esc_attr( wp_create_nonce( 'openlab-module-clone' ) ); ?>"></div>
+<div id="clone-module-container-<?php echo esc_attr( $openlab_modules_block_unique_id ); ?>" class="clone-module-container" data-uniqid="<?php echo esc_attr( $openlab_modules_block_unique_id ); ?>" data-module-id="<?php echo esc_attr( (string) $openlab_modules_module_id ); ?>" data-nonce="<?php echo esc_attr( wp_create_nonce( 'openlab-module-clone' ) ); ?>"></div>
