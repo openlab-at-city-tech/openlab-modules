@@ -104,7 +104,7 @@ class Sites extends WP_REST_Controller {
 
 		foreach ( $ordered_sites as $site ) {
 			// Only show for users with edit_others_posts capability.
-			if ( ! current_user_can_for_blog( $site->blog_id, 'edit_others_posts' ) ) {
+			if ( ! current_user_can_for_site( $site->blog_id, 'edit_others_posts' ) ) {
 				continue;
 			}
 
