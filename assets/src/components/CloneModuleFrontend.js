@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { __ } from '@wordpress/i18n';
 import CloneModuleModal from './CloneModuleModal';
 
 const CloneModuleFrontend = ( { moduleId, nonce, uniqid } ) => {
@@ -10,7 +11,7 @@ const CloneModuleFrontend = ( { moduleId, nonce, uniqid } ) => {
         className="clone-module-button clone-module-button-reset"
         onClick={ () => setIsModalOpen( true ) }
       >
-        Clone this Module
+        { __( 'Clone this Module', 'openlab-modules' ) }
       </button>
 
       <CloneModuleModal

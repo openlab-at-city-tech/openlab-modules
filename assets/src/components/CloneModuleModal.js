@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import apiFetch from '@wordpress/api-fetch';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import he from 'he';
 
 const CloneModuleModal = ( { moduleId, nonce, uniqid, isOpen, onClose } ) => {
@@ -202,7 +202,8 @@ const CloneModuleModal = ( { moduleId, nonce, uniqid, isOpen, onClose } ) => {
 										{ userSites.map( ( site ) => (
 											<option key={ site.id } value={ site.id }>
 												{ site.isCurrentSite
-													? sprintf( __( 'This site: %s' ), he.decode( site.text ) )
+													/* translators: %s: site name */
+												? sprintf( __( 'This site: %s', 'openlab-modules' ), he.decode( site.text ) )
 													: he.decode( site.text )
 												}
 											</option>
