@@ -411,7 +411,8 @@ export default function Edit( {
 			<div { ...useBlockProps() }>
 				<div className="openlab-modules-module-navigation">
 					<p className="openlab-modules-module-navigation-heading">
-						{ sprintf( __( 'MODULE: %s' ), selectedModuleTitle() ) }
+						{ /* translators: %s: module title */ }
+						{ sprintf( __( 'MODULE: %s', 'openlab-modules' ), selectedModuleTitle() ) }
 					</p>
 
 					{ showModuleDescription && selectedModuleObject && selectedModuleObject.meta.module_description && (

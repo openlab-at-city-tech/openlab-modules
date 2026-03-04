@@ -49,7 +49,7 @@ const SortableItem = ({ id, title, link, authorName, description, image }) => {
         ref={setActivatorNodeRef} // Bind the drag handle
         { ...listeners } // Apply the necessary event listeners
         icon="move" // Using a WordPress icon for the handle, ensure you have this or use a custom icon
-        label={__('Drag', 'text-domain')} // Accessibility label for the drag handle
+        label={__('Drag', 'openlab-modules')} // Accessibility label for the drag handle
       >
         <span className="screen-reader-text">Drag</span>
       </Button>
