@@ -1,0 +1,80 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    name: Build Plugin ZIP
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build assets
+        run: npm run build
+
+      - name: Install Composer dependencies (production only)
+        run: composer install --no-dev --optimize-autoloader --no-interaction
+
+      - name: Get plugin version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Create plugin directory
+        run: |
+          mkdir -p dist/openlab-module-builder
+
+      - name: Copy plugin files
+        run: |
+          # Copy all files, then remove what we don't need
+          rsync -av --exclude='.git' \
+                    --exclude='.github' \
+                    --exclude='.gitignore' \
+                    --exclude='.eslintrc' \
+                    --exclude='node_modules' \
+                    --exclude='composer.json' \
+                    --exclude='composer.lock' \
+                    --exclude='package.json' \
+                    --exclude='package-lock.json' \
+                    --exclude='phpcs.xml' \
+                    --exclude='phpstan.neon' \
+                    --exclude='webpack.config.js' \
+                    --exclude='dist' \
+                    ./ dist/openlab-module-builder/
+
+      - name: Create ZIP file
+        working-directory: dist
+        run: zip -r openlab-module-builder-${{ steps.get_version.outputs.VERSION }}.zip openlab-module-builder
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openlab-module-builder-${{ steps.get_version.outputs.VERSION }}
+          path: dist/openlab-module-builder-${{ steps.get_version.outputs.VERSION }}.zip
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/openlab-module-builder-${{ steps.get_version.outputs.VERSION }}.zip
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
