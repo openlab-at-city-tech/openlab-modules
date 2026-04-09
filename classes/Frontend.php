@@ -406,7 +406,7 @@ class Frontend {
 		);
 
 		$message_subject = sprintf(
-			// translators: 1. Module title.
+			// translators: %s is the title of the module.
 			__( 'Well done! You have completed a section of the module: %s', 'openlab-module-builder' ),
 			get_the_title( $module_id )
 		);
