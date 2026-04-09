@@ -199,15 +199,18 @@ const CloneModuleModal = ( { moduleId, nonce, uniqid, isOpen, onClose } ) => {
 											{ __( '- Select a site -', 'openlab-module-builder' ) }
 										</option>
 
-										{ userSites.map( ( site ) => (
-											<option key={ site.id } value={ site.id }>
-												{ site.isCurrentSite
-													/* translators: %s: site name */
-												? sprintf( __( 'This site: %s', 'openlab-module-builder' ), he.decode( site.text ) )
-													: he.decode( site.text )
-												}
-											</option>
-										)) }
+										{ userSites.map( ( site ) => {
+												/* translators: %s: site name */
+												const siteLabel = site.isCurrentSite
+														? sprintf( __( 'This site: %s', 'openlab-modules' ), he.decode( site.text ) )
+														: he.decode( site.text );
+
+												return (
+														<option key={ site.id } value={ site.id }>
+																{ siteLabel }
+														</option>
+												);
+										} ) }
 									</select>
 								</>
 							) }
