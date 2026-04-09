@@ -184,7 +184,7 @@ class Admin {
 		if ( 'module_author' === $column_name ) {
 			$post = get_post( $post_id );
 			if ( $post ) {
-				if ( ! function_exists( 'bp_core_get_userlink' ) ) {
+				if ( function_exists( 'bp_core_get_userlink' ) ) {
 					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					echo bp_core_get_userlink( $post->post_author ); // @phpstan-ignore-line
 				} else {
