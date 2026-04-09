@@ -1,0 +1,1393 @@
+# Copyright (C) 2026 OpenLab at City Tech
+# This file is distributed under the GPL-3.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenLab Module Builder 1.0.0-alpha\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/openlab-module-builder\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-04-09T11:38:05-05:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: openlab-module-builder\n"
+
+#. Plugin Name of the plugin
+#: openlab-module-builder.php
+msgid "OpenLab Module Builder"
+msgstr ""
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: openlab-module-builder.php
+msgid "https://openlab.citytech.cuny.edu/"
+msgstr ""
+
+#. Description of the plugin
+#: openlab-module-builder.php
+msgid "A plugin to manage and display OpenLab Modules."
+msgstr ""
+
+#. Author of the plugin
+#: openlab-module-builder.php
+msgid "OpenLab at City Tech"
+msgstr ""
+
+#: classes/Admin.php:91
+msgid "Author"
+msgstr ""
+
+#: classes/Admin.php:162
+msgid "Clone"
+msgstr ""
+
+#: classes/Admin.php:241
+#: classes/Schema.php:108
+#: assets/src/blocks/module-navigation/edit.js:379
+#: build/index.js:5
+msgid "Module"
+msgstr ""
+
+#: classes/Admin.php:284
+msgid "All Pages / Modules"
+msgstr ""
+
+#: classes/Admin.php:285
+msgid "All Pages in Modules"
+msgstr ""
+
+#: classes/Admin.php:286
+msgid "All Pages not in Modules"
+msgstr ""
+
+#: classes/Admin.php:380
+#: classes/Export/Admin.php:107
+#: classes/Schema.php:107
+#: classes/Schema.php:131
+#: assets/src/components/PageModules.js:66
+#: build/index.js:5
+msgid "Modules"
+msgstr ""
+
+#: classes/Cloner.php:24
+#: classes/Cloner.php:64
+#: classes/Cloner.php:72
+#: classes/Endpoints/CheckModuleRequirements.php:94
+#: classes/Endpoints/CloneModule.php:77
+msgid "Module not found."
+msgstr ""
+
+#. translators: %s is the module title.
+#: classes/Cloner.php:44
+#, php-format
+msgid "Clone of %s"
+msgstr ""
+
+#: classes/Editor.php:277
+#: classes/Editor.php:278
+msgid "14px"
+msgstr ""
+
+#: classes/Editor.php:329
+msgid "Module Blocks"
+msgstr ""
+
+#: classes/Endpoints/CheckModuleRequirements.php:62
+#: classes/Endpoints/CloneModule.php:69
+msgid "Destination site ID is required."
+msgstr ""
+
+#: classes/Endpoints/CheckModuleRequirements.php:70
+msgid "Sorry, you are not allowed to manage plugins on this site."
+msgstr ""
+
+#. translators: 1: parameter name, 2: expected type.
+#: classes/Endpoints/CheckModuleRequirements.php:163
+#: classes/Endpoints/CloneModule.php:172
+#, php-format
+msgid "%1$s is not of type %2$s"
+msgstr ""
+
+#: classes/Endpoints/CloneModule.php:84
+msgid "Module is not shared."
+msgstr ""
+
+#: classes/Endpoints/CloneModule.php:93
+msgid "You do not have permission to create a module on this site."
+msgstr ""
+
+#: classes/Endpoints/CloneModule.php:98
+msgid "OpenLab Module Builder must be active on the destination site."
+msgstr ""
+
+#. translators: 1. Name of site, 2. URL of site.
+#: classes/Endpoints/Sites.php:113
+#, php-format
+msgid "%1$s (%2$s)"
+msgstr ""
+
+#: classes/Endpoints/Sites.php:143
+msgid "You are not currently logged in."
+msgstr ""
+
+#: classes/Export/Admin.php:40
+#: classes/Export/Admin.php:41
+msgid "Module Export"
+msgstr ""
+
+#: classes/Export/Admin.php:96
+msgid "Export"
+msgstr ""
+
+#: classes/Export/Admin.php:100
+msgid "Use this tool to create a Module Archive file (.zip) that will be downloaded to your computer and can be used with the OpenLab Module Builder plugin to import into another site."
+msgstr ""
+
+#: classes/Export/Admin.php:103
+msgid "Choose what to export"
+msgstr ""
+
+#: classes/Export/Admin.php:105
+msgid "Please choose the module you would like to export."
+msgstr ""
+
+#: classes/Export/Admin.php:109
+msgid "Please Select"
+msgstr ""
+
+#: classes/Export/Admin.php:120
+msgid "Readme file"
+msgstr ""
+
+#: classes/Export/Admin.php:122
+msgid "A readme text file will be included with the exported archive file. It will include information on how this archive file can be imported into another site. You can also include your own custom text in the box below. If there are specific plugins or a theme needed to create this module, please include those in your text."
+msgstr ""
+
+#: classes/Export/Admin.php:124
+msgid "Additional text for readme file"
+msgstr ""
+
+#: classes/Export/Admin.php:128
+#: classes/Export/Exporter.php:324
+#: classes/Schema.php:254
+#: assets/src/components/EditModule.js:133
+#: build/index.js:5
+msgid "Acknowledgements"
+msgstr ""
+
+#: classes/Export/Admin.php:130
+msgid "The text below will be included in an acknowledgments block on the module home on any site that imports your module’s contents. You can edit the acknowledgements below, if necessary."
+msgstr ""
+
+#: classes/Export/Admin.php:132
+msgid "Acknowledgments text"
+msgstr ""
+
+#: classes/Export/Admin.php:145
+msgid "Download Archive File"
+msgstr ""
+
+#: classes/Export/Admin.php:182
+msgid "Please select a module to export."
+msgstr ""
+
+#: classes/Export/Exporter.php:333
+msgid "Note from Exporter"
+msgstr ""
+
+#: classes/Frontend.php:95
+#: classes/Integrations/WWPE.php:77
+msgid "Continue without logging in"
+msgstr ""
+
+#: classes/Frontend.php:96
+#: classes/Integrations/WWPE.php:78
+msgid "Dismiss"
+msgstr ""
+
+#: classes/Frontend.php:97
+#: classes/Integrations/WWPE.php:79
+msgid "Log In"
+msgstr ""
+
+#: classes/Frontend.php:99
+#: classes/Integrations/WWPE.php:81
+msgid "To receive an official confirmation when you complete this page, please sign in now."
+msgstr ""
+
+#: classes/Frontend.php:100
+#: classes/Integrations/WWPE.php:82
+msgid "You are not logged in."
+msgstr ""
+
+#: classes/Frontend.php:225
+msgid "← Previous"
+msgstr ""
+
+#: classes/Frontend.php:235
+msgid "Next →"
+msgstr ""
+
+#: classes/Frontend.php:266
+msgid "Invalid nonce."
+msgstr ""
+
+#: classes/Frontend.php:270
+msgid "No post ID available"
+msgstr ""
+
+#: classes/Frontend.php:275
+msgid "Invalid post ID."
+msgstr ""
+
+#. translators: %s is the title of the module.
+#: classes/Frontend.php:310
+#: classes/Frontend.php:410
+#: assets/src/components/CompletionMessagesModule.js:51
+#: build/index.js:8
+#, php-format,js-format
+msgid "Well done! You have completed a section of the module: %s"
+msgstr ""
+
+#. translators: 1. Module title, 2. Module URL.
+#: classes/Frontend.php:395
+#, php-format
+msgid "Module: %1$s %2$s"
+msgstr ""
+
+#. translators: 1. section title, 2. section URL.
+#: classes/Frontend.php:399
+#, php-format
+msgid "Section: %1$s %2$s"
+msgstr ""
+
+#: classes/Frontend.php:404
+msgid "You have completed a module section."
+msgstr ""
+
+#: classes/Import/Admin.php:54
+#: classes/Import/Admin.php:55
+msgid "Module Import"
+msgstr ""
+
+#: classes/Import/Admin.php:98
+msgid "Invalid import ID."
+msgstr ""
+
+#. translators: %s is the max upload size.
+#: classes/Import/Admin.php:133
+#, php-format
+msgid "File too large. Max upload size is %s."
+msgstr ""
+
+#: classes/Import/Admin.php:146
+msgid "Import Module"
+msgstr ""
+
+#: classes/Import/Admin.php:150
+msgid "Use this tool to import a previously exported OpenLab Module Archive."
+msgstr ""
+
+#: classes/Import/Admin.php:152
+msgid "<strong>Before you begin:</strong> The Module Archive contains a readme file with information about plugins you may want to activate before performing the import, as well as other information about the import. Please read through the file before beginning the import."
+msgstr ""
+
+#: classes/Import/Admin.php:179
+#: classes/Import/Admin.php:202
+#: classes/Import/Admin.php:225
+msgid "Step 1: Choose and upload your Module Export file (.zip)."
+msgstr ""
+
+#: classes/Import/Admin.php:185
+msgid "Import zip file"
+msgstr ""
+
+#: classes/Import/Admin.php:189
+msgid "Upload Module Export File"
+msgstr ""
+
+#: classes/Import/Admin.php:203
+#: classes/Import/Admin.php:226
+msgid "Step 2: Import the Module Export file"
+msgstr ""
+
+#: classes/Import/Admin.php:211
+msgid "Start Importing"
+msgstr ""
+
+#: classes/Import/Admin.php:227
+msgid "Step 3: Now importing."
+msgstr ""
+
+#: classes/Import/Admin.php:236
+msgid "Type"
+msgstr ""
+
+#: classes/Import/Admin.php:237
+msgid "Message"
+msgstr ""
+
+#: classes/Import/Admin.php:379
+msgid "Invalid archive ID."
+msgstr ""
+
+#: classes/Import/Importer.php:218
+msgid "Could not open the file for parsing"
+msgstr ""
+
+#. translators: %1$s is the WXR version, %2$s is the importer version.
+#: classes/Import/Importer.php:258
+#: classes/Import/Importer.php:331
+#, php-format
+msgid "This WXR file (version %1$s) is newer than the importer (version %2$s) and may not be supported. Please consider updating."
+msgstr ""
+
+#: classes/Import/Importer.php:469
+msgid "The file does not exist, please try again."
+msgstr ""
+
+#: classes/Import/Importer.php:530
+msgid "Invalid author mapping"
+msgstr ""
+
+#: classes/Import/Importer.php:635
+msgid "Cannot import auto-draft posts"
+msgstr ""
+
+#. translators: %1$s is the post title, %2$s is the post type.
+#: classes/Import/Importer.php:733
+#, php-format
+msgid "Failed to import \"%1$s\": Invalid post type %2$s"
+msgstr ""
+
+#. translators: %1$s is the post type, %2$s is the post title.
+#: classes/Import/Importer.php:746
+#, php-format
+msgid "%1$s \"%2$s\" already exists."
+msgstr ""
+
+#. translators: %s is the attachment title.
+#: classes/Import/Importer.php:836
+#, php-format
+msgid "Skipping attachment \"%s\", fetching attachments disabled"
+msgstr ""
+
+#. translators: %1$s is the post title, %2$s is the post type.
+#: classes/Import/Importer.php:860
+#, php-format
+msgid "Failed to import \"%1$s\" (%2$s)"
+msgstr ""
+
+#. translators: %1$s is the post title, %2$s is the post type.
+#: classes/Import/Importer.php:898
+#, php-format
+msgctxt "post imported success message"
+msgid "Imported \"%1$s\" (%2$s)"
+msgstr ""
+
+#. translators: %1$d is the original post ID, %2$d is the new post ID.
+#: classes/Import/Importer.php:906
+#, php-format
+msgid "Post %1$d remapped to %2$d"
+msgstr ""
+
+#. translators: %1$d is the HTTP response code, %2$s is the response message, %3$s is the URL.
+#: classes/Import/Importer.php:996
+#, php-format
+msgid "Remote server returned %1$d %2$s for %3$s"
+msgstr ""
+
+#: classes/Import/Importer.php:1009
+msgid "Remote file is incorrect size"
+msgstr ""
+
+#: classes/Import/Importer.php:1014
+msgid "Zero size file downloaded"
+msgstr ""
+
+#. translators: %s is the max size.
+#: classes/Import/Importer.php:1022
+#, php-format
+msgid "Remote file is too large, limit is %s"
+msgstr ""
+
+#: classes/Import/Importer.php:1360
+msgid "Cannot import comment"
+msgstr ""
+
+#. translators: %1$s is the comment content, %2$s is the post title.
+#: classes/Import/Importer.php:1439
+#, php-format
+msgid "Failed to import comment \"%1$s\" for post \"%2$s\""
+msgstr ""
+
+#. translators: %s is the user login.
+#: classes/Import/Importer.php:1665
+#, php-format
+msgid "Failed to import user \"%s\""
+msgstr ""
+
+#. translators: %s is the user login.
+#: classes/Import/Importer.php:1689
+#, php-format
+msgid "Imported user \"%s\""
+msgstr ""
+
+#. Translators: %1$d is the original user ID, %2$d is the new user ID.
+#: classes/Import/Importer.php:1696
+#, php-format
+msgid "User %1$d remapped to %2$d"
+msgstr ""
+
+#. translators: %1$s is the taxonomy name, %2$s is the term name.
+#: classes/Import/Importer.php:1858
+#, php-format
+msgid "Failed to import %1$s %2$s"
+msgstr ""
+
+#. translators: %1$s is the term name, %2$s is the taxonomy name.
+#: classes/Import/Importer.php:1893
+#, php-format
+msgctxt "term imported success message"
+msgid "Imported \"%1$s\" (%2$s)"
+msgstr ""
+
+#. translators: %1$d is the original term ID, %2$d is the new term ID.
+#: classes/Import/Importer.php:1902
+#, php-format
+msgid "Term %1$d remapped to %2$d"
+msgstr ""
+
+#: classes/Import/Importer.php:1940
+#: classes/Import/Importer.php:2393
+msgid "Could not initialize filesystem"
+msgstr ""
+
+#: classes/Import/Importer.php:1947
+msgid "Failed to copy file to destination."
+msgstr ""
+
+#. translators: %d is the post ID.
+#: classes/Import/Importer.php:1993
+#, php-format
+msgid "Running post-processing for post %d"
+msgstr ""
+
+#. translators: %1$s is the post title, %2$d is the post ID.
+#: classes/Import/Importer.php:2011
+#, php-format
+msgid "Could not find the post parent for \"%1$s\" (post #%2$d)"
+msgstr ""
+
+#. translators: %1$d is the post ID, %2$d is the parent ID.
+#: classes/Import/Importer.php:2019
+#, php-format
+msgid "Post %1$d was imported with parent %2$d, but could not be found"
+msgstr ""
+
+#. translators: %1$s is the post title, %2$d is the post ID.
+#: classes/Import/Importer.php:2036
+#, php-format
+msgid "Could not find the author for \"%1$s\" (post #%2$d)"
+msgstr ""
+
+#. translators: %1$d is the post ID, %2$s is the author slug.
+#: classes/Import/Importer.php:2044
+#, php-format
+msgid "Post %1$d was imported with author \"%2$s\", but could not be found"
+msgstr ""
+
+#. translators: %d is the post ID.
+#: classes/Import/Importer.php:2071
+#, php-format
+msgid "Post %d was marked for post-processing, but none was required."
+msgstr ""
+
+#. translators: %1$s is the post title, %2$d is the post ID.
+#: classes/Import/Importer.php:2085
+#, php-format
+msgid "Could not update \"%1$s\" (post #%2$d) with mapped data"
+msgstr ""
+
+#. translators: %d is the comment ID.
+#: classes/Import/Importer.php:2122
+#, php-format
+msgid "Could not find the comment parent for comment #%d"
+msgstr ""
+
+#. translators: %1$d is the comment ID, %2$d is the parent ID.
+#: classes/Import/Importer.php:2129
+#, php-format
+msgid "Comment %1$d was imported with parent %2$d, but could not be found"
+msgstr ""
+
+#. translators: %d is the comment ID.
+#: classes/Import/Importer.php:2148
+#, php-format
+msgid "Could not find the author for comment #%d"
+msgstr ""
+
+#. translators: %1$d is the comment ID, %2$d is the author ID.
+#: classes/Import/Importer.php:2155
+#, php-format
+msgid "Comment %1$d was imported with author %2$d, but could not be found"
+msgstr ""
+
+#. translators: %d is the comment ID.
+#: classes/Import/Importer.php:2175
+#, php-format
+msgid "Could not update comment #%d with mapped data"
+msgstr ""
+
+#. translators: %s is the source files directory.
+#: classes/Import/Importer.php:2406
+#, php-format
+msgid "Source files directory not found: %s"
+msgstr ""
+
+#. translators: %1$s is the source file, %2$s is the destination path.
+#: classes/Import/Importer.php:2431
+#, php-format
+msgid "Failed to copy %1$s to %2$s"
+msgstr ""
+
+#: classes/Integrations/H5P.php:107
+msgid "H5P"
+msgstr ""
+
+#: classes/Integrations/WWPE.php:80
+msgid "You have completed this page. You will receive a private message confirming the completion."
+msgstr ""
+
+#: classes/Integrations/WWPE.php:142
+msgid "WebWoRK Problem Embed"
+msgstr ""
+
+#: classes/Module.php:317
+msgid "Module Home"
+msgstr ""
+
+#. translators: 1. Link to source module, 2. Link to source module author.
+#: classes/Module.php:381
+#, php-format
+msgid "<span class=\"openlab-module-attribution-prefix\">Attribution:</span> This module is based on %1$s by %2$s."
+msgstr ""
+
+#. translators: 1. Link to source module, 2. Link to source module author.
+#: classes/Module.php:442
+#, php-format
+msgid "This module is based on %1$s by %2$s."
+msgstr ""
+
+#: classes/Module.php:561
+#: assets/src/components/CompletionMessagesModule.js:60
+#: build/index.js:8
+msgid ""
+"Hi {{display_name}},\n"
+"\n"
+"You have completed the following:\n"
+"\n"
+"Module: {{module_title}} {{module_url}}\n"
+"Section: {{section_title}} {{section_url}}\n"
+"\n"
+"Well done!"
+msgstr ""
+
+#: classes/Schema.php:109
+#: classes/Schema.php:696
+msgid "All Modules"
+msgstr ""
+
+#: classes/Schema.php:110
+msgid "Module Archives"
+msgstr ""
+
+#: classes/Schema.php:111
+msgid "Module Attributes"
+msgstr ""
+
+#: classes/Schema.php:112
+msgid "Insert into Module"
+msgstr ""
+
+#: classes/Schema.php:113
+msgid "Uploaded to this Module"
+msgstr ""
+
+#: classes/Schema.php:114
+msgctxt "openlab_module"
+msgid "Featured Image"
+msgstr ""
+
+#: classes/Schema.php:115
+msgctxt "openlab_module"
+msgid "Set featured image"
+msgstr ""
+
+#: classes/Schema.php:116
+msgctxt "openlab_module"
+msgid "Remove featured image"
+msgstr ""
+
+#: classes/Schema.php:117
+msgctxt "openlab_module"
+msgid "Use as featured image"
+msgstr ""
+
+#: classes/Schema.php:118
+msgid "Filter Modules list"
+msgstr ""
+
+#: classes/Schema.php:119
+msgid "Modules list navigation"
+msgstr ""
+
+#: classes/Schema.php:120
+msgid "Modules list"
+msgstr ""
+
+#: classes/Schema.php:121
+msgid "New Module"
+msgstr ""
+
+#: classes/Schema.php:122
+msgid "Add New"
+msgstr ""
+
+#: classes/Schema.php:123
+msgid "Add New Module"
+msgstr ""
+
+#: classes/Schema.php:124
+#: assets/src/components/EditModule.js:87
+#: build/index.js:5
+msgid "Edit Module"
+msgstr ""
+
+#: classes/Schema.php:125
+msgid "View Module"
+msgstr ""
+
+#: classes/Schema.php:126
+msgid "View Modules"
+msgstr ""
+
+#: classes/Schema.php:127
+msgid "Search Modules"
+msgstr ""
+
+#: classes/Schema.php:128
+msgid "No Modules found"
+msgstr ""
+
+#: classes/Schema.php:129
+msgid "No Modules found in trash"
+msgstr ""
+
+#: classes/Schema.php:130
+msgid "Parent Modules:"
+msgstr ""
+
+#: classes/Schema.php:152
+msgid "Introduction"
+msgstr ""
+
+#: classes/Schema.php:158
+msgid "<strong>Faculty:</strong> Please edit this page to organize any additional course resources that you'd like to share with your students. Please delete this informational block when you are ready to share your site with your students. For help working with OpenLab Course sites, visit <a href=\"https://openlab.citytech.cuny.edu/blog/help/creating-a-course-faculty-only/\">OpenLab Help</a>."
+msgstr ""
+
+#: classes/Schema.php:190
+#: classes/Schema.php:207
+msgid "Openlab module taxes"
+msgstr ""
+
+#: classes/Schema.php:191
+msgctxt "taxonomy general name"
+msgid "Openlab module tax"
+msgstr ""
+
+#: classes/Schema.php:192
+msgid "Search Openlab module taxes"
+msgstr ""
+
+#: classes/Schema.php:193
+msgid "Popular Openlab module taxes"
+msgstr ""
+
+#: classes/Schema.php:194
+msgid "All Openlab module taxes"
+msgstr ""
+
+#: classes/Schema.php:195
+msgid "Parent Openlab module tax"
+msgstr ""
+
+#: classes/Schema.php:196
+msgid "Parent Openlab module tax:"
+msgstr ""
+
+#: classes/Schema.php:197
+msgid "Edit Openlab module tax"
+msgstr ""
+
+#: classes/Schema.php:198
+msgid "Update Openlab module tax"
+msgstr ""
+
+#: classes/Schema.php:199
+msgid "View Openlab module tax"
+msgstr ""
+
+#: classes/Schema.php:200
+msgid "Add New Openlab module tax"
+msgstr ""
+
+#: classes/Schema.php:201
+msgid "New Openlab module tax"
+msgstr ""
+
+#: classes/Schema.php:202
+msgid "Separate openlab module taxes with commas"
+msgstr ""
+
+#: classes/Schema.php:203
+msgid "Add or remove openlab module taxes"
+msgstr ""
+
+#: classes/Schema.php:204
+msgid "Choose from the most used openlab module taxes"
+msgstr ""
+
+#: classes/Schema.php:205
+msgid "No openlab module taxes found."
+msgstr ""
+
+#: classes/Schema.php:206
+msgid "No openlab module taxes"
+msgstr ""
+
+#: classes/Schema.php:208
+msgid "Openlab module taxes list navigation"
+msgstr ""
+
+#: classes/Schema.php:209
+msgid "Openlab module taxes list"
+msgstr ""
+
+#: classes/Schema.php:210
+msgctxt "openlab_module_tax"
+msgid "Most Used"
+msgstr ""
+
+#: classes/Schema.php:211
+msgid "&larr; Back to Openlab module taxes"
+msgstr ""
+
+#: classes/Schema.php:241
+#: assets/src/components/EditModule.js:113
+#: build/index.js:5
+msgid "Description"
+msgstr ""
+
+#: classes/Schema.php:267
+msgid "Module Page IDs"
+msgstr ""
+
+#: classes/Schema.php:281
+msgid "Link to Module"
+msgstr ""
+
+#: templates/blocks/module-list.php:80
+#: assets/src/blocks/module-list/edit.js:302
+#: build/index.js:1
+msgid "This site has no modules to display."
+msgstr ""
+
+#: templates/blocks/module-navigation.php:37
+msgid "The module associated with this navigation block is not published, and the navigation will not be visible to normal users."
+msgstr ""
+
+#. translators: Module link or title.
+#: templates/blocks/module-navigation.php:44
+#: assets/src/blocks/module-navigation/edit.js:415
+#: build/index.js:5
+#, php-format,js-format
+msgid "MODULE: %s"
+msgstr ""
+
+#: assets/src/blocks/module-acknowledgements/index.js:16
+#: assets/src/blocks/module-acknowledgements/index.js:45
+#: build/index.js:1
+msgid "Module Acknowledgements"
+msgstr ""
+
+#: assets/src/blocks/module-acknowledgements/index.js:17
+#: build/index.js:1
+msgid "Add text in the acknowledgements section of the module settings panel to create reusable text that can be used in the Module Acknowledgements block."
+msgstr ""
+
+#: assets/src/blocks/module-list/edit.js:52
+#: build/index.js:1
+msgid "Drag"
+msgstr ""
+
+#: assets/src/blocks/module-list/edit.js:54
+#: build/index.js:1
+msgid "Drag to reorder"
+msgstr ""
+
+#: assets/src/blocks/module-list/edit.js:222
+#: build/index.js:1
+msgid "Layout Settings"
+msgstr ""
+
+#: assets/src/blocks/module-list/edit.js:225
+#: assets/src/blocks/module-navigation/edit.js:388
+#: build/index.js:1
+#: build/index.js:5
+msgid "Module Description"
+msgstr ""
+
+#: assets/src/blocks/module-list/edit.js:226
+#: build/index.js:1
+msgid "Include each Module's Description in the list. This can be edited in the Module Settings"
+msgstr ""
+
+#: assets/src/blocks/module-list/edit.js:234
+#: build/index.js:1
+msgid "Module Author"
+msgstr ""
+
+#: assets/src/blocks/module-list/edit.js:235
+#: build/index.js:1
+msgid "Include each Module's Author in the list."
+msgstr ""
+
+#: assets/src/blocks/module-list/edit.js:243
+#: build/index.js:1
+msgid "Module Featured Image"
+msgstr ""
+
+#: assets/src/blocks/module-list/edit.js:244
+#: build/index.js:1
+msgid "Include each Module's featured image in the list. This can be edited in the Module Settings"
+msgstr ""
+
+#: assets/src/blocks/module-navigation/edit.js:67
+#: build/index.js:1
+msgid "Edit Page"
+msgstr ""
+
+#: assets/src/blocks/module-navigation/edit.js:74
+#: build/index.js:1
+msgid "Visit Page"
+msgstr ""
+
+#. translators: %s: module title
+#: assets/src/blocks/module-navigation/edit.js:248
+#: build/index.js:3
+#, js-format
+msgid "%s (Trash)"
+msgstr ""
+
+#. translators: %s: module title
+#: assets/src/blocks/module-navigation/edit.js:252
+#: build/index.js:5
+#, js-format
+msgid "%s (Draft)"
+msgstr ""
+
+#: assets/src/blocks/module-navigation/edit.js:275
+#: build/index.js:5
+msgid "- Select Module -"
+msgstr ""
+
+#: assets/src/blocks/module-navigation/edit.js:326
+#: build/index.js:5
+msgid "This page is in the trash and will not appear on the frontend."
+msgstr ""
+
+#: assets/src/blocks/module-navigation/edit.js:331
+#: build/index.js:5
+msgid "This page is in draft status and will not appear on the frontend."
+msgstr ""
+
+#: assets/src/blocks/module-navigation/edit.js:337
+#: build/index.js:5
+msgid "Draft"
+msgstr ""
+
+#: assets/src/blocks/module-navigation/edit.js:375
+#: build/index.js:5
+msgid "Settings"
+msgstr ""
+
+#: assets/src/blocks/module-navigation/edit.js:378
+#: build/index.js:5
+msgid "Select the module to display in the TOC."
+msgstr ""
+
+#: assets/src/blocks/module-navigation/edit.js:389
+#: build/index.js:5
+msgid "Include the Module Description in the TOC. This can be edited on the Module Settings."
+msgstr ""
+
+#: assets/src/blocks/module-navigation/edit.js:397
+#: build/index.js:5
+msgid "List Style"
+msgstr ""
+
+#: assets/src/blocks/module-navigation/edit.js:398
+#: build/index.js:5
+msgid "Choose between an unordered or ordered list."
+msgstr ""
+
+#: assets/src/blocks/module-navigation/edit.js:401
+#: build/index.js:5
+msgid "Unordered List"
+msgstr ""
+
+#: assets/src/blocks/module-navigation/edit.js:402
+#: build/index.js:5
+msgid "Ordered List"
+msgstr ""
+
+#: assets/src/blocks/module-navigation/edit.js:455
+#: build/index.js:5
+msgid "Add Page to Module (in the module settings panel)"
+msgstr ""
+
+#: assets/src/blocks/module-navigation/edit.js:459
+#: build/index.js:5
+msgid "This Table of Contents (TOC) is dynamically generated based on the pages belonging to the module."
+msgstr ""
+
+#: assets/src/blocks/sharing/edit.js:71
+#: assets/src/components/CloneModuleModal.js:163
+#: build/admin.js:1
+#: build/frontend.js:1
+#: build/index.js:5
+msgid "Clone this Module"
+msgstr ""
+
+#: assets/src/blocks/sharing/edit.js:76
+#: build/index.js:5
+msgid "Shared cloning is disabled for this module, so the \"Clone this Module\" button will not be visible to others when viewing the module. To enable shared cloning go to the \"Edit Module\" section of the module settings sidebar and click the \"Share\" button. You can remove this block if you don't want to enable shared cloning."
+msgstr ""
+
+#: assets/src/components/CloneModuleModal.js:168
+#: build/admin.js:1
+#: build/frontend.js:1
+msgid "Cancel module cloning"
+msgstr ""
+
+#: assets/src/components/CloneModuleModal.js:175
+#: build/admin.js:1
+#: build/frontend.js:1
+msgid "Before you clone this module, make sure the OpenLab Module Builder plugin is activated on the site you are cloning the module to. You will also need to have an Administrator or Editor role on the site. The site will then appear in the dropdown below."
+msgstr ""
+
+#: assets/src/components/CloneModuleModal.js:179
+#: build/admin.js:1
+#: build/frontend.js:1
+msgid "There are currently no sites available that fit these requirements."
+msgstr ""
+
+#: assets/src/components/CloneModuleModal.js:185
+#: build/admin.js:1
+#: build/frontend.js:1
+msgid "Select a site to clone this module to:"
+msgstr ""
+
+#: assets/src/components/CloneModuleModal.js:199
+#: build/admin.js:1
+#: build/frontend.js:1
+msgid "- Select a site -"
+msgstr ""
+
+#. translators: %s: site name
+#: assets/src/components/CloneModuleModal.js:220
+#: build/admin.js:3
+#: build/frontend.js:3
+msgid "Warning: A module with the same name already exists on the target site."
+msgstr ""
+
+#: assets/src/components/CloneModuleModal.js:227
+#: build/admin.js:3
+#: build/frontend.js:3
+msgid "This module requires a number of plugins that are not currently active on the target site. Make sure to activate these plugins to maintain full functionality in the cloned module."
+msgstr ""
+
+#: assets/src/components/CloneModuleModal.js:245
+#: build/admin.js:3
+#: build/frontend.js:3
+msgid "Cancel"
+msgstr ""
+
+#: assets/src/components/CloneModuleModal.js:254
+#: build/admin.js:3
+#: build/frontend.js:3
+msgid "Cloning..."
+msgstr ""
+
+#: assets/src/components/CloneModuleModal.js:254
+#: build/admin.js:3
+#: build/frontend.js:3
+msgid "Continue"
+msgstr ""
+
+#: assets/src/components/CloneModuleModal.js:264
+#: build/admin.js:3
+#: build/frontend.js:3
+msgid "The module was successfully cloned."
+msgstr ""
+
+#: assets/src/components/CloneModuleModal.js:270
+#: build/admin.js:3
+#: build/frontend.js:3
+msgid "Edit the cloned module"
+msgstr ""
+
+#: assets/src/components/CloneModuleModal.js:275
+#: build/admin.js:3
+#: build/frontend.js:3
+msgid "There was a problem cloning the module."
+msgstr ""
+
+#: assets/src/components/CloneModuleModal.js:283
+#: build/admin.js:3
+#: build/frontend.js:3
+msgid "Close"
+msgstr ""
+
+#: assets/src/components/CompletionMessagesModule.js:69
+#: build/index.js:8
+msgid "You have completed the activities on this page. You will receive an email confirming your completion."
+msgstr ""
+
+#: assets/src/components/CompletionMessagesModule.js:76
+#: build/index.js:8
+msgid "Email Completion Message"
+msgstr ""
+
+#: assets/src/components/CompletionMessagesModule.js:80
+#: build/index.js:8
+msgid "Configure the email sent to users when they complete the interactive elements in a module section."
+msgstr ""
+
+#: assets/src/components/CompletionMessagesModule.js:84
+#: build/index.js:8
+msgid "CC"
+msgstr ""
+
+#: assets/src/components/CompletionMessagesModule.js:85
+#: build/index.js:8
+msgid "Enter any addresses to be copied on the email, separated by commas."
+msgstr ""
+
+#: assets/src/components/CompletionMessagesModule.js:90
+#: build/index.js:8
+msgid "Enter email addresses"
+msgstr ""
+
+#: assets/src/components/CompletionMessagesModule.js:94
+#: build/index.js:8
+msgid "Email subject"
+msgstr ""
+
+#: assets/src/components/CompletionMessagesModule.js:100
+#: build/index.js:8
+msgid "Enter email subject"
+msgstr ""
+
+#: assets/src/components/CompletionMessagesModule.js:104
+#: build/index.js:8
+msgid "Email text"
+msgstr ""
+
+#: assets/src/components/CompletionMessagesModule.js:110
+#: build/index.js:8
+msgid "Use the following tokens for dynamic values: {{display_name}}, {{module_title}}, {{module_url}}, {{section_title}}, {{section_url}}"
+msgstr ""
+
+#: assets/src/components/CompletionMessagesModule.js:118
+#: build/index.js:8
+msgid "Popup Completion Message"
+msgstr ""
+
+#: assets/src/components/CompletionMessagesModule.js:122
+#: build/index.js:8
+msgid "Edit the popup message users will see when the interactive activities in a module section are completed. The default popup text below can also be customized on individual pages."
+msgstr ""
+
+#: assets/src/components/CompletionMessagesModule.js:126
+#: build/index.js:8
+msgid "Default popup text"
+msgstr ""
+
+#: assets/src/components/CompletionMessagesModule.js:132
+#: build/index.js:8
+msgid "Enter popup text"
+msgstr ""
+
+#: assets/src/components/CompletionMessagesPage.js:45
+#: build/index.js:8
+msgid "Completion Messages"
+msgstr ""
+
+#: assets/src/components/CompletionMessagesPage.js:49
+#: build/index.js:8
+msgid "Completion message settings can be configured for the entire module when editing the Module Home."
+msgstr ""
+
+#: assets/src/components/CompletionMessagesPage.js:53
+#: build/index.js:8
+msgid "Show completion message popup when activities for this page are completed"
+msgstr ""
+
+#: assets/src/components/CompletionMessagesPage.js:62
+#: build/index.js:8
+msgid "Popup Text"
+msgstr ""
+
+#: assets/src/components/CompletionMessagesPage.js:69
+#: build/index.js:8
+msgid "Send completion email when activities for this page are completed"
+msgstr ""
+
+#: assets/src/components/CompletionMessagesPage.js:77
+#: build/index.js:8
+msgid "Include popup text in the email"
+msgstr ""
+
+#: assets/src/components/EditModule.js:92
+#: build/index.js:5
+msgid "Name"
+msgstr ""
+
+#: assets/src/components/EditModule.js:102
+#: build/index.js:5
+msgid "Navigation Title"
+msgstr ""
+
+#: assets/src/components/EditModule.js:103
+#: build/index.js:5
+msgid "The title of the module home page, for use in the Module TOC block"
+msgstr ""
+
+#: assets/src/components/EditModule.js:121
+#: build/index.js:5
+msgid "Author Name"
+msgstr ""
+
+#: assets/src/components/EditModule.js:122
+#: build/index.js:5
+msgid "Used in the Module List block."
+msgstr ""
+
+#: assets/src/components/EditModule.js:132
+#: build/index.js:5
+msgid "Acknowledgements appear in a block at the bottom of the module home."
+msgstr ""
+
+#: assets/src/components/EditModule.js:143
+#: build/index.js:5
+msgid "Enable shared cloning"
+msgstr ""
+
+#: assets/src/components/EditModule.js:144
+#: build/index.js:5
+msgid "Allow others to clone this Module."
+msgstr ""
+
+#: assets/src/components/ModulePages.js:177
+#: build/index.js:5
+msgid "Add Page to Module"
+msgstr ""
+
+#: assets/src/components/ModulePages.js:182
+#: build/index.js:5
+msgid "Add a page to this module by choosing one of the following options:"
+msgstr ""
+
+#: assets/src/components/ModulePages.js:190
+#: build/index.js:5
+msgid "Create New Page"
+msgstr ""
+
+#: assets/src/components/ModulePages.js:202
+#: assets/src/components/ModulePages.js:203
+#: build/index.js:5
+msgid "Add page title and press enter."
+msgstr ""
+
+#: assets/src/components/ModulePages.js:221
+#: build/index.js:5
+msgid "Page creation in progress"
+msgstr ""
+
+#: assets/src/components/ModulePages.js:228
+#: build/index.js:5
+msgid "Click to create page"
+msgstr ""
+
+#: assets/src/components/ModulePages.js:244
+#: build/index.js:5
+msgid "Add Existing Page"
+msgstr ""
+
+#: assets/src/components/ModulePages.js:256
+#: assets/src/components/ModulePages.js:257
+#: build/index.js:5
+msgid "Search for an existing page."
+msgstr ""
+
+#: assets/src/components/ModulePages.js:270
+#: build/index.js:5
+msgid "Module Pages"
+msgstr ""
+
+#: assets/src/components/ModulePages.js:282
+#: build/index.js:5
+msgid "This module has no pages yet. Add or create a new page using the tools above."
+msgstr ""
+
+#: assets/src/components/PageModules.js:72
+#: build/index.js:5
+msgid "This item is linked to the following module:"
+msgid_plural "This item is linked to the following modules:"
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/src/components/PageModules.js:83
+#: assets/src/components/PageModules.js:106
+#: assets/src/components/SortableMultiSelect/SortableItem.js:69
+#: build/index.js:5
+msgid "Edit"
+msgstr ""
+
+#: assets/src/components/PageModules.js:86
+#: assets/src/components/PageModules.js:109
+#: assets/src/components/SortableMultiSelect/SortableItem.js:71
+#: build/index.js:5
+msgid "View"
+msgstr ""
+
+#: assets/src/components/PageModules.js:96
+#: build/index.js:5
+msgid "This item will be linked to the following module:"
+msgstr ""
+
+#: assets/src/components/PostPicker.js:105
+#: build/index.js:5
+msgid "No Items found"
+msgstr ""
+
+#: assets/src/components/SortableMultiSelect/SortableItem.js:36
+#: build/index.js:5
+msgid "(Trash)"
+msgstr ""
+
+#: assets/src/components/SortableMultiSelect/SortableItem.js:41
+#: build/index.js:5
+msgid "(Draft)"
+msgstr ""
+
+#: assets/src/components/SortableMultiSelect/SortableItem.js:79
+#: build/index.js:5
+msgid "Remove"
+msgstr ""
+
+#. Translators: %1$s is a URL, %2$s is a module name, %3$s is an author name.
+#: assets/src/export.js:19
+#: build/export.js:3
+#, js-format
+msgid "This module is based on <a href=\"%1$s\">%2$s</a> by %3$s."
+msgstr ""
+
+#: assets/src/import.js:13
+#: build/import.js:1
+msgid "Step 3: Import Complete. Check out your site!"
+msgstr ""
+
+#: assets/src/import.js:15
+#: build/import.js:1
+msgid "Import unsuccessful."
+msgstr ""
+
+#: assets/src/import.js:52
+#: build/import.js:1
+msgid "Please select an OpenLab Module Builder Export file (.zip)."
+msgstr ""
+
+#: assets/src/import.js:72
+#: build/import.js:1
+msgid "Uploading…"
+msgstr ""
+
+#: assets/src/blocks/module-acknowledgements/block.json
+msgctxt "block title"
+msgid "Module Acknowledgements"
+msgstr ""
+
+#: assets/src/blocks/module-acknowledgements/block.json
+msgctxt "block description"
+msgid "This block presents the Module attribution and acknowledgements. It appears at the bottom of the Module Home automatically. You can delete this block or add it to other areas of the Module or Site."
+msgstr ""
+
+#: assets/src/blocks/module-list/block.json
+msgctxt "block title"
+msgid "All Modules List"
+msgstr ""
+
+#: assets/src/blocks/module-list/block.json
+msgctxt "block description"
+msgid "This block is dynamically generated to display a list of all of the published Modules on your site. To change the order of the modules, drag and drop using the icon."
+msgstr ""
+
+#: assets/src/blocks/module-list/block.json
+msgctxt "block style label"
+msgid "Text List"
+msgstr ""
+
+#: assets/src/blocks/module-list/block.json
+msgctxt "block style label"
+msgid "Image List"
+msgstr ""
+
+#: assets/src/blocks/module-list/block.json
+msgctxt "block style label"
+msgid "Image Grid"
+msgstr ""
+
+#: assets/src/blocks/module-navigation/block.json
+msgctxt "block title"
+msgid "Module TOC"
+msgstr ""
+
+#: assets/src/blocks/module-navigation/block.json
+msgctxt "block description"
+msgid "This Table of Contents (TOC) is dynamically generated based on the pages belonging to the module."
+msgstr ""
+
+#: assets/src/blocks/placeholder-text/block.json
+msgctxt "block title"
+msgid "Placeholder Text"
+msgstr ""
+
+#: assets/src/blocks/placeholder-text/block.json
+msgctxt "block description"
+msgid "Placeholder text for use in the editor."
+msgstr ""
+
+#: assets/src/blocks/sharing/block.json
+msgctxt "block title"
+msgid "Module Sharing"
+msgstr ""
+
+#: assets/src/blocks/sharing/block.json
+msgctxt "block description"
+msgid "This block enables others to clone the module. It will appear at the top of the Module Home automatically when you select Clone in the Module Settings. You can remove this block, if you don’t want to enable shared cloning. You can also add it to other areas of the Module."
+msgstr ""
