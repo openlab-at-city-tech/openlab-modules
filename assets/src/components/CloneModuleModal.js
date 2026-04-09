@@ -186,7 +186,7 @@ const CloneModuleModal = ( { moduleId, nonce, uniqid, isOpen, onClose } ) => {
   return (
     <div id={`clone-module-modal-${uniqid}`} className="clone-module-modal" role="presentation" aria-hidden="false">
 			<div className="clone-module-modal-backdrop" aria-hidden="true"></div>
-      <div className="clone-module-modal-content" role="dialog" aria-modal="true">
+      <div className="clone-module-modal-content" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
 					<div className="dialog__header">
 						<h1 id="dialog-title">{ __( 'Clone this Module', 'openlab-module-builder' ) }</h1>
 
