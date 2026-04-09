@@ -32,10 +32,38 @@ const CloneModuleModal = ( { moduleId, nonce, uniqid, isOpen, onClose } ) => {
 			return;
 		}
 
+		const modalElement = document.getElementById( `clone-module-modal-${ uniqid }` );
+		if ( ! modalElement ) {
+			return;
+		}
+
 		const handleKeyDown = ( event ) => {
 			if ( event.key === 'Escape' ) {
 				event.preventDefault();
 				closeModal();
+				return;
+			}
+
+			// Focus trap: handle Tab key
+			if ( event.key === 'Tab' ) {
+				const focusableElements = modalElement.querySelectorAll(
+					'button:not([disabled]), select:not([disabled]), input:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'
+				);
+
+				if ( focusableElements.length === 0 ) {
+					return;
+				}
+
+				const firstElement = focusableElements[ 0 ];
+				const lastElement = focusableElements[ focusableElements.length - 1 ];
+
+				if ( event.shiftKey && document.activeElement === firstElement ) {
+					event.preventDefault();
+					lastElement.focus();
+				} else if ( ! event.shiftKey && document.activeElement === lastElement ) {
+					event.preventDefault();
+					firstElement.focus();
+				}
 			}
 		};
 
@@ -44,7 +72,7 @@ const CloneModuleModal = ( { moduleId, nonce, uniqid, isOpen, onClose } ) => {
 		return () => {
 			window.removeEventListener( 'keydown', handleKeyDown );
 		};
-	}, [ isOpen ] );
+	}, [ isOpen, uniqid ] );
 
 	const closeModal = useCallback( () => {
 		setCloneResult( null );
