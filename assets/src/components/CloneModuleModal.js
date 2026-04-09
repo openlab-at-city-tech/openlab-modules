@@ -203,7 +203,7 @@ const CloneModuleModal = ( { moduleId, nonce, uniqid, isOpen, onClose } ) => {
 											<option key={ site.id } value={ site.id }>
 												{ site.isCurrentSite
 													/* translators: %s: site name */
-												? sprintf( __( 'This site: %s', 'openlab-modules' ), he.decode( site.text ) )
+												? sprintf( __( 'This site: %s', 'openlab-module-builder' ), he.decode( site.text ) )
 													: he.decode( site.text )
 												}
 											</option>

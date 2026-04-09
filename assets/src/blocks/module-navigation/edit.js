@@ -412,7 +412,7 @@ export default function Edit( {
 				<div className="openlab-modules-module-navigation">
 					<p className="openlab-modules-module-navigation-heading">
 						{ /* translators: %s: module title */ }
-						{ sprintf( __( 'MODULE: %s', 'openlab-modules' ), selectedModuleTitle() ) }
+						{ sprintf( __( 'MODULE: %s', 'openlab-module-builder' ), selectedModuleTitle() ) }
 					</p>
 
 					{ showModuleDescription && selectedModuleObject && selectedModuleObject.meta.module_description && (

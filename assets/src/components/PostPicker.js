@@ -102,7 +102,7 @@ export const PostPicker = (props) => {
                         {isLoading && <Spinner />}
                         {!isLoading && !searchResults.length && (
                             <li className={`${NAMESPACE}-grid-item`}>
-                                <Button disabled>{__('No Items found', 'openlab-modules')}</Button>
+                                <Button disabled>{__('No Items found', 'openlab-module-builder')}</Button>
                             </li>
                         )}
                         {searchResults.map((post, index) => {
