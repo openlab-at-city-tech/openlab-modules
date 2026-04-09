@@ -219,7 +219,7 @@ class Admin {
 		}
 
 		header( 'Content-type: application/zip' );
-		header( 'Content-Disposition: attachment; filename="' . basename( $filename ) . '"' );
+		header( 'Content-Disposition: attachment; filename="' . sanitize_file_name( basename( $filename ) ) . '"' );
 		header( 'Content-length: ' . filesize( $filename ) );
 
 		// phpcs:ignore WordPress.WP.AlternativeFunctions
