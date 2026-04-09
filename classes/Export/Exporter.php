@@ -2,7 +2,7 @@
 /**
  * Exporter Class.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 namespace OpenLab\Modules\Export;
@@ -111,8 +111,8 @@ class Exporter {
 		$this->uploads_dir_basedir = $upload_dir_basedir;
 		$this->uploads_dir_baseurl = $upload_dir_baseurl;
 
-		$this->exports_dir = trailingslashit( $this->uploads_dir_basedir ) . 'openlab-modules-exports/';
-		$this->exports_url = trailingslashit( $this->uploads_dir_baseurl ) . 'openlab-modules-exports/';
+		$this->exports_dir = trailingslashit( $this->uploads_dir_basedir ) . 'openlab-module-builder-exports/';
+		$this->exports_url = trailingslashit( $this->uploads_dir_baseurl ) . 'openlab-module-builder-exports/';
 	}
 
 	/**
@@ -321,7 +321,7 @@ class Exporter {
 	protected function prepare_readme() {
 		$admin_names = $this->get_site_admin_names();
 
-		$text = esc_html__( 'Acknowledgements', 'openlab-modules' );
+		$text = esc_html__( 'Acknowledgements', 'openlab-module-builder' );
 
 		$converter = new \League\HTMLToMarkdown\HtmlConverter();
 
@@ -330,7 +330,7 @@ class Exporter {
 
 		if ( ! empty( $this->readme_custom_text ) ) {
 			$text .= "\n\n";
-			$text .= '# ' . esc_html__( 'Note from Exporter', 'openlab-modules' );
+			$text .= '# ' . esc_html__( 'Note from Exporter', 'openlab-module-builder' );
 			$text .= "\n\n";
 			$text .= $this->readme_custom_text;
 		}

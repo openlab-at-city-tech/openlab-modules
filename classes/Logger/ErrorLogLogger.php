@@ -2,7 +2,7 @@
 /**
  * ErrorLogLogger class.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 namespace OpenLab\Modules\Logger;

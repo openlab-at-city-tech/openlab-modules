@@ -2,7 +2,7 @@
 /**
  * Admin methods for module import.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 namespace OpenLab\Modules\Import;
@@ -51,8 +51,8 @@ class Admin {
 		$parent = 'edit.php?post_type=' . Schema::get_module_post_type();
 		add_submenu_page(
 			$parent,
-			__( 'Module Import', 'openlab-modules' ),
-			__( 'Module Import', 'openlab-modules' ),
+			__( 'Module Import', 'openlab-module-builder' ),
+			__( 'Module Import', 'openlab-module-builder' ),
 			'manage_options',
 			Schema::get_module_post_type() . '-import',
 			[ $this, 'render_import_page' ]
@@ -94,8 +94,8 @@ class Admin {
 
 			if ( ! $import_id ) {
 				$error = new WP_Error(
-					'openlab-modules-import',
-					__( 'Invalid import ID.', 'openlab-modules' ),
+					'openlab-module-builder-import',
+					__( 'Invalid import ID.', 'openlab-module-builder' ),
 					[ $this->id ]
 				);
 				$this->display_error( $error );
@@ -105,7 +105,7 @@ class Admin {
 			$this->id = $import_id;
 
 			$url_args = [
-				'action' => 'openlab-modules-import',
+				'action' => 'openlab-module-builder-import',
 				'id'     => (string) $this->id,
 			];
 
@@ -115,8 +115,8 @@ class Admin {
 		$blocks_asset_file = Editor::get_blocks_asset_file();
 
 		wp_enqueue_script(
-			'openlab-modules-import',
-			OPENLAB_MODULES_PLUGIN_URL . '/build/import.js',
+			'openlab-module-builder-import',
+			OPENLAB_MODULE_BUILDER_PLUGIN_URL . '/build/import.js',
 			[ 'wp-i18n', 'jquery' ],
 			$blocks_asset_file['version'],
 			true
@@ -130,12 +130,12 @@ class Admin {
 			'maxUploadSize' => $max_upload_size,
 			'strings'       => [
 				// translators: %s is the max upload size.
-				'errorSize' => sprintf( __( 'File too large. Max upload size is %s.', 'openlab-modules' ), $max_upload_size_h ),
+				'errorSize' => sprintf( __( 'File too large. Max upload size is %s.', 'openlab-module-builder' ), $max_upload_size_h ),
 			],
 		];
 
 		wp_add_inline_script(
-			'openlab-modules-import',
+			'openlab-module-builder-import',
 			'var openlabModulesImport = ' . wp_json_encode( $script_data ) . ';',
 			'before'
 		);
@@ -143,13 +143,13 @@ class Admin {
 		?>
 
 		<div class="wrap nosubsub">
-			<h1><?php esc_html_e( 'Import Module', 'openlab-modules' ); ?></h1>
+			<h1><?php esc_html_e( 'Import Module', 'openlab-module-builder' ); ?></h1>
 
 			<?php settings_errors(); ?>
 
-			<p><?php esc_html_e( 'Use this tool to import a previously exported OpenLab Module Archive.', 'openlab-modules' ); ?></p>
+			<p><?php esc_html_e( 'Use this tool to import a previously exported OpenLab Module Archive.', 'openlab-module-builder' ); ?></p>
 
-			<p><?php echo wp_kses_post( __( '<strong>Before you begin:</strong> The Module Archive contains a readme file with information about plugins you may want to activate before performing the import, as well as other information about the import. Please read through the file before beginning the import.', 'openlab-modules' ) ); ?></p>
+			<p><?php echo wp_kses_post( __( '<strong>Before you begin:</strong> The Module Archive contains a readme file with information about plugins you may want to activate before performing the import, as well as other information about the import. Please read through the file before beginning the import.', 'openlab-module-builder' ) ); ?></p>
 
 			<?php
 			switch ( $step ) {
@@ -176,17 +176,17 @@ class Admin {
 	 */
 	public function render_upload_step() {
 		?>
-		<p><strong><?php esc_html_e( 'Step 1: Choose and upload your Module Export file (.zip).', 'openlab-modules' ); ?></strong></p>
+		<p><strong><?php esc_html_e( 'Step 1: Choose and upload your Module Export file (.zip).', 'openlab-module-builder' ); ?></strong></p>
 
 		<form method="post" enctype="multipart/form-data" action="<?php echo esc_url( self::get_url( 1 ) ); ?>">
 			<input type="hidden" name="action" value="import-upload" />
 			<?php wp_nonce_field( 'openlab-modules-import-upload' ); ?>
 
-			<label class="screen-reader-text" for="importzip"><?php esc_html_e( 'Import zip file', 'openlab-modules' ); ?></label>
+			<label class="screen-reader-text" for="importzip"><?php esc_html_e( 'Import zip file', 'openlab-module-builder' ); ?></label>
 			<input type="file" id="importzip" name="importzip" />
 			<div id="ol-import-error" class="ol-import-error"></div>
 
-			<?php submit_button( __( 'Upload Module Export File', 'openlab-modules' ), 'primary', 'upload-submit' ); ?>
+			<?php submit_button( __( 'Upload Module Export File', 'openlab-module-builder' ), 'primary', 'upload-submit' ); ?>
 		</form>
 		<?php
 	}
@@ -199,8 +199,8 @@ class Admin {
 	public function render_settings_step() {
 		?>
 
-		<p><del><?php esc_html_e( 'Step 1: Choose and upload your Module Export file (.zip).', 'openlab-modules' ); ?></del></p>
-		<p><strong><?php esc_html_e( 'Step 2: Import the Module Export file', 'openlab-modules' ); ?></strong></p>
+		<p><del><?php esc_html_e( 'Step 1: Choose and upload your Module Export file (.zip).', 'openlab-module-builder' ); ?></del></p>
+		<p><strong><?php esc_html_e( 'Step 2: Import the Module Export file', 'openlab-module-builder' ); ?></strong></p>
 
 		<form method="post" action="<?php echo esc_url( self::get_url( 2 ) ); ?>">
 			<input type="hidden" name="import_id" value="<?php echo esc_attr( (string) $this->id ); ?>" />
@@ -208,7 +208,7 @@ class Admin {
 			<input type="hidden" name="archive-has-attachments" value="1" />
 
 			<?php wp_nonce_field( sprintf( 'module.import:%d', $this->id ) ); ?>
-			<?php submit_button( __( 'Start Importing', 'openlab-modules' ) ); ?>
+			<?php submit_button( __( 'Start Importing', 'openlab-module-builder' ) ); ?>
 		</form>
 
 		<?php
@@ -222,9 +222,9 @@ class Admin {
 	public function render_import_step() {
 		?>
 
-		<p><del><?php esc_html_e( 'Step 1: Choose and upload your Module Export file (.zip).', 'openlab-modules' ); ?></del></p>
-		<p><del><?php esc_html_e( 'Step 2: Import the Module Export file', 'openlab-modules' ); ?></del></p>
-		<p id="import-status-message"><strong><?php esc_html_e( 'Step 3: Now importing.', 'openlab-modules' ); ?></strong></p>
+		<p><del><?php esc_html_e( 'Step 1: Choose and upload your Module Export file (.zip).', 'openlab-module-builder' ); ?></del></p>
+		<p><del><?php esc_html_e( 'Step 2: Import the Module Export file', 'openlab-module-builder' ); ?></del></p>
+		<p id="import-status-message"><strong><?php esc_html_e( 'Step 3: Now importing.', 'openlab-module-builder' ); ?></strong></p>
 
 		<input type="hidden" name="import_id" value="<?php echo esc_attr( (string) $this->id ); ?>" />
 
@@ -233,8 +233,8 @@ class Admin {
 		<table id="import-log" class="widefat">
 			<thead>
 				<tr>
-					<th><?php esc_html_e( 'Type', 'openlab-modules' ); ?></th>
-					<th><?php esc_html_e( 'Message', 'openlab-modules' ); ?></th>
+					<th><?php esc_html_e( 'Type', 'openlab-module-builder' ); ?></th>
+					<th><?php esc_html_e( 'Message', 'openlab-module-builder' ); ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -376,7 +376,7 @@ class Admin {
 	protected function get_importer( $archive_id ) {
 		$extract_path = get_post_meta( $archive_id, 'extract_path', true );
 		if ( ! is_string( $extract_path ) ) {
-			return new WP_Error( 'openlab-modules-import', __( 'Invalid archive ID.', 'openlab-modules' ) );
+			return new WP_Error( 'openlab-module-builder-import', __( 'Invalid archive ID.', 'openlab-module-builder' ) );
 		}
 
 		$options = [

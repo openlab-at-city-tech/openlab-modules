@@ -2,7 +2,7 @@
 /**
  * Template for module-navigation block.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -27,7 +27,7 @@ if ( ! empty( $openlab_modules_ordered_ids ) ) {
 	$openlab_modules_ordered_modules = \OpenLab\Modules\Module::get();
 }
 
-wp_enqueue_style( 'openlab-modules-frontend' );
+wp_enqueue_style( 'openlab-module-builder-frontend' );
 
 $openlab_modules_additional_attributes = [];
 if ( $openlab_modules_card_background_color ) {
@@ -77,6 +77,6 @@ $openlab_modules_block_wrapper_attributes = get_block_wrapper_attributes( $openl
 	</div>
 
 	<?php elseif ( current_user_can( 'edit_others_posts' ) ) : ?>
-		<p><?php esc_html_e( 'This site has no modules to display.', 'openlab-modules' ); ?></p>
+		<p><?php esc_html_e( 'This site has no modules to display.', 'openlab-module-builder' ); ?></p>
 	<?php endif; ?>
 </div>

@@ -21,7 +21,7 @@ export default function PageModules() {
 		const urlParams = new URLSearchParams( window.location.search )
 		const linkToModule = urlParams.get( 'link-to-module' )
 
-		const fetchedPageModules = select( 'openlab-modules' ).getPageModules( postId )
+		const fetchedPageModules = select( 'openlab-module-builder' ).getPageModules( postId )
 		const fetchedModuleToLink = linkToModule ? select( 'core' ).getEntityRecord( 'postType', 'openlab_module', linkToModule ) : null
 
 		return {
@@ -61,15 +61,15 @@ export default function PageModules() {
 
 	return (
 		<PluginDocumentSettingPanel
-			name="openlab-modules-page-modules"
-			className="openlab-modules-page-modules"
-			title={ __( 'Modules', 'openlab-modules' ) }
+			name="openlab-module-builder-page-modules"
+			className="openlab-module-builder-page-modules"
+			title={ __( 'Modules', 'openlab-module-builder' ) }
 			>
 
 			{ isExistingPostWithModules && (
 				<>
 					<PanelRow>
-						{ _n( 'This item is linked to the following module:', 'This item is linked to the following modules:', pageModules.length, 'openlab-modules' ) }
+						{ _n( 'This item is linked to the following module:', 'This item is linked to the following modules:', pageModules.length, 'openlab-module-builder' ) }
 					</PanelRow>
 
 					{ pageModules.map( (pageModule) => (
@@ -80,10 +80,10 @@ export default function PageModules() {
 
 							<div className="page-module-actions">
 								<a href={ pageModule.editUrl.replace( '&amp;', '&' ) }
-									>{ __( 'Edit', 'openlab-modules' ) }</a>
+									>{ __( 'Edit', 'openlab-module-builder' ) }</a>
 								&nbsp;|&nbsp;
 								<a href={ pageModule.url }
-									>{ __( 'View', 'openlab-modules' ) }</a>
+									>{ __( 'View', 'openlab-module-builder' ) }</a>
 							</div>
 						</PanelRow>
 					) ) }
@@ -93,7 +93,7 @@ export default function PageModules() {
 			{ isNewPostWithLinkToModule && (
 				<>
 					<PanelRow>
-						{ __( 'This item will be linked to the following module:', 'openlab-modules' ) }
+						{ __( 'This item will be linked to the following module:', 'openlab-module-builder' ) }
 					</PanelRow>
 
 					<PanelRow>
@@ -103,10 +103,10 @@ export default function PageModules() {
 
 						<div className="page-module-actions">
 							<a href={ `${ window.location.origin }/wp-admin/post.php?post=${ moduleToLink.id }&action=edit` }
-								>{ __( 'Edit', 'openlab-modules' ) }</a>
+								>{ __( 'Edit', 'openlab-module-builder' ) }</a>
 							&nbsp;|&nbsp;
 							<a href={ moduleToLink.link }
-								>{ __( 'View', 'openlab-modules' ) }</a>
+								>{ __( 'View', 'openlab-module-builder' ) }</a>
 						</div>
 					</PanelRow>
 				</>

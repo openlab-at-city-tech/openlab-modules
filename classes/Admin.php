@@ -2,7 +2,7 @@
 /**
  * Admin module.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 namespace OpenLab\Modules;
@@ -88,7 +88,7 @@ class Admin {
 			$new_columns[ $key ] = $column_name;
 
 			if ( 'title' === $key ) {
-				$new_columns['module_author'] = __( 'Author', 'openlab-modules' );
+				$new_columns['module_author'] = __( 'Author', 'openlab-module-builder' );
 			}
 		}
 
@@ -148,25 +148,25 @@ class Admin {
 			$blocks_asset_file = Editor::get_blocks_asset_file( 'admin' );
 
 			wp_enqueue_script(
-				'openlab-modules-admin',
-				OPENLAB_MODULES_PLUGIN_URL . '/build/admin.js',
+				'openlab-module-builder-admin',
+				OPENLAB_MODULE_BUILDER_PLUGIN_URL . '/build/admin.js',
 				[ 'wp-element', 'wp-api-fetch', 'wp-i18n' ],
 				$blocks_asset_file['version'],
 				true
 			);
 
 			wp_localize_script(
-				'openlab-modules-admin',
+				'openlab-module-builder-admin',
 				'openlabModulesAdmin',
 				[
-					'clone' => __( 'Clone', 'openlab-modules' ),
+					'clone' => __( 'Clone', 'openlab-module-builder' ),
 					'nonce' => wp_create_nonce( 'wp_rest' ),
 				]
 			);
 
 			wp_enqueue_style(
-				'openlab-modules-admin',
-				OPENLAB_MODULES_PLUGIN_URL . '/build/admin.css',
+				'openlab-module-builder-admin',
+				OPENLAB_MODULE_BUILDER_PLUGIN_URL . '/build/admin.css',
 				[],
 				$blocks_asset_file['version']
 			);
@@ -238,7 +238,7 @@ class Admin {
 			$new_columns[ $key ] = $column_name;
 
 			if ( 'title' === $key ) {
-				$new_columns['module'] = __( 'Module', 'openlab-modules' );
+				$new_columns['module'] = __( 'Module', 'openlab-module-builder' );
 			}
 		}
 
@@ -281,9 +281,9 @@ class Admin {
 		?>
 
 		<select name="filter-by-module">
-			<option value="" <?php selected( ! $selected_module_id ); ?>><?php echo esc_html_e( 'All Pages / Modules', 'openlab-modules' ); ?></option>
-			<option value="_all" <?php selected( '_all', $selected_module_id ); ?>><?php echo esc_html_e( 'All Pages in Modules', 'openlab-modules' ); ?></option>
-			<option value="_none" <?php selected( '_none', $selected_module_id ); ?>><?php echo esc_html_e( 'All Pages not in Modules', 'openlab-modules' ); ?></option>
+			<option value="" <?php selected( ! $selected_module_id ); ?>><?php echo esc_html_e( 'All Pages / Modules', 'openlab-module-builder' ); ?></option>
+			<option value="_all" <?php selected( '_all', $selected_module_id ); ?>><?php echo esc_html_e( 'All Pages in Modules', 'openlab-module-builder' ); ?></option>
+			<option value="_none" <?php selected( '_none', $selected_module_id ); ?>><?php echo esc_html_e( 'All Pages not in Modules', 'openlab-module-builder' ); ?></option>
 
 			<?php foreach ( $all_modules as $module ) : ?>
 				<option value="<?php echo esc_html( (string) $module->get_id() ); ?>" <?php selected( $selected_module_id, $module->get_id() ); ?>><?php echo esc_html( $module->get_title() ); ?></option>
@@ -377,7 +377,7 @@ class Admin {
 		// Build <optgroup> for modules.
 		$module_optgroup = '';
 		if ( $modules ) {
-			$module_optgroup = '<optgroup label="' . esc_attr__( 'Modules', 'openlab-modules' ) . '">';
+			$module_optgroup = '<optgroup label="' . esc_attr__( 'Modules', 'openlab-module-builder' ) . '">';
 			foreach ( $modules as $module ) {
 				$module_optgroup .= sprintf(
 					'<option value="%d"%s%s>%s</option>',
@@ -397,7 +397,7 @@ class Admin {
 	}
 
 	/**
-	 * Sets a flag in blogmeta to indicate that the OpenLab Modules plugin is active.
+	 * Sets a flag in blogmeta to indicate that the OpenLab Module Builder plugin is active.
 	 *
 	 * @return void
 	 */

@@ -68,12 +68,12 @@ export default function Edit( { attributes } ) {
 			<div className="sharing-button-container">
 				<button
 					className="clone-module-button clone-module-button-reset"
-				>{ __( 'Clone this Module', 'openlab-modules' ) }</button>
+				>{ __( 'Clone this Module', 'openlab-module-builder' ) }</button>
 			</div>
 
 			{ ! isSharingEnabled && (
 				<p className="sharing-notice">
-					{ __( 'Shared cloning is disabled for this module, so the "Clone this Module" button will not be visible to others when viewing the module. To enable shared cloning go to the "Edit Module" section of the module settings sidebar and click the "Share" button. You can remove this block if you don\'t want to enable shared cloning.', 'openlab-modules' ) }
+					{ __( 'Shared cloning is disabled for this module, so the "Clone this Module" button will not be visible to others when viewing the module. To enable shared cloning go to the "Edit Module" section of the module settings sidebar and click the "Share" button. You can remove this block if you don\'t want to enable shared cloning.', 'openlab-module-builder' ) }
 				</p>
 			) }
 		</div>

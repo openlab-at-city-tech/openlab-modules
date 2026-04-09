@@ -64,14 +64,14 @@ const ModulePageListItem = ( { module, activePopover, togglePopover } ) => {
 									href={module.editUrl}
 									variant="secondary"
 									target="_blank"
-								>{ __( 'Edit Page', 'openlab-modules' ) }</Button>
+								>{ __( 'Edit Page', 'openlab-module-builder' ) }</Button>
 
 								<Button
 									className="module-navigation-link-visit"
 									href={module.url}
 									variant="secondary"
 									target="_blank"
-								>{ __( 'Visit Page', 'openlab-modules' ) }</Button>
+								>{ __( 'Visit Page', 'openlab-module-builder' ) }</Button>
 
 							</div>
 						</div>
@@ -193,8 +193,8 @@ export default function Edit( {
 			isModule: postType && 'openlab_module' === postType,
 			isNewModule: postStatus && 'auto-draft' === postStatus && postType && 'openlab_module' === postType,
 			pageModuleId: thisPageModuleId,
-			rawThisModulePageIds: select( 'openlab-modules' ).getModulePageIds( thisPageModuleId ) || null,
-			rawThisModulePages: select( 'openlab-modules' ).getModulePages( thisPageModuleId ) || null
+			rawThisModulePageIds: select( 'openlab-module-builder' ).getModulePageIds( thisPageModuleId ) || null,
+			rawThisModulePages: select( 'openlab-module-builder' ).getModulePages( thisPageModuleId ) || null
 		}
 	}, [ moduleId ] )
 
@@ -245,11 +245,11 @@ export default function Edit( {
 
 				case 'trash' :
 					// translators: %s: module title
-					return sprintf( __( '%s (Trash)', 'openlab-modules' ), title )
+					return sprintf( __( '%s (Trash)', 'openlab-module-builder' ), title )
 
 				case 'draft' :
 					// translators: %s: module title
-					return sprintf( __( '%s (Draft)', 'openlab-modules' ), title )
+					return sprintf( __( '%s (Draft)', 'openlab-module-builder' ), title )
 			}
 	}
 
@@ -272,7 +272,7 @@ export default function Edit( {
 
 	moduleOptions.unshift(
 		{
-			label: __( '- Select Module -', 'openlab-modules' ),
+			label: __( '- Select Module -', 'openlab-module-builder' ),
 			value: '',
 		}
 	)
@@ -323,18 +323,18 @@ export default function Edit( {
 
 					case 'trash' :
 						return (
-							<span className="module-page-status module-page-status-trash">{ __( 'This page is in the trash and will not appear on the frontend.', 'openlab-modules' ) }</span>
+							<span className="module-page-status module-page-status-trash">{ __( 'This page is in the trash and will not appear on the frontend.', 'openlab-module-builder' ) }</span>
 						)
 
 					case 'draft' :
 						return (
-							<span className="module-page-status module-page-status-draft">{ __( 'This page is in draft status and will not appear on the frontend.', 'openlab-modules' ) }</span>
+							<span className="module-page-status module-page-status-draft">{ __( 'This page is in draft status and will not appear on the frontend.', 'openlab-module-builder' ) }</span>
 						)
 
 					default :
 						const elClassName = 'module-page-status module-page-status-' + postStatus
 						return (
-							<span className={ elClassName }>{ __( 'Draft', 'openlab-modules' ) }</span>
+							<span className={ elClassName }>{ __( 'Draft', 'openlab-module-builder' ) }</span>
 						)
 				}
 			}
@@ -372,11 +372,11 @@ export default function Edit( {
 		<>
 			<InspectorControls>
 				<Panel>
-					<PanelBody title={ __( 'Settings', 'openlab-modules' ) }>
+					<PanelBody title={ __( 'Settings', 'openlab-module-builder' ) }>
 						<PanelRow>
 							<SelectControl
-								help={ __( 'Select the module to display in the TOC.', 'openlab-modules' ) }
-								label={ __( 'Module', 'openlab-modules' ) }
+								help={ __( 'Select the module to display in the TOC.', 'openlab-module-builder' ) }
+								label={ __( 'Module', 'openlab-module-builder' ) }
 								onChange={ ( newModuleId ) => setAttributes( { moduleId: parseInt( newModuleId, 10 ) } ) }
 								options={ moduleOptions }
 								value={ selectedModuleId.toString() }
@@ -385,8 +385,8 @@ export default function Edit( {
 
 						<PanelRow>
 							<CheckboxControl
-								label={ __( 'Module Description', 'openlab-modules' ) }
-								help={ __( 'Include the Module Description in the TOC. This can be edited on the Module Settings.', 'openlab-modules' ) }
+								label={ __( 'Module Description', 'openlab-module-builder' ) }
+								help={ __( 'Include the Module Description in the TOC. This can be edited on the Module Settings.', 'openlab-module-builder' ) }
 								checked={ showModuleDescription }
 								onChange={ ( newShowModuleDescription ) => setAttributes( { showModuleDescription: newShowModuleDescription } ) }
 							/>
@@ -394,12 +394,12 @@ export default function Edit( {
 
 						<PanelRow>
 							<SelectControl
-								label={ __( 'List Style', 'openlab-modules' ) }
-								help={ __( 'Choose between an unordered or ordered list.', 'openlab-modules' ) }
+								label={ __( 'List Style', 'openlab-module-builder' ) }
+								help={ __( 'Choose between an unordered or ordered list.', 'openlab-module-builder' ) }
 								value={ listStyle }
 								options={ [
-									{ label: __( 'Unordered List', 'openlab-modules' ), value: 'unordered' },
-									{ label: __( 'Ordered List', 'openlab-modules' ), value: 'ordered' }
+									{ label: __( 'Unordered List', 'openlab-module-builder' ), value: 'unordered' },
+									{ label: __( 'Ordered List', 'openlab-module-builder' ), value: 'ordered' }
 								] }
 								onChange={ ( newListStyle ) => setAttributes( { listStyle: newListStyle } ) }
 							/>
@@ -451,11 +451,11 @@ export default function Edit( {
 							<button
 								className="add-a-page-link"
 								onClick={onAddClick}
-							>{ __( 'Add Page to Module (in the module settings panel)', 'openlab-modules' ) }
+							>{ __( 'Add Page to Module (in the module settings panel)', 'openlab-module-builder' ) }
 							</button>
 						</p>
 
-						<p className="openlab-modules-gloss">{ __( 'This Table of Contents (TOC) is dynamically generated based on the pages belonging to the module.', 'openlab-modules' ) }</p>
+						<p className="openlab-modules-gloss">{ __( 'This Table of Contents (TOC) is dynamically generated based on the pages belonging to the module.', 'openlab-module-builder' ) }</p>
 					</>
 				) }
 			</div>

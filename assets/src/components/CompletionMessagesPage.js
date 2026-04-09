@@ -42,15 +42,15 @@ export default function CompletionMessagesModule( {} ) {
 			<PluginDocumentSettingPanel
 				className="openlab-module-completion-messages"
 				name="openlab-module-completion-messages"
-				title={ __( 'Completion Messages', 'openlab-modules' ) }
+				title={ __( 'Completion Messages', 'openlab-module-builder' ) }
 				>
 
 				<PanelRow>
-					<p>{ __( 'Completion message settings can be configured for the entire module when editing the Module Home.', 'openlab-modules' ) }</p>
+					<p>{ __( 'Completion message settings can be configured for the entire module when editing the Module Home.', 'openlab-module-builder' ) }</p>
 				</PanelRow>
 
 				<CheckboxControl
-					label={ __( 'Show completion message popup when activities for this page are completed', 'openlab-modules' ) }
+					label={ __( 'Show completion message popup when activities for this page are completed', 'openlab-module-builder' ) }
 					checked={ showCompletionPopup }
 					onChange={ ( newValue ) => {
 						editPost( { showCompletionPopup: newValue } )
@@ -59,14 +59,14 @@ export default function CompletionMessagesModule( {} ) {
 
 				<TextareaControl
 					disabled={ ! showCompletionPopup }
-					label={ __( 'Popup Text', 'openlab-modules' ) }
+					label={ __( 'Popup Text', 'openlab-module-builder' ) }
 					value={ completionPopupText }
 					onChange={ ( newValue ) => {
 						editPost( { completionPopupText: newValue } )
 					} } />
 
 				<CheckboxControl
-					label={ __( 'Send completion email when activities for this page are completed', 'openlab-modules' ) }
+					label={ __( 'Send completion email when activities for this page are completed', 'openlab-module-builder' ) }
 					checked={ sendCompletionEmail }
 					onChange={ ( newValue ) => {
 						editPost( { sendCompletionEmail: newValue } )
@@ -74,7 +74,7 @@ export default function CompletionMessagesModule( {} ) {
 
 				<CheckboxControl
 					disabled={ ! sendCompletionEmail }
-					label={ __( 'Include popup text in the email', 'openlab-modules' ) }
+					label={ __( 'Include popup text in the email', 'openlab-module-builder' ) }
 					checked={ includePopupTextInCompletionEmail }
 					onChange={ ( newValue ) => {
 						editPost( { includePopupTextInCompletionEmail: newValue } )

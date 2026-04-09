@@ -15,9 +15,9 @@
         "default": ""
       }
     },
-    "textdomain": "openlab-modules",
+    "textdomain": "openlab-module-builder",
     "editorScript": {
-      "handle": "openlab-modules-sharing-editor-script",
+      "handle": "openlab-module-builder-sharing-editor-script",
       "path": "index.js",
       "module": true
     },

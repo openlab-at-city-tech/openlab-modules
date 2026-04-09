@@ -2,7 +2,7 @@
 /**
  * Decompressor class.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 namespace OpenLab\Modules\Import;

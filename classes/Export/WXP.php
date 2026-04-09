@@ -2,7 +2,7 @@
 /**
  * Generates the WXR export file.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 namespace OpenLab\Modules\Export;

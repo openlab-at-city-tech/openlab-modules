@@ -13,8 +13,8 @@ const ackIcon = (
 )
 
 registerBlockType( 'openlab-modules/module-acknowledgements', {
-	title: __( 'Module Acknowledgements', 'openlab-modules' ),
-	description: __( 'Add text in the acknowledgements section of the module settings panel to create reusable text that can be used in the Module Acknowledgements block.', 'openlab-modules' ),
+	title: __( 'Module Acknowledgements', 'openlab-module-builder' ),
+	description: __( 'Add text in the acknowledgements section of the module settings panel to create reusable text that can be used in the Module Acknowledgements block.', 'openlab-module-builder' ),
 	icon: ackIcon,
 	attributes: {
 		hasContent: {
@@ -22,7 +22,7 @@ registerBlockType( 'openlab-modules/module-acknowledgements', {
 			default: true,
 		},
 	},
-	category: 'openlab-modules',
+	category: 'openlab-module-builder',
 	supports: {
 		html: false,
 	},
@@ -42,7 +42,7 @@ registerBlockType( 'openlab-modules/module-acknowledgements', {
 			[
 				'core/details',
 				{
-					summary: __( 'Module Acknowledgements', 'openlab-modules' ),
+					summary: __( 'Module Acknowledgements', 'openlab-module-builder' ),
 				},
 				[
 					[

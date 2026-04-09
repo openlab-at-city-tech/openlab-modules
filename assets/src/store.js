@@ -7,7 +7,7 @@ const DEFAULT_STATE = {
 	pageModulesByPageId: {}
 }
 
-const STORE_NAME = 'openlab-modules'
+const STORE_NAME = 'openlab-module-builder'
 
 const actions = {
 	fetchFromAPI( path ) {

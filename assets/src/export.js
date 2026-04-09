@@ -16,7 +16,7 @@
 
 		return sprintf(
 			// Translators: %1$s is a URL, %2$s is a module name, %3$s is an author name.
-			__( 'This module is based on <a href="%1$s">%2$s</a> by %3$s.', 'openlab-modules' ),
+			__( 'This module is based on <a href="%1$s">%2$s</a> by %3$s.', 'openlab-module-builder' ),
 			module.url,
 			module.title,
 			module.author_name

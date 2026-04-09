@@ -2,7 +2,7 @@
 /**
  * Integration for h5p.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 namespace OpenLab\Modules\Integrations;
@@ -63,8 +63,8 @@ class H5P {
 		$blocks_asset_file = Editor::get_blocks_asset_file( 'h5p' );
 
 		wp_enqueue_script(
-			'openlab-modules-h5p',
-			OPENLAB_MODULES_PLUGIN_URL . '/build/h5p.js',
+			'openlab-module-builder-h5p',
+			OPENLAB_MODULE_BUILDER_PLUGIN_URL . '/build/h5p.js',
 			[],
 			$blocks_asset_file['version'],
 			true
@@ -104,7 +104,7 @@ class H5P {
 			return $plugin_requirements;
 		}
 
-		$plugin_requirements['h5p/h5p.php'] = __( 'H5P', 'openlab-modules' );
+		$plugin_requirements['h5p/h5p.php'] = __( 'H5P', 'openlab-module-builder' );
 
 		return $plugin_requirements;
 	}

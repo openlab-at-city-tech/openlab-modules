@@ -2,7 +2,7 @@
 /**
  * Template for module-navigation block.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -26,7 +26,7 @@ $openlab_modules_module_post_status = get_post_status( $openlab_modules_module_i
 
 $openlab_modules_module_page_ids = $openlab_modules_module->get_page_ids( 'publish' );
 
-wp_enqueue_style( 'openlab-modules-frontend' );
+wp_enqueue_style( 'openlab-module-builder-frontend' );
 
 ?>
 
@@ -34,14 +34,14 @@ wp_enqueue_style( 'openlab-modules-frontend' );
 	<?php /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */ ?>
 	<div <?php echo get_block_wrapper_attributes(); ?>>
 		<?php if ( 'publish' !== $openlab_modules_module_post_status ) : ?>
-			<p><strong><?php esc_html_e( 'The module associated with this navigation block is not published, and the navigation will not be visible to normal users.', 'openlab-modules' ); ?></strong></p>
+			<p><strong><?php esc_html_e( 'The module associated with this navigation block is not published, and the navigation will not be visible to normal users.', 'openlab-module-builder' ); ?></strong></p>
 		<?php endif; ?>
 
 		<h2 class="openlab-modules-module-navigation-heading">
 			<?php
 			printf(
 				// translators: Module link or title.
-				esc_html__( 'MODULE: %s', 'openlab-modules' ),
+				esc_html__( 'MODULE: %s', 'openlab-module-builder' ),
 				sprintf(
 					'<a href="%s">%s</a>',
 					esc_url( $openlab_modules_module->get_url() ),

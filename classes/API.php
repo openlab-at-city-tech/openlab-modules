@@ -2,7 +2,7 @@
 /**
  * Handles API registration.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 namespace OpenLab\Modules;

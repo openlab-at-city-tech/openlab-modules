@@ -2,7 +2,7 @@
 /**
  * Definition of clone-module endpoint.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 namespace OpenLab\Modules\Endpoints;
@@ -66,7 +66,7 @@ class CloneModule extends WP_REST_Controller {
 		$destination_site_id = $this->sanitize_integer( $request->get_param( 'destinationSiteId' ) );
 
 		if ( ! $destination_site_id ) {
-			return new WP_Error( 'missing_destination_site_id', __( 'Destination site ID is required.', 'openlab-modules' ), [ 'status' => 400 ] );
+			return new WP_Error( 'missing_destination_site_id', __( 'Destination site ID is required.', 'openlab-module-builder' ), [ 'status' => 400 ] );
 		}
 
 		// Verify that sharing is enabled for the module.
@@ -74,14 +74,14 @@ class CloneModule extends WP_REST_Controller {
 
 		$module = Module::get_instance( $module_id );
 		if ( ! $module ) {
-			return new WP_Error( 'module_not_found', __( 'Module not found.', 'openlab-modules' ), [ 'status' => 404 ] );
+			return new WP_Error( 'module_not_found', __( 'Module not found.', 'openlab-module-builder' ), [ 'status' => 404 ] );
 		}
 
 		$module_post        = get_post( $module_id );
 		$is_my_module       = $module_post instanceof WP_Post && get_current_user_id() === (int) $module_post->post_author;
 		$is_sharing_enabled = $module->is_sharing_enabled();
 		if ( ! $is_my_module && ! $is_sharing_enabled ) {
-			return new WP_Error( 'module_not_shared', __( 'Module is not shared.', 'openlab-modules' ), [ 'status' => 400 ] );
+			return new WP_Error( 'module_not_shared', __( 'Module is not shared.', 'openlab-module-builder' ), [ 'status' => 400 ] );
 		}
 
 		$error = null;
@@ -90,12 +90,12 @@ class CloneModule extends WP_REST_Controller {
 
 		// @todo This should reference the cap for the post type.
 		if ( ! current_user_can( 'edit_posts' ) ) {
-			$error = new WP_Error( 'rest_forbidden', __( 'You do not have permission to create a module on this site.', 'openlab-modules' ), [ 'status' => 403 ] );
+			$error = new WP_Error( 'rest_forbidden', __( 'You do not have permission to create a module on this site.', 'openlab-module-builder' ), [ 'status' => 403 ] );
 		}
 
 		$active_plugins = (array) get_option( 'active_plugins' );
-		if ( ! in_array( 'openlab-modules/openlab-modules.php', $active_plugins, true ) ) {
-			$error = new WP_Error( 'rest_forbidden', __( 'OpenLab Modules must be active on the destination site.', 'openlab-modules' ), [ 'status' => 403 ] );
+		if ( ! in_array( 'openlab-module-builder/openlab-module-builder.php', $active_plugins, true ) ) {
+			$error = new WP_Error( 'rest_forbidden', __( 'OpenLab Module Builder must be active on the destination site.', 'openlab-module-builder' ), [ 'status' => 403 ] );
 		}
 
 		restore_current_blog();
@@ -169,7 +169,7 @@ class CloneModule extends WP_REST_Controller {
 	public function validate_integer( $value, $request, $param ) {
 		if ( ! is_numeric( $value ) ) {
 			// translators: 1: parameter name, 2: expected type.
-			return new WP_Error( 'rest_invalid_param', sprintf( __( '%1$s is not of type %2$s', 'openlab-modules' ), $param, 'integer' ) );
+			return new WP_Error( 'rest_invalid_param', sprintf( __( '%1$s is not of type %2$s', 'openlab-module-builder' ), $param, 'integer' ) );
 		}
 
 		return true;

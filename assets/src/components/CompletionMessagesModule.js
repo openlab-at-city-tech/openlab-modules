@@ -48,7 +48,7 @@ export default function CompletionMessagesModule( {} ) {
 			setGeneratedSubject(
 				sprintf(
 					// translators: %s is the title of the module.
-					__( 'Well done! You have completed a section of the module: %s', 'openlab-modules' ),
+					__( 'Well done! You have completed a section of the module: %s', 'openlab-module-builder' ),
 					postTitle
 				)
 			)
@@ -57,7 +57,7 @@ export default function CompletionMessagesModule( {} ) {
 		if ( ! bodyFormatDirty && ! completionMessageBodyFormat ) {
 			setGeneratedBodyFormat(
 				// eslint-disable-next-line
-				__( 'Hi {{display_name}},\n\nYou have completed the following:\n\nModule: {{module_title}} {{module_url}}\nSection: {{section_title}} {{section_url}}\n\nWell done!', 'openlab-modules' ),
+				__( 'Hi {{display_name}},\n\nYou have completed the following:\n\nModule: {{module_title}} {{module_url}}\nSection: {{section_title}} {{section_url}}\n\nWell done!', 'openlab-module-builder' ),
 			)
 		}
 	}, [ postTitle, completionMessageSubject, subjectDirty, completionMessageBodyFormat, bodyFormatDirty ] )
@@ -66,48 +66,48 @@ export default function CompletionMessagesModule( {} ) {
 		return null
 	}
 
-	const defaultPopupText = __( 'You have completed the activities on this page. You will receive an email confirming your completion.', 'openlab-modules' )
+	const defaultPopupText = __( 'You have completed the activities on this page. You will receive an email confirming your completion.', 'openlab-module-builder' )
 
 	return (
 		<>
 			<PluginDocumentSettingPanel
 				className="openlab-module-email-completion-message"
 				name="openlab-module-email-completion-message"
-				title={ __( 'Email Completion Message', 'openlab-modules' ) }
+				title={ __( 'Email Completion Message', 'openlab-module-builder' ) }
 				>
 
 				<PanelRow>
-					<p>{ __( 'Configure the email sent to users when they complete the interactive elements in a module section.', 'openlab-modules' ) }</p>
+					<p>{ __( 'Configure the email sent to users when they complete the interactive elements in a module section.', 'openlab-module-builder' ) }</p>
 				</PanelRow>
 
 				<TextareaControl
-					label={ __( 'CC', 'openlab-modules' ) }
-					help={ __( 'Enter any addresses to be copied on the email, separated by commas.', 'openlab-modules' ) }
+					label={ __( 'CC', 'openlab-module-builder' ) }
+					help={ __( 'Enter any addresses to be copied on the email, separated by commas.', 'openlab-module-builder' ) }
 					value={ completionMessageCcString }
 					onChange={ ( value ) => {
 						wp.data.dispatch( 'core/editor' ).editPost( { completionMessageCcString: value } )
 					} }
-					placeholder={ __( 'Enter email addresses', 'openlab-modules' ) }
+					placeholder={ __( 'Enter email addresses', 'openlab-module-builder' ) }
 					/>
 
 				<TextareaControl
-					label={ __( 'Email subject', 'openlab-modules' ) }
+					label={ __( 'Email subject', 'openlab-module-builder' ) }
 					value={ subjectDirty || completionMessageSubject ? completionMessageSubject : generatedSubject }
 					onChange={ ( value ) => {
 						setSubjectDirty( true )
 						editPost( { completionMessageSubject: value } )
 					} }
-					placeholder={ __( 'Enter email subject', 'openlab-modules' ) }
+					placeholder={ __( 'Enter email subject', 'openlab-module-builder' ) }
 					/>
 
 				<TextareaControl
-					label={ __( 'Email text', 'openlab-modules' ) }
+					label={ __( 'Email text', 'openlab-module-builder' ) }
 					value={ bodyFormatDirty || completionMessageBodyFormat ? completionMessageBodyFormat : generatedBodyFormat }
 					onChange={ ( value ) => {
 						setBodyFormatDirty( true )
 						editPost( { completionMessageBodyFormat: value } )
 					} }
-					help={ __( 'Use the following tokens for dynamic values: {{display_name}}, {{module_title}}, {{module_url}}, {{section_title}}, {{section_url}}', 'openlab-modules' ) }
+					help={ __( 'Use the following tokens for dynamic values: {{display_name}}, {{module_title}}, {{module_url}}, {{section_title}}, {{section_url}}', 'openlab-module-builder' ) }
 					/>
 
 			</PluginDocumentSettingPanel>
@@ -115,21 +115,21 @@ export default function CompletionMessagesModule( {} ) {
 			<PluginDocumentSettingPanel
 				className="openlab-module-popup-completion-message"
 				name="openlab-module-popup-completion-message"
-				title={ __( 'Popup Completion Message', 'openlab-modules' ) }
+				title={ __( 'Popup Completion Message', 'openlab-module-builder' ) }
 				>
 
 				<PanelRow>
-					<p>{ __( 'Edit the popup message users will see when the interactive activities in a module section are completed. The default popup text below can also be customized on individual pages.', 'openlab-modules' ) }</p>
+					<p>{ __( 'Edit the popup message users will see when the interactive activities in a module section are completed. The default popup text below can also be customized on individual pages.', 'openlab-module-builder' ) }</p>
 				</PanelRow>
 
 				<TextareaControl
-					label={ __( 'Default popup text', 'openlab-modules' ) }
+					label={ __( 'Default popup text', 'openlab-module-builder' ) }
 					value={ popupTextDirty || completionPopupText ? completionPopupText : defaultPopupText }
 					onChange={ ( value ) => {
 						setPopupTextDirty( true )
 						editPost( { completionPopupText: value } )
 					} }
-					placeholder={ __( 'Enter popup text', 'openlab-modules' ) }
+					placeholder={ __( 'Enter popup text', 'openlab-module-builder' ) }
 					/>
 			</PluginDocumentSettingPanel>
 		</>

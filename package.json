@@ -1,5 +1,5 @@
 {
-	"name": "openlab-modules",
+	"name": "openlab-module-builder",
 	"version": "1.0.0-alpha",
 	"devDependencies": {
 		"@babel/preset-env": "^7.22.4",

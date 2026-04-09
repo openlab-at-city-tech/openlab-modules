@@ -2,7 +2,7 @@
 /**
  * Cloner.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 namespace OpenLab\Modules;
@@ -21,7 +21,7 @@ class Cloner {
 		$module = Module::get_instance( $module_id );
 
 		if ( ! $module ) {
-			return new \WP_Error( 'module_not_found', __( 'Module not found.', 'openlab-modules' ), [ 'status' => 404 ] );
+			return new \WP_Error( 'module_not_found', __( 'Module not found.', 'openlab-module-builder' ), [ 'status' => 404 ] );
 		}
 
 		return $module->get_module_data();
@@ -41,7 +41,7 @@ class Cloner {
 		// Create the module first, so we have the new module ID.
 		$module_post_data = [
 			// translators: %s is the module title.
-			'post_title'   => sprintf( __( 'Clone of %s', 'openlab-modules' ), $module_data->get_title() ),
+			'post_title'   => sprintf( __( 'Clone of %s', 'openlab-module-builder' ), $module_data->get_title() ),
 			'post_content' => $module_data->get_content(),
 			'post_name'    => $module_data->get_slug(),
 			'post_status'  => 'draft',
@@ -61,7 +61,7 @@ class Cloner {
 
 		$module_post = get_post( $module_id );
 		if ( ! $module_post ) {
-			return new \WP_Error( 'module_not_found', __( 'Module not found.', 'openlab-modules' ), [ 'status' => 404 ] );
+			return new \WP_Error( 'module_not_found', __( 'Module not found.', 'openlab-module-builder' ), [ 'status' => 404 ] );
 		}
 
 		$attribution_data = $module_data->get_attribution();
@@ -69,7 +69,7 @@ class Cloner {
 
 		$module = Module::get_instance( $module_id );
 		if ( ! $module ) {
-			return new \WP_Error( 'module_not_found', __( 'Module not found.', 'openlab-modules' ), [ 'status' => 404 ] );
+			return new \WP_Error( 'module_not_found', __( 'Module not found.', 'openlab-module-builder' ), [ 'status' => 404 ] );
 		}
 
 		// Create the pages.

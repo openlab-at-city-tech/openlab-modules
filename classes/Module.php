@@ -2,7 +2,7 @@
 /**
  * Module functionality.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 namespace OpenLab\Modules;
@@ -314,7 +314,7 @@ class Module {
 		}
 
 		if ( empty( $nav_title ) ) {
-			$nav_title = __( 'Module Home', 'openlab-modules' );
+			$nav_title = __( 'Module Home', 'openlab-module-builder' );
 		}
 
 		return $nav_title;
@@ -378,7 +378,7 @@ class Module {
 
 		$attribution_data['text'] = sprintf(
 			// translators: 1. Link to source module, 2. Link to source module author.
-			__( '<span class="openlab-module-attribution-prefix">Attribution:</span> This module is based on %1$s by %2$s.', 'openlab-modules' ),
+			__( '<span class="openlab-module-attribution-prefix">Attribution:</span> This module is based on %1$s by %2$s.', 'openlab-module-builder' ),
 			'<a href="' . $attribution_data['post_url'] . '">' . $attribution_data['post_title'] . '</a>',
 			'<a href="' . $attribution_data['user_url'] . '">' . $attribution_data['user_name'] . '</a>'
 		);
@@ -439,7 +439,7 @@ class Module {
 
 		return sprintf(
 			// translators: 1. Link to source module, 2. Link to source module author.
-			__( 'This module is based on %1$s by %2$s.', 'openlab-modules' ),
+			__( 'This module is based on %1$s by %2$s.', 'openlab-module-builder' ),
 			'<a href="' . esc_url( $attribution_data['post_url'] ) . '">' . esc_html( $attribution_data['post_title'] ) . '</a>',
 			'<a href="' . esc_url( $attribution_data['user_url'] ) . '">' . esc_html( $attribution_data['user_name'] ) . '</a>'
 		);
@@ -567,7 +567,7 @@ Module: {{module_title}} {{module_url}}
 Section: {{section_title}} {{section_url}}
 
 Well done!',
-				'openlab-modules'
+				'openlab-module-builder'
 			);
 		}
 

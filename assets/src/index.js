@@ -50,7 +50,7 @@ const OpenlabModulesRegisterPlugins = () => {
 };
 
 // Register the component as a plugin
-registerPlugin( 'openlab-modules', {
+registerPlugin( 'openlab-module-builder', {
   render: OpenlabModulesRegisterPlugins,
   icon: 'users',
 } );

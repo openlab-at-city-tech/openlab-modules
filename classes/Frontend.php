@@ -2,7 +2,7 @@
 /**
  * Handles frontend integration.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 namespace OpenLab\Modules;
@@ -61,8 +61,8 @@ class Frontend {
 		$blocks_asset_file = Editor::get_blocks_asset_file();
 
 		wp_register_script(
-			'openlab-modules-frontend',
-			OPENLAB_MODULES_PLUGIN_URL . '/build/frontend.js',
+			'openlab-module-builder-frontend',
+			OPENLAB_MODULE_BUILDER_PLUGIN_URL . '/build/frontend.js',
 			[ 'wp-api-fetch', 'wp-element', 'wp-i18n' ],
 			$blocks_asset_file['version'],
 			true
@@ -89,26 +89,26 @@ class Frontend {
 		}
 
 		wp_localize_script(
-			'openlab-modules-frontend',
+			'openlab-module-builder-frontend',
 			'openlabModulesStrings',
 			[
-				'continueWithout'   => __( 'Continue without logging in', 'openlab-modules' ),
-				'dismiss'           => __( 'Dismiss', 'openlab-modules' ),
-				'logIn'             => __( 'Log In', 'openlab-modules' ),
+				'continueWithout'   => __( 'Continue without logging in', 'openlab-module-builder' ),
+				'dismiss'           => __( 'Dismiss', 'openlab-module-builder' ),
+				'logIn'             => __( 'Log In', 'openlab-module-builder' ),
 				'sectionComplete'   => $section_complete_message,
-				'toReceiveCredit'   => __( 'To receive an official confirmation when you complete this page, please sign in now.', 'openlab-modules' ),
-				'youAreNotLoggedIn' => __( 'You are not logged in.', 'openlab-modules' ),
+				'toReceiveCredit'   => __( 'To receive an official confirmation when you complete this page, please sign in now.', 'openlab-module-builder' ),
+				'youAreNotLoggedIn' => __( 'You are not logged in.', 'openlab-module-builder' ),
 			]
 		);
 
 		wp_add_inline_script(
-			'openlab-modules-frontend',
+			'openlab-module-builder-frontend',
 			'const openlabModules = ' . wp_json_encode(
 				[
 					'ajaxUrl'             => admin_url( 'admin-ajax.php' ),
 					'isUserLoggedIn'      => is_user_logged_in(),
 					'loginUrl'            => wp_login_url( (string) $current_page_permalink ),
-					'nonce'               => wp_create_nonce( 'openlab-modules' ),
+					'nonce'               => wp_create_nonce( 'openlab-module-builder' ),
 					'postId'              => get_queried_object_id(),
 					'showCompletionPopup' => $show_completion_popup,
 				]
@@ -117,8 +117,8 @@ class Frontend {
 		);
 
 		wp_register_style(
-			'openlab-modules-frontend',
-			OPENLAB_MODULES_PLUGIN_URL . '/build/frontend.css',
+			'openlab-module-builder-frontend',
+			OPENLAB_MODULE_BUILDER_PLUGIN_URL . '/build/frontend.css',
 			[],
 			$blocks_asset_file['version']
 		);
@@ -135,8 +135,8 @@ class Frontend {
 	 */
 	public function enqueue_assets() {
 		if ( self::get_module_id_for_post() ) {
-			wp_enqueue_script( 'openlab-modules-frontend' );
-			wp_enqueue_style( 'openlab-modules-frontend' );
+			wp_enqueue_script( 'openlab-module-builder-frontend' );
+			wp_enqueue_style( 'openlab-module-builder-frontend' );
 		}
 	}
 
@@ -222,7 +222,7 @@ class Frontend {
 			$prev_el = sprintf(
 				'<div class="module-pagination-link"><a href="%s">%s</a></div><div class="module-pagination-title">%s</div>',
 				esc_url( $links['prev']['url'] ),
-				__( '← Previous', 'openlab-modules' ),
+				__( '← Previous', 'openlab-module-builder' ),
 				esc_html( $links['prev']['title'] )
 			);
 		}
@@ -232,7 +232,7 @@ class Frontend {
 			$next_el = sprintf(
 				'<div class="module-pagination-link"><a href="%s">%s</a></div><div class="module-pagination-title">%s</div>',
 				esc_url( $links['next']['url'] ),
-				__( 'Next →', 'openlab-modules' ),
+				__( 'Next →', 'openlab-module-builder' ),
 				esc_html( $links['next']['title'] )
 			);
 		}
@@ -249,7 +249,7 @@ class Frontend {
 			$next_el
 		);
 
-		wp_enqueue_style( 'openlab-modules-frontend' );
+		wp_enqueue_style( 'openlab-module-builder-frontend' );
 
 		return $content . $pagination;
 	}
@@ -262,17 +262,17 @@ class Frontend {
 	public static function ajax_mark_module_section_complete() {
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$nonce = isset( $_POST['nonce'] ) ? wp_unslash( $_POST['nonce'] ) : '';
-		if ( ! $nonce || ! is_string( $nonce ) || ! wp_verify_nonce( sanitize_text_field( $nonce ), 'openlab-modules' ) ) {
-			wp_send_json_error( [ 'message' => __( 'Invalid nonce.', 'openlab-modules' ) ] );
+		if ( ! $nonce || ! is_string( $nonce ) || ! wp_verify_nonce( sanitize_text_field( $nonce ), 'openlab-module-builder' ) ) {
+			wp_send_json_error( [ 'message' => __( 'Invalid nonce.', 'openlab-module-builder' ) ] );
 		}
 
 		if ( ! isset( $_POST['postId'] ) ) {
-			wp_send_json_error( [ 'message' => __( 'No post ID available', 'openlab-modules' ) ] );
+			wp_send_json_error( [ 'message' => __( 'No post ID available', 'openlab-module-builder' ) ] );
 		}
 
 		$post_id = is_numeric( $_POST['postId'] ) ? intval( $_POST['postId'] ) : 0;
 		if ( ! $post_id ) {
-			wp_send_json_error( [ 'message' => __( 'Invalid post ID.', 'openlab-modules' ) ] );
+			wp_send_json_error( [ 'message' => __( 'Invalid post ID.', 'openlab-module-builder' ) ] );
 		}
 
 		$post = get_post( $post_id );
@@ -307,7 +307,7 @@ class Frontend {
 			if ( ! $email_subject ) {
 				$email_subject = sprintf(
 					// translators: %s is the title of the module.
-					__( 'Well done! You have completed a section of the module: %s', 'openlab-modules' ),
+					__( 'Well done! You have completed a section of the module: %s', 'openlab-module-builder' ),
 					$module->get_title()
 				);
 			}
@@ -392,22 +392,22 @@ class Frontend {
 		$post = get_post( $post_id );
 
 		// translators: 1. Module title, 2. Module URL.
-		$module_infos = '<p>' . esc_html( sprintf( __( 'Module: %1$s %2$s', 'openlab-modules' ), get_the_title( $module_id ), get_permalink( $module_id ) ) ) . '</p>';
+		$module_infos = '<p>' . esc_html( sprintf( __( 'Module: %1$s %2$s', 'openlab-module-builder' ), get_the_title( $module_id ), get_permalink( $module_id ) ) ) . '</p>';
 
 		if ( $post_id === $module_id ) {
 			// translators: 1. section title, 2. section URL.
-			$module_infos .= '<p>' . esc_html( sprintf( __( 'Section: %1$s %2$s', 'openlab-modules' ), get_the_title( $post_id ), get_permalink( $post_id ) ) ) . '</p>';
+			$module_infos .= '<p>' . esc_html( sprintf( __( 'Section: %1$s %2$s', 'openlab-module-builder' ), get_the_title( $post_id ), get_permalink( $post_id ) ) ) . '</p>';
 		}
 
 		$message_content = sprintf(
 			'<p>%s</p><p>%s</p>',
-			esc_html__( 'You have completed a module section.', 'openlab-modules' ),
+			esc_html__( 'You have completed a module section.', 'openlab-module-builder' ),
 			$module_infos
 		);
 
 		$message_subject = sprintf(
 			// translators: 1. Module title.
-			__( 'Well done! You have completed a section of the module: %s', 'openlab-modules' ),
+			__( 'Well done! You have completed a section of the module: %s', 'openlab-module-builder' ),
 			get_the_title( $module_id )
 		);
 

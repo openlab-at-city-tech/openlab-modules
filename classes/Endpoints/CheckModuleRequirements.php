@@ -2,7 +2,7 @@
 /**
  * Definition of check-module-requirements endpoint.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 namespace OpenLab\Modules\Endpoints;
@@ -59,7 +59,7 @@ class CheckModuleRequirements extends WP_REST_Controller {
 		$destination_site_id = $this->sanitize_integer( $request->get_param( 'destinationSiteId' ) );
 
 		if ( ! $destination_site_id ) {
-			return new WP_Error( 'missing_destination_site_id', __( 'Destination site ID is required.', 'openlab-modules' ), [ 'status' => 400 ] );
+			return new WP_Error( 'missing_destination_site_id', __( 'Destination site ID is required.', 'openlab-module-builder' ), [ 'status' => 400 ] );
 		}
 
 		$error = null;
@@ -67,7 +67,7 @@ class CheckModuleRequirements extends WP_REST_Controller {
 		switch_to_blog( $destination_site_id );
 
 		if ( ! current_user_can( 'activate_plugins' ) ) {
-			$error = new WP_Error( 'rest_forbidden', __( 'Sorry, you are not allowed to manage plugins on this site.', 'openlab-modules' ), [ 'status' => 403 ] );
+			$error = new WP_Error( 'rest_forbidden', __( 'Sorry, you are not allowed to manage plugins on this site.', 'openlab-module-builder' ), [ 'status' => 403 ] );
 		}
 
 		restore_current_blog();
@@ -91,7 +91,7 @@ class CheckModuleRequirements extends WP_REST_Controller {
 
 		$module = Module::get_instance( $module_id );
 		if ( ! $module ) {
-			return new WP_Error( 'module_not_found', __( 'Module not found.', 'openlab-modules' ), [ 'status' => 404 ] );
+			return new WP_Error( 'module_not_found', __( 'Module not found.', 'openlab-module-builder' ), [ 'status' => 404 ] );
 		}
 
 		$module_requirements = $module->get_requirements();
@@ -160,7 +160,7 @@ class CheckModuleRequirements extends WP_REST_Controller {
 	public function validate_integer( $value, $request, $param ) {
 		if ( ! is_numeric( $value ) ) {
 			// translators: 1: parameter name, 2: expected type.
-			return new WP_Error( 'rest_invalid_param', sprintf( __( '%1$s is not of type %2$s', 'openlab-modules' ), $param, 'integer' ) );
+			return new WP_Error( 'rest_invalid_param', sprintf( __( '%1$s is not of type %2$s', 'openlab-module-builder' ), $param, 'integer' ) );
 		}
 
 		return true;

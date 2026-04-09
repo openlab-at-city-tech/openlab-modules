@@ -6,7 +6,7 @@
  *
  * @see https://github.com/humanmade/WordPress-Importer
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 // We intentionally reuse hook names used by the WordPress Importer plugin.
@@ -215,7 +215,7 @@ class Importer {
 		$status = $reader->open( $file );
 
 		if ( ! $status ) {
-			return new WP_Error( 'wxr_importer.cannot_parse', __( 'Could not open the file for parsing', 'openlab-modules' ) );
+			return new WP_Error( 'wxr_importer.cannot_parse', __( 'Could not open the file for parsing', 'openlab-module-builder' ) );
 		}
 
 		return $reader;
@@ -255,7 +255,7 @@ class Importer {
 						$this->logger->warning(
 							sprintf(
 								// translators: %1$s is the WXR version, %2$s is the importer version.
-								__( 'This WXR file (version %1$s) is newer than the importer (version %2$s) and may not be supported. Please consider updating.', 'openlab-modules' ),
+								__( 'This WXR file (version %1$s) is newer than the importer (version %2$s) and may not be supported. Please consider updating.', 'openlab-module-builder' ),
 								$this->version,
 								self::MAX_WXR_VERSION
 							)
@@ -328,7 +328,7 @@ class Importer {
 						$this->logger->warning(
 							sprintf(
 								// translators: %1$s is the WXR version, %2$s is the importer version.
-								__( 'This WXR file (version %1$s) is newer than the importer (version %2$s) and may not be supported. Please consider updating.', 'openlab-modules' ),
+								__( 'This WXR file (version %1$s) is newer than the importer (version %2$s) and may not be supported. Please consider updating.', 'openlab-module-builder' ),
 								$this->version,
 								self::MAX_WXR_VERSION
 							)
@@ -466,7 +466,7 @@ class Importer {
 	 */
 	protected function import_start( $file ) {
 		if ( ! is_file( $file ) ) {
-			return new WP_Error( 'wxr_importer.file_missing', __( 'The file does not exist, please try again.', 'openlab-modules' ) );
+			return new WP_Error( 'wxr_importer.file_missing', __( 'The file does not exist, please try again.', 'openlab-module-builder' ) );
 		}
 
 		// Suspend bunches of stuff in WP core.
@@ -527,7 +527,7 @@ class Importer {
 	public function set_user_mapping( $mapping ) {
 		foreach ( $mapping as $map ) {
 			if ( empty( $map['old_slug'] ) || empty( $map['old_id'] ) || empty( $map['new_id'] ) ) {
-				$this->logger->warning( __( 'Invalid author mapping', 'openlab-modules' ) );
+				$this->logger->warning( __( 'Invalid author mapping', 'openlab-module-builder' ) );
 				// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_var_export
 				$this->logger->debug( var_export( $map, true ) );
 				continue;
@@ -632,7 +632,7 @@ class Importer {
 						// Bail now.
 						return new WP_Error(
 							'wxr_importer.post.cannot_import_draft',
-							__( 'Cannot import auto-draft posts', 'openlab-modules' ),
+							__( 'Cannot import auto-draft posts', 'openlab-module-builder' ),
 							$data
 						);
 					}
@@ -730,7 +730,7 @@ class Importer {
 			$this->logger->warning(
 				sprintf(
 					// translators: %1$s is the post title, %2$s is the post type.
-					__( 'Failed to import "%1$s": Invalid post type %2$s', 'openlab-modules' ),
+					__( 'Failed to import "%1$s": Invalid post type %2$s', 'openlab-module-builder' ),
 					$data['post_title'],
 					$data['post_type']
 				)
@@ -743,7 +743,7 @@ class Importer {
 			$this->logger->info(
 				sprintf(
 					// translators: %1$s is the post type, %2$s is the post title.
-					__( '%1$s "%2$s" already exists.', 'openlab-modules' ),
+					__( '%1$s "%2$s" already exists.', 'openlab-module-builder' ),
 					$post_type_object->labels->singular_name,
 					$data['post_title']
 				)
@@ -833,7 +833,7 @@ class Importer {
 				$this->logger->notice(
 					sprintf(
 						// translators: %s is the attachment title.
-						__( 'Skipping attachment "%s", fetching attachments disabled', 'openlab-modules' ),
+						__( 'Skipping attachment "%s", fetching attachments disabled', 'openlab-module-builder' ),
 						$data['post_title']
 					)
 				);
@@ -857,7 +857,7 @@ class Importer {
 			$this->logger->error(
 				sprintf(
 					// translators: %1$s is the post title, %2$s is the post type.
-					__( 'Failed to import "%1$s" (%2$s)', 'openlab-modules' ),
+					__( 'Failed to import "%1$s" (%2$s)', 'openlab-module-builder' ),
 					$data['post_title'],
 					$post_type_object->labels->singular_name
 				)
@@ -895,7 +895,7 @@ class Importer {
 		$this->logger->info(
 			sprintf(
 				// translators: %1$s is the post title, %2$s is the post type.
-				__( 'Imported "%1$s" (%2$s)', 'openlab-modules' ),
+				__( 'Imported "%1$s" (%2$s)', 'openlab-module-builder' ),
 				$data['post_title'],
 				$post_type_object->labels->singular_name
 			)
@@ -903,7 +903,7 @@ class Importer {
 		$this->logger->debug(
 			sprintf(
 				// translators: %1$d is the original post ID, %2$d is the new post ID.
-				__( 'Post %1$d remapped to %2$d', 'openlab-modules' ),
+				__( 'Post %1$d remapped to %2$d', 'openlab-module-builder' ),
 				$original_id,
 				$post_id
 			)
@@ -993,7 +993,7 @@ class Importer {
 				'import_file_error',
 				sprintf(
 					// translators: %1$d is the HTTP response code, %2$s is the response message, %3$s is the URL.
-					__( 'Remote server returned %1$d %2$s for %3$s', 'openlab-modules' ),
+					__( 'Remote server returned %1$d %2$s for %3$s', 'openlab-module-builder' ),
 					$code,
 					get_status_header_desc( $code ),
 					$url
@@ -1006,12 +1006,12 @@ class Importer {
 
 		if ( isset( $headers['content-length'] ) && $filesize !== (int) $headers['content-length'] ) {
 			wp_delete_file( $upload['file'] );
-			return new WP_Error( 'import_file_error', __( 'Remote file is incorrect size', 'openlab-modules' ) );
+			return new WP_Error( 'import_file_error', __( 'Remote file is incorrect size', 'openlab-module-builder' ) );
 		}
 
 		if ( 0 === $filesize ) {
 			wp_delete_file( $upload['file'] );
-			return new WP_Error( 'import_file_error', __( 'Zero size file downloaded', 'openlab-modules' ) );
+			return new WP_Error( 'import_file_error', __( 'Zero size file downloaded', 'openlab-module-builder' ) );
 		}
 
 		$max_size = (int) $this->max_attachment_size();
@@ -1019,7 +1019,7 @@ class Importer {
 			wp_delete_file( $upload['file'] );
 
 			// translators: %s is the max size.
-			$message = sprintf( __( 'Remote file is too large, limit is %s', 'openlab-modules' ), size_format( $max_size ) );
+			$message = sprintf( __( 'Remote file is too large, limit is %s', 'openlab-module-builder' ), size_format( $max_size ) );
 
 			return new WP_Error( 'import_file_error', $message );
 		}
@@ -1357,7 +1357,7 @@ class Importer {
 			if ( empty( $comment ) ) {
 				$error = new WP_Error(
 					'wxr_importer.comment.cannot_import',
-					__( 'Cannot import comment', 'openlab-modules' ),
+					__( 'Cannot import comment', 'openlab-module-builder' ),
 					$comment
 				);
 
@@ -1436,7 +1436,7 @@ class Importer {
 				$this->logger->error(
 					sprintf(
 						// translators: %1$s is the comment content, %2$s is the post title.
-						__( 'Failed to import comment "%1$s" for post "%2$s"', 'openlab-modules' ),
+						__( 'Failed to import comment "%1$s" for post "%2$s"', 'openlab-module-builder' ),
 						$comment['comment_content'],
 						$post['post_title']
 					)
@@ -1662,7 +1662,7 @@ class Importer {
 			$this->logger->error(
 				sprintf(
 					// translators: %s is the user login.
-					__( 'Failed to import user "%s"', 'openlab-modules' ),
+					__( 'Failed to import user "%s"', 'openlab-module-builder' ),
 					$userdata['user_login']
 				)
 			);
@@ -1686,14 +1686,14 @@ class Importer {
 		$this->logger->info(
 			sprintf(
 				// translators: %s is the user login.
-				__( 'Imported user "%s"', 'openlab-modules' ),
+				__( 'Imported user "%s"', 'openlab-module-builder' ),
 				$userdata['user_login']
 			)
 		);
 		$this->logger->debug(
 			sprintf(
 				// Translators: %1$d is the original user ID, %2$d is the new user ID.
-				__( 'User %1$d remapped to %2$d', 'openlab-modules' ),
+				__( 'User %1$d remapped to %2$d', 'openlab-module-builder' ),
 				$original_id,
 				$user_id
 			)
@@ -1855,7 +1855,7 @@ class Importer {
 			$this->logger->warning(
 				sprintf(
 					// translators: %1$s is the taxonomy name, %2$s is the term name.
-					__( 'Failed to import %1$s %2$s', 'openlab-modules' ),
+					__( 'Failed to import %1$s %2$s', 'openlab-module-builder' ),
 					$data['taxonomy'],
 					$data['name']
 				)
@@ -1890,7 +1890,7 @@ class Importer {
 		$this->logger->info(
 			sprintf(
 				// translators: %1$s is the term name, %2$s is the taxonomy name.
-				__( 'Imported "%1$s" (%2$s)', 'openlab-modules' ),
+				__( 'Imported "%1$s" (%2$s)', 'openlab-module-builder' ),
 				$data['name'],
 				$data['taxonomy']
 			)
@@ -1899,7 +1899,7 @@ class Importer {
 		$this->logger->debug(
 			sprintf(
 				// translators: %1$d is the original term ID, %2$d is the new term ID.
-				__( 'Term %1$d remapped to %2$d', 'openlab-modules' ),
+				__( 'Term %1$d remapped to %2$d', 'openlab-module-builder' ),
 				$original_id,
 				$term_id
 			)
@@ -1937,14 +1937,14 @@ class Importer {
 		// Use WP_Filesystem to copy.
 		$filesystem_is_initialized = WP_Filesystem();
 		if ( ! $filesystem_is_initialized ) {
-			$message = __( 'Could not initialize filesystem', 'openlab-modules' );
+			$message = __( 'Could not initialize filesystem', 'openlab-module-builder' );
 			return new WP_Error( 'filesystem_error', $message );
 		}
 
 		global $wp_filesystem;
 		$success = $wp_filesystem->copy( $extract_path, $destination_path, true );
 		if ( ! $success ) {
-			return new WP_Error( 'copy_failed', __( 'Failed to copy file to destination.', 'openlab-modules' ) );
+			return new WP_Error( 'copy_failed', __( 'Failed to copy file to destination.', 'openlab-module-builder' ) );
 		}
 
 		// Return value should mimic the return value of wp_upload_bits.
@@ -1990,7 +1990,7 @@ class Importer {
 					// Note: title intentionally not used to skip extra processing
 					// for when debug logging is off.
 					// translators: %d is the post ID.
-					__( 'Running post-processing for post %d', 'openlab-modules' ),
+					__( 'Running post-processing for post %d', 'openlab-module-builder' ),
 					$post_id
 				)
 			);
@@ -2008,7 +2008,7 @@ class Importer {
 					$this->logger->warning(
 						sprintf(
 							// translators: %1$s is the post title, %2$d is the post ID.
-							__( 'Could not find the post parent for "%1$s" (post #%2$d)', 'openlab-modules' ),
+							__( 'Could not find the post parent for "%1$s" (post #%2$d)', 'openlab-module-builder' ),
 							get_the_title( $post_id ),
 							$post_id
 						)
@@ -2016,7 +2016,7 @@ class Importer {
 					$this->logger->debug(
 						sprintf(
 							// translators: %1$d is the post ID, %2$d is the parent ID.
-							__( 'Post %1$d was imported with parent %2$d, but could not be found', 'openlab-modules' ),
+							__( 'Post %1$d was imported with parent %2$d, but could not be found', 'openlab-module-builder' ),
 							$post_id,
 							$parent_id
 						)
@@ -2033,7 +2033,7 @@ class Importer {
 					$this->logger->warning(
 						sprintf(
 							// translators: %1$s is the post title, %2$d is the post ID.
-							__( 'Could not find the author for "%1$s" (post #%2$d)', 'openlab-modules' ),
+							__( 'Could not find the author for "%1$s" (post #%2$d)', 'openlab-module-builder' ),
 							get_the_title( $post_id ),
 							$post_id
 						)
@@ -2041,7 +2041,7 @@ class Importer {
 					$this->logger->debug(
 						sprintf(
 							// translators: %1$d is the post ID, %2$s is the author slug.
-							__( 'Post %1$d was imported with author "%2$s", but could not be found', 'openlab-modules' ),
+							__( 'Post %1$d was imported with author "%2$s", but could not be found', 'openlab-module-builder' ),
 							$post_id,
 							$author_slug
 						)
@@ -2068,7 +2068,7 @@ class Importer {
 				$this->logger->debug(
 					sprintf(
 						// translators: %d is the post ID.
-						__( 'Post %d was marked for post-processing, but none was required.', 'openlab-modules' ),
+						__( 'Post %d was marked for post-processing, but none was required.', 'openlab-module-builder' ),
 						$post_id
 					)
 				);
@@ -2082,7 +2082,7 @@ class Importer {
 				$this->logger->warning(
 					sprintf(
 						// translators: %1$s is the post title, %2$d is the post ID.
-						__( 'Could not update "%1$s" (post #%2$d) with mapped data', 'openlab-modules' ),
+						__( 'Could not update "%1$s" (post #%2$d) with mapped data', 'openlab-module-builder' ),
 						get_the_title( $post_id ),
 						$post_id
 					)
@@ -2119,14 +2119,14 @@ class Importer {
 					$this->logger->warning(
 						sprintf(
 							// translators: %d is the comment ID.
-							__( 'Could not find the comment parent for comment #%d', 'openlab-modules' ),
+							__( 'Could not find the comment parent for comment #%d', 'openlab-module-builder' ),
 							$comment_id
 						)
 					);
 					$this->logger->debug(
 						sprintf(
 							// translators: %1$d is the comment ID, %2$d is the parent ID.
-							__( 'Comment %1$d was imported with parent %2$d, but could not be found', 'openlab-modules' ),
+							__( 'Comment %1$d was imported with parent %2$d, but could not be found', 'openlab-module-builder' ),
 							$comment_id,
 							$parent_id
 						)
@@ -2145,14 +2145,14 @@ class Importer {
 					$this->logger->warning(
 						sprintf(
 							// translators: %d is the comment ID.
-							__( 'Could not find the author for comment #%d', 'openlab-modules' ),
+							__( 'Could not find the author for comment #%d', 'openlab-module-builder' ),
 							$comment_id
 						)
 					);
 					$this->logger->debug(
 						sprintf(
 							// translators: %1$d is the comment ID, %2$d is the author ID.
-							__( 'Comment %1$d was imported with author %2$d, but could not be found', 'openlab-modules' ),
+							__( 'Comment %1$d was imported with author %2$d, but could not be found', 'openlab-module-builder' ),
 							$comment_id,
 							$author_id
 						)
@@ -2172,7 +2172,7 @@ class Importer {
 				$this->logger->warning(
 					sprintf(
 						// translators: %d is the comment ID.
-						__( 'Could not update comment #%d with mapped data', 'openlab-modules' ),
+						__( 'Could not update comment #%d with mapped data', 'openlab-module-builder' ),
 						$comment_id
 					)
 				);
@@ -2390,7 +2390,7 @@ class Importer {
 	protected function copy_files() {
 		$filesystem_is_initialized = WP_Filesystem();
 		if ( ! $filesystem_is_initialized ) {
-			return new WP_Error( 'filesystem_error', __( 'Could not initialize filesystem', 'openlab-modules' ) );
+			return new WP_Error( 'filesystem_error', __( 'Could not initialize filesystem', 'openlab-module-builder' ) );
 		}
 
 		global $wp_filesystem;
@@ -2403,7 +2403,7 @@ class Importer {
 			return new WP_Error(
 				'missing_files_dir',
 				// translators: %s is the source files directory.
-				sprintf( __( 'Source files directory not found: %s', 'openlab-modules' ), $source_files_root )
+				sprintf( __( 'Source files directory not found: %s', 'openlab-module-builder' ), $source_files_root )
 			);
 		}
 
@@ -2428,7 +2428,7 @@ class Importer {
 				return new WP_Error(
 					'copy_failed',
 					// translators: %1$s is the source file, %2$s is the destination path.
-					sprintf( __( 'Failed to copy %1$s to %2$s', 'openlab-modules' ), $source_file, $destination_path )
+					sprintf( __( 'Failed to copy %1$s to %2$s', 'openlab-module-builder' ), $source_file, $destination_path )
 				);
 			}
 		}

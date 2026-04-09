@@ -2,7 +2,7 @@
 /**
  * Defines WP data schema.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 namespace OpenLab\Modules;
@@ -104,31 +104,31 @@ class Schema {
 			self::get_module_post_type(),
 			[
 				'labels'            => [
-					'name'                  => __( 'Modules', 'openlab-modules' ),
-					'singular_name'         => __( 'Module', 'openlab-modules' ),
-					'all_items'             => __( 'All Modules', 'openlab-modules' ),
-					'archives'              => __( 'Module Archives', 'openlab-modules' ),
-					'attributes'            => __( 'Module Attributes', 'openlab-modules' ),
-					'insert_into_item'      => __( 'Insert into Module', 'openlab-modules' ),
-					'uploaded_to_this_item' => __( 'Uploaded to this Module', 'openlab-modules' ),
-					'featured_image'        => _x( 'Featured Image', 'openlab_module', 'openlab-modules' ),
-					'set_featured_image'    => _x( 'Set featured image', 'openlab_module', 'openlab-modules' ),
-					'remove_featured_image' => _x( 'Remove featured image', 'openlab_module', 'openlab-modules' ),
-					'use_featured_image'    => _x( 'Use as featured image', 'openlab_module', 'openlab-modules' ),
-					'filter_items_list'     => __( 'Filter Modules list', 'openlab-modules' ),
-					'items_list_navigation' => __( 'Modules list navigation', 'openlab-modules' ),
-					'items_list'            => __( 'Modules list', 'openlab-modules' ),
-					'new_item'              => __( 'New Module', 'openlab-modules' ),
-					'add_new'               => __( 'Add New', 'openlab-modules' ),
-					'add_new_item'          => __( 'Add New Module', 'openlab-modules' ),
-					'edit_item'             => __( 'Edit Module', 'openlab-modules' ),
-					'view_item'             => __( 'View Module', 'openlab-modules' ),
-					'view_items'            => __( 'View Modules', 'openlab-modules' ),
-					'search_items'          => __( 'Search Modules', 'openlab-modules' ),
-					'not_found'             => __( 'No Modules found', 'openlab-modules' ),
-					'not_found_in_trash'    => __( 'No Modules found in trash', 'openlab-modules' ),
-					'parent_item_colon'     => __( 'Parent Modules:', 'openlab-modules' ),
-					'menu_name'             => __( 'Modules', 'openlab-modules' ),
+					'name'                  => __( 'Modules', 'openlab-module-builder' ),
+					'singular_name'         => __( 'Module', 'openlab-module-builder' ),
+					'all_items'             => __( 'All Modules', 'openlab-module-builder' ),
+					'archives'              => __( 'Module Archives', 'openlab-module-builder' ),
+					'attributes'            => __( 'Module Attributes', 'openlab-module-builder' ),
+					'insert_into_item'      => __( 'Insert into Module', 'openlab-module-builder' ),
+					'uploaded_to_this_item' => __( 'Uploaded to this Module', 'openlab-module-builder' ),
+					'featured_image'        => _x( 'Featured Image', 'openlab_module', 'openlab-module-builder' ),
+					'set_featured_image'    => _x( 'Set featured image', 'openlab_module', 'openlab-module-builder' ),
+					'remove_featured_image' => _x( 'Remove featured image', 'openlab_module', 'openlab-module-builder' ),
+					'use_featured_image'    => _x( 'Use as featured image', 'openlab_module', 'openlab-module-builder' ),
+					'filter_items_list'     => __( 'Filter Modules list', 'openlab-module-builder' ),
+					'items_list_navigation' => __( 'Modules list navigation', 'openlab-module-builder' ),
+					'items_list'            => __( 'Modules list', 'openlab-module-builder' ),
+					'new_item'              => __( 'New Module', 'openlab-module-builder' ),
+					'add_new'               => __( 'Add New', 'openlab-module-builder' ),
+					'add_new_item'          => __( 'Add New Module', 'openlab-module-builder' ),
+					'edit_item'             => __( 'Edit Module', 'openlab-module-builder' ),
+					'view_item'             => __( 'View Module', 'openlab-module-builder' ),
+					'view_items'            => __( 'View Modules', 'openlab-module-builder' ),
+					'search_items'          => __( 'Search Modules', 'openlab-module-builder' ),
+					'not_found'             => __( 'No Modules found', 'openlab-module-builder' ),
+					'not_found_in_trash'    => __( 'No Modules found in trash', 'openlab-module-builder' ),
+					'parent_item_colon'     => __( 'Parent Modules:', 'openlab-module-builder' ),
+					'menu_name'             => __( 'Modules', 'openlab-module-builder' ),
 				],
 				'public'            => true,
 				'hierarchical'      => false,
@@ -149,13 +149,13 @@ class Schema {
 					[
 						'core/heading',
 						[
-							'placeholder' => __( 'Introduction', 'openlab-modules' ),
+							'placeholder' => __( 'Introduction', 'openlab-module-builder' ),
 						],
 					],
 					[
 						'openlab-modules/placeholder-text',
 						[
-							'textContent' => '<p>' . wp_kses_post( __( '<strong>Faculty:</strong> Please edit this page to organize any additional course resources that you\'d like to share with your students. Please delete this informational block when you are ready to share your site with your students. For help working with OpenLab Course sites, visit <a href="https://openlab.citytech.cuny.edu/blog/help/creating-a-course-faculty-only/">OpenLab Help</a>.', 'openlab-modules' ) ),
+							'textContent' => '<p>' . wp_kses_post( __( '<strong>Faculty:</strong> Please edit this page to organize any additional course resources that you\'d like to share with your students. Please delete this informational block when you are ready to share your site with your students. For help working with OpenLab Course sites, visit <a href="https://openlab.citytech.cuny.edu/blog/help/creating-a-course-faculty-only/">OpenLab Help</a>.', 'openlab-module-builder' ) ),
 						],
 					],
 				],
@@ -187,28 +187,28 @@ class Schema {
 					'assign_terms' => 'do_not_allow',
 				],
 				'labels'            => [
-					'name'                       => __( 'Openlab module taxes', 'openlab-modules' ),
-					'singular_name'              => _x( 'Openlab module tax', 'taxonomy general name', 'openlab-modules' ),
-					'search_items'               => __( 'Search Openlab module taxes', 'openlab-modules' ),
-					'popular_items'              => __( 'Popular Openlab module taxes', 'openlab-modules' ),
-					'all_items'                  => __( 'All Openlab module taxes', 'openlab-modules' ),
-					'parent_item'                => __( 'Parent Openlab module tax', 'openlab-modules' ),
-					'parent_item_colon'          => __( 'Parent Openlab module tax:', 'openlab-modules' ),
-					'edit_item'                  => __( 'Edit Openlab module tax', 'openlab-modules' ),
-					'update_item'                => __( 'Update Openlab module tax', 'openlab-modules' ),
-					'view_item'                  => __( 'View Openlab module tax', 'openlab-modules' ),
-					'add_new_item'               => __( 'Add New Openlab module tax', 'openlab-modules' ),
-					'new_item_name'              => __( 'New Openlab module tax', 'openlab-modules' ),
-					'separate_items_with_commas' => __( 'Separate openlab module taxes with commas', 'openlab-modules' ),
-					'add_or_remove_items'        => __( 'Add or remove openlab module taxes', 'openlab-modules' ),
-					'choose_from_most_used'      => __( 'Choose from the most used openlab module taxes', 'openlab-modules' ),
-					'not_found'                  => __( 'No openlab module taxes found.', 'openlab-modules' ),
-					'no_terms'                   => __( 'No openlab module taxes', 'openlab-modules' ),
-					'menu_name'                  => __( 'Openlab module taxes', 'openlab-modules' ),
-					'items_list_navigation'      => __( 'Openlab module taxes list navigation', 'openlab-modules' ),
-					'items_list'                 => __( 'Openlab module taxes list', 'openlab-modules' ),
-					'most_used'                  => _x( 'Most Used', 'openlab_module_tax', 'openlab-modules' ),
-					'back_to_items'              => __( '&larr; Back to Openlab module taxes', 'openlab-modules' ),
+					'name'                       => __( 'Openlab module taxes', 'openlab-module-builder' ),
+					'singular_name'              => _x( 'Openlab module tax', 'taxonomy general name', 'openlab-module-builder' ),
+					'search_items'               => __( 'Search Openlab module taxes', 'openlab-module-builder' ),
+					'popular_items'              => __( 'Popular Openlab module taxes', 'openlab-module-builder' ),
+					'all_items'                  => __( 'All Openlab module taxes', 'openlab-module-builder' ),
+					'parent_item'                => __( 'Parent Openlab module tax', 'openlab-module-builder' ),
+					'parent_item_colon'          => __( 'Parent Openlab module tax:', 'openlab-module-builder' ),
+					'edit_item'                  => __( 'Edit Openlab module tax', 'openlab-module-builder' ),
+					'update_item'                => __( 'Update Openlab module tax', 'openlab-module-builder' ),
+					'view_item'                  => __( 'View Openlab module tax', 'openlab-module-builder' ),
+					'add_new_item'               => __( 'Add New Openlab module tax', 'openlab-module-builder' ),
+					'new_item_name'              => __( 'New Openlab module tax', 'openlab-module-builder' ),
+					'separate_items_with_commas' => __( 'Separate openlab module taxes with commas', 'openlab-module-builder' ),
+					'add_or_remove_items'        => __( 'Add or remove openlab module taxes', 'openlab-module-builder' ),
+					'choose_from_most_used'      => __( 'Choose from the most used openlab module taxes', 'openlab-module-builder' ),
+					'not_found'                  => __( 'No openlab module taxes found.', 'openlab-module-builder' ),
+					'no_terms'                   => __( 'No openlab module taxes', 'openlab-module-builder' ),
+					'menu_name'                  => __( 'Openlab module taxes', 'openlab-module-builder' ),
+					'items_list_navigation'      => __( 'Openlab module taxes list navigation', 'openlab-module-builder' ),
+					'items_list'                 => __( 'Openlab module taxes list', 'openlab-module-builder' ),
+					'most_used'                  => _x( 'Most Used', 'openlab_module_tax', 'openlab-module-builder' ),
+					'back_to_items'              => __( '&larr; Back to Openlab module taxes', 'openlab-module-builder' ),
 				],
 				'show_in_rest'      => true,
 			]
@@ -238,7 +238,7 @@ class Schema {
 				'type'           => 'string',
 				'single'         => true,
 				'show_in_rest'   => true,
-				'description'    => __( 'Description', 'openlab-modules' ),
+				'description'    => __( 'Description', 'openlab-module-builder' ),
 				'auth_callback'  => '__return_true',
 			]
 		);
@@ -251,7 +251,7 @@ class Schema {
 				'type'           => 'string',
 				'single'         => true,
 				'show_in_rest'   => true,
-				'description'    => __( 'Acknowledgements', 'openlab-modules' ),
+				'description'    => __( 'Acknowledgements', 'openlab-module-builder' ),
 				'auth_callback'  => '__return_true',
 			]
 		);
@@ -264,7 +264,7 @@ class Schema {
 				'type'           => 'string',
 				'single'         => true,
 				'show_in_rest'   => true,
-				'description'    => __( 'Module Page IDs', 'openlab-modules' ),
+				'description'    => __( 'Module Page IDs', 'openlab-module-builder' ),
 				'auth_callback'  => '__return_true',
 			]
 		);
@@ -278,7 +278,7 @@ class Schema {
 				'type'           => 'integer',
 				'single'         => true,
 				'show_in_rest'   => true,
-				'description'    => __( 'Link to Module', 'openlab-modules' ),
+				'description'    => __( 'Link to Module', 'openlab-module-builder' ),
 				'auth_callback'  => '__return_true',
 			]
 		);
@@ -693,7 +693,7 @@ class Schema {
 			[
 				'post_type'    => 'page',
 				'post_status'  => 'draft',
-				'post_title'   => __( 'All Modules', 'openlab-modules' ),
+				'post_title'   => __( 'All Modules', 'openlab-module-builder' ),
 				'post_content' => $serialized_block,
 			]
 		);

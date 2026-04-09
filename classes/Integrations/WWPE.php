@@ -2,7 +2,7 @@
 /**
  * Integration for webwork-problem-embed.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 namespace OpenLab\Modules\Integrations;
@@ -63,36 +63,36 @@ class WWPE {
 		$blocks_asset_file = Editor::get_blocks_asset_file( 'webwork-problem-embed' );
 
 		wp_enqueue_script(
-			'openlab-modules-wwpe',
-			OPENLAB_MODULES_PLUGIN_URL . '/build/webwork-problem-embed.js',
+			'openlab-module-builder-wwpe',
+			OPENLAB_MODULE_BUILDER_PLUGIN_URL . '/build/webwork-problem-embed.js',
 			[ 'wwpe-public' ],
 			$blocks_asset_file['version'],
 			true
 		);
 
 		wp_localize_script(
-			'openlab-modules-wwpe',
+			'openlab-module-builder-wwpe',
 			'openlabModulesWwpeStrings',
 			[
-				'continueWithout'   => __( 'Continue without logging in', 'openlab-modules' ),
-				'dismiss'           => __( 'Dismiss', 'openlab-modules' ),
-				'logIn'             => __( 'Log In', 'openlab-modules' ),
-				'sectionComplete'   => __( 'You have completed this page. You will receive a private message confirming the completion.', 'openlab-modules' ),
-				'toReceiveCredit'   => __( 'To receive an official confirmation when you complete this page, please sign in now.', 'openlab-modules' ),
-				'youAreNotLoggedIn' => __( 'You are not logged in.', 'openlab-modules' ),
+				'continueWithout'   => __( 'Continue without logging in', 'openlab-module-builder' ),
+				'dismiss'           => __( 'Dismiss', 'openlab-module-builder' ),
+				'logIn'             => __( 'Log In', 'openlab-module-builder' ),
+				'sectionComplete'   => __( 'You have completed this page. You will receive a private message confirming the completion.', 'openlab-module-builder' ),
+				'toReceiveCredit'   => __( 'To receive an official confirmation when you complete this page, please sign in now.', 'openlab-module-builder' ),
+				'youAreNotLoggedIn' => __( 'You are not logged in.', 'openlab-module-builder' ),
 			]
 		);
 
 		$current_page_permalink = get_permalink();
 
 		wp_add_inline_script(
-			'openlab-modules-wwpe',
+			'openlab-module-builder-wwpe',
 			'const openlabModulesWwpe = ' . wp_json_encode(
 				[
 					'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
 					'isUserLoggedIn' => is_user_logged_in(),
 					'loginUrl'       => wp_login_url( (string) $current_page_permalink ),
-					'nonce'          => wp_create_nonce( 'openlab-modules' ),
+					'nonce'          => wp_create_nonce( 'openlab-module-builder' ),
 					'postId'         => get_queried_object_id(),
 				]
 			),
@@ -100,8 +100,8 @@ class WWPE {
 		);
 
 		wp_enqueue_style(
-			'openlab-modules-wwpe',
-			OPENLAB_MODULES_PLUGIN_URL . '/build/webwork-problem-embed.css',
+			'openlab-module-builder-wwpe',
+			OPENLAB_MODULE_BUILDER_PLUGIN_URL . '/build/webwork-problem-embed.css',
 			[],
 			$blocks_asset_file['version']
 		);
@@ -139,7 +139,7 @@ class WWPE {
 			return $plugin_requirements;
 		}
 
-		$plugin_requirements['webwork-problem-embed/webwork-problem-embed.php'] = __( 'WebWoRK Problem Embed', 'openlab-modules' );
+		$plugin_requirements['webwork-problem-embed/webwork-problem-embed.php'] = __( 'WebWoRK Problem Embed', 'openlab-module-builder' );
 
 		return $plugin_requirements;
 	}

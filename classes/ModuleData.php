@@ -2,7 +2,7 @@
 /**
  * Module data object.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 namespace OpenLab\Modules;

@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       OpenLab Modules
+ * Plugin Name:       OpenLab Module Builder
  * Plugin URI:        https://openlab.citytech.cuny.edu/
  * Description:       A plugin to manage and display OpenLab Modules.
  * Version:           1.0.0-alpha
@@ -10,10 +10,10 @@
  * Author URI:        https://openlab.citytech.cuny.edu/
  * License:           GPL-3.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-3.0.html
- * Text Domain:       openlab-modules
+ * Text Domain:       openlab-module-builder
  * Domain Path:       /languages
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 namespace OpenLab\Modules;

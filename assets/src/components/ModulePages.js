@@ -42,7 +42,7 @@ export default function EditModule( {} ) {
 	} = useSelect( ( select ) => {
 		const thePostId = select( 'core/editor' ).getCurrentPostId()
 
-		const theModulePages = select( 'openlab-modules' ).getModulePages( thePostId )
+		const theModulePages = select( 'openlab-module-builder' ).getModulePages( thePostId )
 
 		return {
 			rawModulePages: theModulePages ?? null,
@@ -98,7 +98,7 @@ export default function EditModule( {} ) {
 		editPostMeta( { module_page_ids: JSON.stringify( sortedIds ) } )
 
 		// We mirror the page order in our own store to ensure accuracy of navigation block.
-		dispatch( 'openlab-modules' ).setModulePageIds( postId, sortedIds )
+		dispatch( 'openlab-module-builder' ).setModulePageIds( postId, sortedIds )
 	}
 
 	const onAddExistingPage = ( newPage ) => {
@@ -145,7 +145,7 @@ console.log( JSON.stringify( postData, null, 2 ) )
 		editPostMeta( { module_page_ids: JSON.stringify( newModulePageIds ) } )
 
 		// We mirror the page order in our own store to ensure accuracy of navigation block.
-		dispatch( 'openlab-modules' ).setModulePageIds( postId, newModulePageIds )
+		dispatch( 'openlab-module-builder' ).setModulePageIds( postId, newModulePageIds )
 
 		const newModulePage = {
 			id: newPage.id,
@@ -158,7 +158,7 @@ console.log( JSON.stringify( postData, null, 2 ) )
 
 		const newModulePages = Object.assign( {}, modulePages, { [ newPage.id ]: newModulePage } )
 
-		dispatch( 'openlab-modules' ).setModulePages( postId, newModulePages )
+		dispatch( 'openlab-module-builder' ).setModulePages( postId, newModulePages )
 	}
 
 	const fetchParams = { excludeModulePages: '1' }
@@ -172,14 +172,14 @@ console.log( JSON.stringify( postData, null, 2 ) )
 	return (
 		<>
 			<PluginDocumentSettingPanel
-				className="openlab-modules-add-page-to-module"
-				name="openlab-modules-add-page-to-module"
-				title={ __( 'Add Page to Module', 'openlab-modules' ) }
+				className="openlab-module-builder-add-page-to-module"
+				name="openlab-module-builder-add-page-to-module"
+				title={ __( 'Add Page to Module', 'openlab-module-builder' ) }
 				>
 
 				<fieldset>
 					<PanelRow>
-						<legend>{ __( 'Add a page to this module by choosing one of the following options:', 'openlab-modules' ) }</legend>
+						<legend>{ __( 'Add a page to this module by choosing one of the following options:', 'openlab-module-builder' ) }</legend>
 					</PanelRow>
 
 					<div className="add-mode">
@@ -187,7 +187,7 @@ console.log( JSON.stringify( postData, null, 2 ) )
 							<div className={ 'create' === addMode ? 'add-mode-toggle add-mode-toggle-active' : 'add-mode-toggle' }>
 								<Button
 									onClick={ () => toggleAddMode( 'create' ) }
-									text={ __( 'Create New Page', 'openlab-modules' ) }
+									text={ __( 'Create New Page', 'openlab-module-builder' ) }
 								/>
 							</div>
 						</PanelRow>
@@ -199,8 +199,8 @@ console.log( JSON.stringify( postData, null, 2 ) )
 											className="add-mode-text-field add-mode-create-title"
 											onChange={ ( newTitle ) => setCreateTitle( newTitle ) }
 											hideLabelFromVision={ true }
-											label={ __( 'Add page title and press enter.', 'openlab-modules' ) }
-											placeholder={ __( 'Add page title and press enter.', 'openlab-modules' ) }
+											label={ __( 'Add page title and press enter.', 'openlab-module-builder' ) }
+											placeholder={ __( 'Add page title and press enter.', 'openlab-module-builder' ) }
 											value={ createTitle }
 											onKeyUp={ ( event ) => {
 												if ( 13 === event.keyCode ) {
@@ -218,14 +218,14 @@ console.log( JSON.stringify( postData, null, 2 ) )
 												( <>
 														<div className="progress-spinner">&nbsp;</div>
 														<div className="screen-reader-text">
-															{ __( 'Page creation in progress', 'openlab-modules' ) }
+															{ __( 'Page creation in progress', 'openlab-module-builder' ) }
 														</div>
 													</>
 												) :
 												( <>
 														{returnIcon}
 														<div className="screen-reader-text">
-															{ __( 'Click to create page', 'openlab-modules' ) }
+															{ __( 'Click to create page', 'openlab-module-builder' ) }
 														</div>
 													</>
 												)
@@ -241,7 +241,7 @@ console.log( JSON.stringify( postData, null, 2 ) )
 							<div className={ 'existing' === addMode ? 'add-mode-toggle add-mode-toggle-active' : 'add-mode-toggle' }>
 								<Button
 									onClick={ () => toggleAddMode( 'existing' ) }
-									text={ __( 'Add Existing Page', 'openlab-modules' ) }
+									text={ __( 'Add Existing Page', 'openlab-module-builder' ) }
 								/>
 							</div>
 						</PanelRow>
@@ -253,8 +253,8 @@ console.log( JSON.stringify( postData, null, 2 ) )
 										fetchParams={fetchParams}
 										hideLabelFromVision={ true }
 										onSelectPost={ onAddExistingPage }
-										label={ __( 'Search for an existing page.', 'openlab-modules' ) }
-										placeholder={ __( 'Search for an existing page.', 'openlab-modules' ) }
+										label={ __( 'Search for an existing page.', 'openlab-module-builder' ) }
+										placeholder={ __( 'Search for an existing page.', 'openlab-module-builder' ) }
 										postTypes={ [ 'pages' ] }
 									/>
 								</PanelRow>
@@ -266,8 +266,8 @@ console.log( JSON.stringify( postData, null, 2 ) )
 			</PluginDocumentSettingPanel>
 
 			<PluginDocumentSettingPanel
-				name="openlab-modules-module-pages"
-				title={ __( 'Module Pages', 'openlab-modules' ) }
+				name="openlab-module-builder-module-pages"
+				title={ __( 'Module Pages', 'openlab-module-builder' ) }
 				>
 
 				<PanelRow>
@@ -279,7 +279,7 @@ console.log( JSON.stringify( postData, null, 2 ) )
 					) }
 
 					{ sortedOptions.length === 0 && (
-						<p>{ __( 'This module has no pages yet. Add or create a new page using the tools above.', 'openlab-modules' ) }</p>
+						<p>{ __( 'This module has no pages yet. Add or create a new page using the tools above.', 'openlab-module-builder' ) }</p>
 					) }
 				</PanelRow>
 			</PluginDocumentSettingPanel>

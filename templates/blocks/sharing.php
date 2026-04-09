@@ -2,7 +2,7 @@
 /**
  * Sharing block template.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -12,8 +12,8 @@ if ( ! is_user_logged_in() ) {
 	return;
 }
 
-wp_enqueue_style( 'openlab-modules-frontend' );
-wp_enqueue_script( 'openlab-modules-frontend' );
+wp_enqueue_style( 'openlab-module-builder-frontend' );
+wp_enqueue_script( 'openlab-module-builder-frontend' );
 
 $openlab_modules_block_unique_id = 'clone-module-' . uniqid();
 

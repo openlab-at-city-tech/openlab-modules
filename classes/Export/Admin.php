@@ -2,7 +2,7 @@
 /**
  * Admin methods for module export.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 namespace OpenLab\Modules\Export;
@@ -37,8 +37,8 @@ class Admin {
 		$parent = 'edit.php?post_type=' . Schema::get_module_post_type();
 		add_submenu_page(
 			$parent,
-			__( 'Module Export', 'openlab-modules' ),
-			__( 'Module Export', 'openlab-modules' ),
+			__( 'Module Export', 'openlab-module-builder' ),
+			__( 'Module Export', 'openlab-module-builder' ),
 			'manage_options',
 			Schema::get_module_post_type() . '-export',
 			[ __CLASS__, 'render_export_page' ]
@@ -54,8 +54,8 @@ class Admin {
 		$blocks_asset_file = Editor::get_blocks_asset_file();
 
 		wp_enqueue_script(
-			'openlab-modules-export',
-			OPENLAB_MODULES_PLUGIN_URL . '/build/export.js',
+			'openlab-module-builder-export',
+			OPENLAB_MODULE_BUILDER_PLUGIN_URL . '/build/export.js',
 			[ 'wp-i18n' ],
 			$blocks_asset_file['version'],
 			true
@@ -82,7 +82,7 @@ class Admin {
 		];
 
 		wp_add_inline_script(
-			'openlab-modules-export',
+			'openlab-module-builder-export',
 			sprintf(
 				'var openlabModulesExport = %s;',
 				wp_json_encode( $script_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES )
@@ -93,20 +93,20 @@ class Admin {
 		?>
 
 		<div class="wrap nosubsub" style="max-width: 1200px">
-			<h1><?php esc_html_e( 'Export', 'openlab-modules' ); ?></h1>
+			<h1><?php esc_html_e( 'Export', 'openlab-module-builder' ); ?></h1>
 
 			<?php settings_errors(); ?>
 
-			<p><?php esc_html_e( 'Use this tool to create a Module Archive file (.zip) that will be downloaded to your computer and can be used with the OpenLab Modules plugin to import into another site.', 'openlab-modules' ); ?></p>
+			<p><?php esc_html_e( 'Use this tool to create a Module Archive file (.zip) that will be downloaded to your computer and can be used with the OpenLab Module Builder plugin to import into another site.', 'openlab-module-builder' ); ?></p>
 
 			<form method="post" id="export-module" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-				<h2><?php esc_html_e( 'Choose what to export', 'openlab-modules' ); ?></h2>
+				<h2><?php esc_html_e( 'Choose what to export', 'openlab-module-builder' ); ?></h2>
 
-				<p><?php esc_html_e( 'Please choose the module you would like to export.', 'openlab-modules' ); ?></p>
+				<p><?php esc_html_e( 'Please choose the module you would like to export.', 'openlab-module-builder' ); ?></p>
 
-				<label for="module-select"><?php esc_html_e( 'Modules', 'openlab-modules' ); ?></label>
+				<label for="module-select"><?php esc_html_e( 'Modules', 'openlab-module-builder' ); ?></label>
 				<select name="module-select" id="module-select">
-					<option value="" disabled="disabled" selected="selected"><?php esc_html_e( 'Please Select', 'openlab-modules' ); ?></option>
+					<option value="" disabled="disabled" selected="selected"><?php esc_html_e( 'Please Select', 'openlab-module-builder' ); ?></option>
 
 					<?php
 					foreach ( $all_modules as $module ) {
@@ -117,32 +117,32 @@ class Admin {
 					?>
 				</select>
 
-				<h2><?php esc_html_e( 'Readme file', 'openlab-modules' ); ?></h2>
+				<h2><?php esc_html_e( 'Readme file', 'openlab-module-builder' ); ?></h2>
 
-				<p id="readme-description"><?php esc_html_e( 'A readme text file will be included with the exported archive file. It will include information on how this archive file can be imported into another site. You can also include your own custom text in the box below. If there are specific plugins or a theme needed to create this module, please include those in your text.', 'openlab-modules' ); ?></p>
+				<p id="readme-description"><?php esc_html_e( 'A readme text file will be included with the exported archive file. It will include information on how this archive file can be imported into another site. You can also include your own custom text in the box below. If there are specific plugins or a theme needed to create this module, please include those in your text.', 'openlab-module-builder' ); ?></p>
 
-				<label for="readme-additional-text" class="screen-reader-text"><?php esc_html_e( 'Additional text for readme file', 'openlab-modules' ); ?></label>
+				<label for="readme-additional-text" class="screen-reader-text"><?php esc_html_e( 'Additional text for readme file', 'openlab-module-builder' ); ?></label>
 
 				<textarea class="widefat" name="readme-additional-text" id="readme-additional-text" aria-describedby="readme-description"></textarea>
 
-				<h2><?php esc_html_e( 'Acknowledgements', 'openlab-modules' ); ?></h2>
+				<h2><?php esc_html_e( 'Acknowledgements', 'openlab-module-builder' ); ?></h2>
 
-				<p id="acknowledgements-description"><?php esc_html_e( 'The text below will be included in an acknowledgments block on the module home on any site that imports your module’s contents. You can edit the acknowledgements below, if necessary.', 'openlab-modules' ); ?></p>
+				<p id="acknowledgements-description"><?php esc_html_e( 'The text below will be included in an acknowledgments block on the module home on any site that imports your module’s contents. You can edit the acknowledgements below, if necessary.', 'openlab-module-builder' ); ?></p>
 
-				<label for="acknowledgements-text" class="screen-reader-text"><?php esc_html_e( 'Acknowledgments text', 'openlab-modules' ); ?></label>
+				<label for="acknowledgements-text" class="screen-reader-text"><?php esc_html_e( 'Acknowledgments text', 'openlab-module-builder' ); ?></label>
 
 				<textarea class="widefat" name="acknowledgements-text" id="acknowledgements-text" aria-describedby="acknowledgements-description"></textarea>
 
 				<input type="hidden" name="action" value="export-module" />
 
-				<?php wp_nonce_field( 'openlab-modules-export' ); ?>
+				<?php wp_nonce_field( 'openlab-module-builder-export' ); ?>
 
 				<br />
 
 				<div class="archive-download-type-button">
 					<?php
 					submit_button(
-						__( 'Download Archive File', 'openlab-modules' ),
+						__( 'Download Archive File', 'openlab-module-builder' ),
 						'primary large',
 						'download-archive-file'
 					);
@@ -160,7 +160,7 @@ class Admin {
 	 * @return void
 	 */
 	public function handle() {
-		check_admin_referer( 'openlab-modules-export' );
+		check_admin_referer( 'openlab-module-builder-export' );
 
 		$upload_dir = wp_get_upload_dir();
 
@@ -179,7 +179,7 @@ class Admin {
 			add_settings_error(
 				'failed_export',
 				'failed_export',
-				__( 'Please select a module to export.', 'openlab-modules' )
+				__( 'Please select a module to export.', 'openlab-module-builder' )
 			);
 
 			wp_safe_redirect( $referer );

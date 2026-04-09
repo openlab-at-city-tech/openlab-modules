@@ -33,12 +33,12 @@ const SortableItem = (props) => {
 		switch ( postStatus ) {
 			case 'trash' :
 				return (
-					<span className="module-page-inline-status module-page-non-publish-inline-status">{ __( '(Trash)', 'openlab-modules' ) }</span>
+					<span className="module-page-inline-status module-page-non-publish-inline-status">{ __( '(Trash)', 'openlab-module-builder' ) }</span>
 				)
 
 			case 'draft' :
 				return (
-					<span className="module-page-inline-status module-page-non-publish-inline-status">{ __( '(Draft)', 'openlab-modules' ) }</span>
+					<span className="module-page-inline-status module-page-non-publish-inline-status">{ __( '(Draft)', 'openlab-module-builder' ) }</span>
 				)
 
 			case 'publish' :
@@ -66,9 +66,9 @@ const SortableItem = (props) => {
 			>{label}{getStatusEl(postStatus)}</div>
 
 			<div>
-				<a href={editUrlClean}>{ __( 'Edit', 'openlab-modules' ) }</a>
+				<a href={editUrlClean}>{ __( 'Edit', 'openlab-module-builder' ) }</a>
 				&nbsp;|&nbsp;
-				<a href={url}>{ __( 'View', 'openlab-modules' ) }</a>
+				<a href={url}>{ __( 'View', 'openlab-module-builder' ) }</a>
 				&nbsp;|&nbsp;
 				<a
 					href={editUrl}
@@ -76,7 +76,7 @@ const SortableItem = (props) => {
 						e.preventDefault()
 						handleRemoveClick( id )
 					}}
-				>{ __( 'Remove', 'openlab-modules' ) }</a>
+				>{ __( 'Remove', 'openlab-module-builder' ) }</a>
 			</div>
     </Item>
   );

@@ -160,29 +160,29 @@ const CloneModuleModal = ( { moduleId, nonce, uniqid, isOpen, onClose } ) => {
 			<div className="clone-module-modal-backdrop" aria-hidden="true"></div>
       <div className="clone-module-modal-content" role="dialog" aria-modal="true">
 					<div className="dialog__header">
-						<h1 id="dialog-title">{ __( 'Clone this Module', 'openlab-modules' ) }</h1>
+						<h1 id="dialog-title">{ __( 'Clone this Module', 'openlab-module-builder' ) }</h1>
 
 						<button
 							className="close-clone-module-modal clone-module-button-reset"
 							onClick={ closeModal }
-							aria-label={ __( 'Cancel module cloning', 'openlab-modules' ) }
+							aria-label={ __( 'Cancel module cloning', 'openlab-module-builder' ) }
 						>×</button>
 					</div>
 
 					<div className="dialog__body">
 						{ ! cloneResult && ( <div className="clone-module-form">
 							<p>
-								{ __( 'Before you clone this module, make sure the OpenLab Modules plugin is activated on the site you are cloning the module to. You will also need to have an Administrator or Editor role on the site. The site will then appear in the dropdown below.', 'openlab-modules' ) }
+								{ __( 'Before you clone this module, make sure the OpenLab Module Builder plugin is activated on the site you are cloning the module to. You will also need to have an Administrator or Editor role on the site. The site will then appear in the dropdown below.', 'openlab-module-builder' ) }
 							</p>
 
 							{ userSites.length === 0 && (
-								<p><strong>{ __( 'There are currently no sites available that fit these requirements.', 'openlab-modules' ) }</strong></p>
+								<p><strong>{ __( 'There are currently no sites available that fit these requirements.', 'openlab-module-builder' ) }</strong></p>
 							) }
 
 							{ userSites.length > 0 && (
 								<>
 									<label htmlFor={ `clone-module-destination-select-${uniqid}` }>
-										{ __( 'Select a site to clone this module to:', 'openlab-modules' ) }
+										{ __( 'Select a site to clone this module to:', 'openlab-module-builder' ) }
 									</label>
 
 									<select
@@ -196,7 +196,7 @@ const CloneModuleModal = ( { moduleId, nonce, uniqid, isOpen, onClose } ) => {
 										} }
 									>
 										<option value="">
-											{ __( '- Select a site -', 'openlab-modules' ) }
+											{ __( '- Select a site -', 'openlab-module-builder' ) }
 										</option>
 
 										{ userSites.map( ( site ) => (
@@ -213,14 +213,14 @@ const CloneModuleModal = ( { moduleId, nonce, uniqid, isOpen, onClose } ) => {
 
 							{ moduleWithSameNameExistsOnTargetSite && (
 								<p className="clone-module-error">
-									{ __( 'Warning: A module with the same name already exists on the target site.', 'openlab-modules' ) }
+									{ __( 'Warning: A module with the same name already exists on the target site.', 'openlab-module-builder' ) }
 								</p>
 							) }
 
 							{ requiredPluginsMissing.length > 0 && (
 								<div className="clone-module-notice">
 									<p>
-										{ __( 'This module requires a number of plugins that are not currently active on the target site. Make sure to activate these plugins to maintain full functionality in the cloned module.', 'openlab-modules' ) }
+										{ __( 'This module requires a number of plugins that are not currently active on the target site. Make sure to activate these plugins to maintain full functionality in the cloned module.', 'openlab-module-builder' ) }
 									</p>
 
 									<ul>
@@ -238,7 +238,7 @@ const CloneModuleModal = ( { moduleId, nonce, uniqid, isOpen, onClose } ) => {
 									className="clone-module-button-cancel clone-module-button-reset"
 									onClick={ closeModal }
 								>
-									{ __( 'Cancel', 'openlab-modules' ) }
+									{ __( 'Cancel', 'openlab-module-builder' ) }
 								</button>
 
 								<button
@@ -247,7 +247,7 @@ const CloneModuleModal = ( { moduleId, nonce, uniqid, isOpen, onClose } ) => {
 									onClick={ handleContinueClick }
 								>
 									{ /* eslint-disable-next-line */ }
-									{ cloneInProgress ? __( 'Cloning...', 'openlab-modules' ) : __( 'Continue', 'openlab-modules' ) }
+									{ cloneInProgress ? __( 'Cloning...', 'openlab-module-builder' ) : __( 'Continue', 'openlab-module-builder' ) }
 								</button>
 							</div>
 						</div> ) }
@@ -257,18 +257,18 @@ const CloneModuleModal = ( { moduleId, nonce, uniqid, isOpen, onClose } ) => {
 								{ cloneResult.success ? (
 									<>
 										<p>
-											{ __( 'The module was successfully cloned.', 'openlab-modules' ) }
+											{ __( 'The module was successfully cloned.', 'openlab-module-builder' ) }
 										</p>
 
 										<p>
 											<a
 												href={ cloneResult.clone_edit_url }
-											>{ __( 'Edit the cloned module', 'openlab-modules' ) }</a>
+											>{ __( 'Edit the cloned module', 'openlab-module-builder' ) }</a>
 										</p>
 									</>
 								) : (
 									<p>
-										{ __( 'There was a problem cloning the module.', 'openlab-modules' ) }
+										{ __( 'There was a problem cloning the module.', 'openlab-module-builder' ) }
 									</p>
 								) }
 
@@ -276,7 +276,7 @@ const CloneModuleModal = ( { moduleId, nonce, uniqid, isOpen, onClose } ) => {
 									className="clone-module-button-submit"
 									onClick={ closeModal }
 								>
-									{ __( 'Close', 'openlab-modules' ) }
+									{ __( 'Close', 'openlab-module-builder' ) }
 								</button>
 							</div>
 						) }

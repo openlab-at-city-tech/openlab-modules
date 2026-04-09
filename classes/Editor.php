@@ -2,7 +2,7 @@
 /**
  * Handles editor functionality.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 namespace OpenLab\Modules;
@@ -170,16 +170,16 @@ class Editor {
 		$blocks_asset_file = self::get_blocks_asset_file();
 
 		wp_enqueue_script(
-			'openlab-modules-dashboard',
-			OPENLAB_MODULES_PLUGIN_URL . '/build/index.js',
+			'openlab-module-builder-dashboard',
+			OPENLAB_MODULE_BUILDER_PLUGIN_URL . '/build/index.js',
 			$blocks_asset_file['dependencies'],
 			$blocks_asset_file['version'],
 			true
 		);
 
 		wp_enqueue_style(
-			'openlab-modules-dashboard',
-			OPENLAB_MODULES_PLUGIN_URL . '/build/index.css',
+			'openlab-module-builder-dashboard',
+			OPENLAB_MODULE_BUILDER_PLUGIN_URL . '/build/index.css',
 			[],
 			$blocks_asset_file['version']
 		);
@@ -274,8 +274,8 @@ class Editor {
 		// Only add our font size if it doesn't already exist.
 		if ( ! $has_attribution_size ) {
 			$existing_font_sizes[] = array(
-				'name'      => __( '14px', 'openlab-modules' ),
-				'shortName' => __( '14px', 'openlab-modules' ),
+				'name'      => __( '14px', 'openlab-module-builder' ),
+				'shortName' => __( '14px', 'openlab-module-builder' ),
 				'size'      => 14,
 				'slug'      => '14-px',
 			);
@@ -317,16 +317,16 @@ class Editor {
 	}
 
 	/**
-	 * Adds a custom block category for OpenLab Modules.
+	 * Adds a custom block category for OpenLab Module Builder.
 	 *
 	 * @param array<array{slug: string, title: string, icon: string}> $categories Existing block categories.
 	 * @return array<array{slug: string, title: string, icon: string}>
 	 */
 	public function add_block_category( $categories ) {
-		// Add a new category for OpenLab Modules.
+		// Add a new category for OpenLab Module Builder.
 		$categories[] = [
-			'slug'  => 'openlab-modules',
-			'title' => __( 'Module Blocks', 'openlab-modules' ),
+			'slug'  => 'openlab-module-builder',
+			'title' => __( 'Module Blocks', 'openlab-module-builder' ),
 			'icon'  => 'grid-view',
 		];
 

@@ -83,13 +83,13 @@ export default function EditModule() {
 
 	return (
 		<PluginDocumentSettingPanel
-			name="openlab-modules-edit-module"
-			title={ __( 'Edit Module', 'openlab-modules' ) }
+			name="openlab-module-builder-edit-module"
+			title={ __( 'Edit Module', 'openlab-module-builder' ) }
 			>
 
 			<PanelRow>
 				<TextControl
-					label={ __( 'Name', 'openlab-modules' ) }
+					label={ __( 'Name', 'openlab-module-builder' ) }
 					onChange={ ( newTitle ) => editPost( { title: newTitle } ) }
 					value={ postTitle }
 				/>
@@ -99,8 +99,8 @@ export default function EditModule() {
 
 			<PanelRow>
 				<TextControl
-					label={ __( 'Navigation Title', 'openlab-modules' ) }
-					help={ __( 'The title of the module home page, for use in the Module TOC block', 'openlab-modules' ) }
+					label={ __( 'Navigation Title', 'openlab-module-builder' ) }
+					help={ __( 'The title of the module home page, for use in the Module TOC block', 'openlab-module-builder' ) }
 					onChange={ ( newNavTitle ) => editPost( { moduleNavTitle: newNavTitle } ) }
 					value={ moduleNavTitle }
 				/>
@@ -110,7 +110,7 @@ export default function EditModule() {
 
 			<PanelRow>
 				<TextareaControl
-					label={ __( 'Description', 'openlab-modules' ) }
+					label={ __( 'Description', 'openlab-module-builder' ) }
 					onChange={ ( newDescription ) => editPostMeta( { module_description: newDescription } ) }
 					value={ moduleDescription }
 				/>
@@ -118,8 +118,8 @@ export default function EditModule() {
 
 			<PanelRow>
 				<TextControl
-					label={ __( 'Author Name', 'openlab-modules' ) }
-					help={ __( 'Used in the Module List block.', 'openlab-modules' ) }
+					label={ __( 'Author Name', 'openlab-module-builder' ) }
+					help={ __( 'Used in the Module List block.', 'openlab-module-builder' ) }
 					onChange={ ( newAuthorName ) => editPost( { authorName: newAuthorName } ) }
 					value={ moduleAuthorName || '' }
 				/>
@@ -129,8 +129,8 @@ export default function EditModule() {
 
 			<PanelRow>
 				<TextareaControl
-					help={ __( 'Acknowledgements appear in a block at the bottom of the module home.', 'openlab-modules' ) }
-					label={ __( 'Acknowledgements', 'openlab-modules' ) }
+					help={ __( 'Acknowledgements appear in a block at the bottom of the module home.', 'openlab-module-builder' ) }
+					label={ __( 'Acknowledgements', 'openlab-module-builder' ) }
 					onChange={ ( newAcknowledgements ) => editPostMeta( { module_acknowledgements: newAcknowledgements } ) }
 					value={ moduleAcknowledgements }
 				/>
@@ -140,8 +140,8 @@ export default function EditModule() {
 
 			<PanelRow>
 				<ToggleControl
-					label={ __( 'Enable shared cloning', 'openlab-modules' ) }
-					help={ __( 'Allow others to clone this Module.', 'openlab-modules' ) }
+					label={ __( 'Enable shared cloning', 'openlab-module-builder' ) }
+					help={ __( 'Allow others to clone this Module.', 'openlab-module-builder' ) }
 					checked={ isSharingEnabled }
 					onChange={ ( newIsSharingEnabled ) => handleEnableSharingToggle( newIsSharingEnabled ) }
 				/>

@@ -47,9 +47,9 @@
         "default": "unordered"
       }
     },
-    "textdomain": "openlab-modules",
+    "textdomain": "openlab-module-builder",
     "editorScript": {
-      "handle": "openlab-modules-module-navigation-editor-script",
+      "handle": "openlab-module-builder-module-navigation-editor-script",
       "path": "index.js",
       "module": true
     },

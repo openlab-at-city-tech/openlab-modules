@@ -2,7 +2,7 @@
 /**
  * Definition for module-pages endpoint.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 namespace OpenLab\Modules\Endpoints;

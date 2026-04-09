@@ -219,11 +219,11 @@ export default function Edit({ attributes, isSelected, setAttributes }) {
 			<InspectorControls>
 
 				<Panel>
-					<PanelBody title={ __( 'Layout Settings', 'openlab-modules' ) }>
+					<PanelBody title={ __( 'Layout Settings', 'openlab-module-builder' ) }>
 						<PanelRow>
 							<CheckboxControl
-								label={ __( 'Module Description', 'openlab-modules' ) }
-								help={ __( 'Include each Module\'s Description in the list. This can be edited in the Module Settings', 'openlab-modules' ) }
+								label={ __( 'Module Description', 'openlab-module-builder' ) }
+								help={ __( 'Include each Module\'s Description in the list. This can be edited in the Module Settings', 'openlab-module-builder' ) }
 								checked={ showModuleDescription }
 								onChange={ (value) => setAttributes({ showModuleDescription: value }) }
 							/>
@@ -231,8 +231,8 @@ export default function Edit({ attributes, isSelected, setAttributes }) {
 
 						<PanelRow>
 							<CheckboxControl
-								label={ __( 'Module Author', 'openlab-modules' ) }
-								help={ __( 'Include each Module\'s Author in the list.', 'openlab-modules' ) }
+								label={ __( 'Module Author', 'openlab-module-builder' ) }
+								help={ __( 'Include each Module\'s Author in the list.', 'openlab-module-builder' ) }
 								checked={ showModuleAuthor }
 								onChange={ (value) => setAttributes({ showModuleAuthor: value }) }
 							/>
@@ -240,8 +240,8 @@ export default function Edit({ attributes, isSelected, setAttributes }) {
 
 						<PanelRow>
 							<CheckboxControl
-								label={ __( 'Module Featured Image', 'openlab-modules' ) }
-								help={ __( 'Include each Module\'s featured image in the list. This can be edited in the Module Settings', 'openlab-modules' ) }
+								label={ __( 'Module Featured Image', 'openlab-module-builder' ) }
+								help={ __( 'Include each Module\'s featured image in the list. This can be edited in the Module Settings', 'openlab-module-builder' ) }
 								checked={ showModuleImage }
 								onChange={ (value) => setAttributes({ showModuleImage: value }) }
 							/>
@@ -299,7 +299,7 @@ export default function Edit({ attributes, isSelected, setAttributes }) {
 				) }
 
 				{ null !== allModules && allModules.length === 0 && (
-					<p>{ __( 'This site has no modules to display.', 'openlab-modules' ) }</p>
+					<p>{ __( 'This site has no modules to display.', 'openlab-module-builder' ) }</p>
 				) }
 
 				{ null === allModules && (

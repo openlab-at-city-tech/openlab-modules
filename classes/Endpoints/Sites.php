@@ -2,7 +2,7 @@
 /**
  * Definition for sites endpoint.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 namespace OpenLab\Modules\Endpoints;
@@ -110,7 +110,7 @@ class Sites extends WP_REST_Controller {
 
 			$label = sprintf(
 				// translators: 1. Name of site, 2. URL of site.
-				__( '%1$s (%2$s)', 'openlab-modules' ),
+				__( '%1$s (%2$s)', 'openlab-module-builder' ),
 				$site->blogname,
 				$site->siteurl
 			);
@@ -140,7 +140,7 @@ class Sites extends WP_REST_Controller {
 	 */
 	public function get_items_permissions_check( $request ) {
 		if ( ! is_user_logged_in() ) {
-			return new WP_Error( 'rest_forbidden', __( 'You are not currently logged in.', 'openlab-modules' ), [ 'status' => 401 ] );
+			return new WP_Error( 'rest_forbidden', __( 'You are not currently logged in.', 'openlab-module-builder' ), [ 'status' => 401 ] );
 		}
 
 		return true;

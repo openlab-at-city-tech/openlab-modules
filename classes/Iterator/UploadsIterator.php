@@ -2,7 +2,7 @@
 /**
  * Uploads directory iterator.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 namespace OpenLab\Modules\Iterator;

@@ -6,7 +6,7 @@
  *
  * @see https://developer.wordpress.org/reference/classes/file_upload_upgrader/.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 namespace OpenLab\Modules\Import;

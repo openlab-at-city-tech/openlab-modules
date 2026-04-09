@@ -2,9 +2,9 @@
 /**
  * Constant definitions.
  *
- * @package openlab-modules
+ * @package openlab-module-builder
  */
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'OPENLAB_MODULES_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'OPENLAB_MODULE_BUILDER_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

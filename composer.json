@@ -1,5 +1,5 @@
 {
-    "name": "openlab-at-city-tech/openlab-modules",
+    "name": "openlab-at-city-tech/openlab-module-builder",
     "type": "project",
     "license": "GPLv3",
     "autoload": {

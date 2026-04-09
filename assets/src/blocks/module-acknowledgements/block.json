@@ -10,9 +10,9 @@
       "anchor": true
     },
     "attributes": {},
-    "textdomain": "openlab-modules",
+    "textdomain": "openlab-module-builder",
     "editorScript": {
-      "handle": "openlab-modules-module-acknowledgements-editor-script",
+      "handle": "openlab-module-builder-module-acknowledgements-editor-script",
       "path": "index.js",
       "module": true
     },

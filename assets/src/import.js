@@ -10,9 +10,9 @@
 		const message = $('#import-status-message').find('strong');
 
 		if ( ! data.error ) {
-			message.text( __( 'Step 3: Import Complete. Check out your site!', 'openlab-modules' ) );
+			message.text( __( 'Step 3: Import Complete. Check out your site!', 'openlab-module-builder' ) );
 		} else {
-			message.html( __( 'Import unsuccessful.', 'openlab-modules' ) );
+			message.html( __( 'Import unsuccessful.', 'openlab-module-builder' ) );
 		}
 	};
 
@@ -49,7 +49,7 @@
 
 		// File type.
 		if ( ! isZip ) {
-			error = __( 'Please select an OpenLab Modules Export file (.zip).', 'openlab-modules' );
+			error = __( 'Please select an OpenLab Module Builder Export file (.zip).', 'openlab-module-builder' );
 		}
 
 		if ( ! error ) {
@@ -69,7 +69,7 @@
 	} );
 
 	$uploadSubmitButton.on( 'click', () => {
-		$uploadSubmitButton.val( __( "Uploading…", 'openlab-modules' ) ).attr( 'disabled', true );
+		$uploadSubmitButton.val( __( "Uploading…", 'openlab-module-builder' ) ).attr( 'disabled', true );
 		$uploadSubmitButton.closest( 'form' ).submit();
 	} );
 })(jQuery);
