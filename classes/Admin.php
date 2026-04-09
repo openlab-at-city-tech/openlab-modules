@@ -186,7 +186,7 @@ class Admin {
 			if ( $post ) {
 				if ( function_exists( 'bp_core_get_userlink' ) ) {
 					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					echo bp_core_get_userlink( $post->post_author ); // @phpstan-ignore-line
+					echo bp_core_get_userlink( $post->post_author );
 				} else {
 					$author_id = (int) $post->post_author;
 					$author    = get_userdata( $author_id );
