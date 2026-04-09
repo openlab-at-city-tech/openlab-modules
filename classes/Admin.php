@@ -280,7 +280,8 @@ class Admin {
 
 		?>
 
-		<select name="filter-by-module">
+		<label for="filter-by-module" class="screen-reader-text"><?php esc_html_e( 'Filter by module', 'openlab-module-builder' ); ?></label>
+		<select name="filter-by-module" id="filter-by-module">
 			<option value="" <?php selected( ! $selected_module_id ); ?>><?php echo esc_html_e( 'All Pages / Modules', 'openlab-module-builder' ); ?></option>
 			<option value="_all" <?php selected( '_all', $selected_module_id ); ?>><?php echo esc_html_e( 'All Pages in Modules', 'openlab-module-builder' ); ?></option>
 			<option value="_none" <?php selected( '_none', $selected_module_id ); ?>><?php echo esc_html_e( 'All Pages not in Modules', 'openlab-module-builder' ); ?></option>
