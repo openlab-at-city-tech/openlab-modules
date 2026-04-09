@@ -895,7 +895,7 @@ class Importer {
 		$this->logger->info(
 			sprintf(
 				// translators: %1$s is the post title, %2$s is the post type.
-				__( 'Imported "%1$s" (%2$s)', 'openlab-module-builder' ),
+				_x( 'Imported "%1$s" (%2$s)', 'post imported success message', 'openlab-module-builder' ),
 				$data['post_title'],
 				$post_type_object->labels->singular_name
 			)
@@ -1890,7 +1890,7 @@ class Importer {
 		$this->logger->info(
 			sprintf(
 				// translators: %1$s is the term name, %2$s is the taxonomy name.
-				__( 'Imported "%1$s" (%2$s)', 'openlab-module-builder' ),
+				_x( 'Imported "%1$s" (%2$s)', 'term imported success message', 'openlab-module-builder' ),
 				$data['name'],
 				$data['taxonomy']
 			)
