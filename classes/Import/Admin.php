@@ -319,12 +319,6 @@ class Admin {
 			exit;
 		}
 
-		if ( ! $this->id ) {
-			// Tell the browser to stop reconnecting.
-			status_header( 204 );
-			exit;
-		}
-
 		// 2KB padding for IE
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo ':' . str_repeat( ' ', 2048 ) . "\n\n";
