@@ -105,8 +105,9 @@ class Admin {
 			$this->id = $import_id;
 
 			$url_args = [
-				'action' => 'openlab-module-builder-import',
-				'id'     => (string) $this->id,
+				'action'   => 'openlab-modules-import',
+				'id'       => (string) $this->id,
+				'_wpnonce' => wp_create_nonce( sprintf( 'module.import:%d', $this->id ) ),
 			];
 
 			$url = add_query_arg( urlencode_deep( $url_args ), admin_url( 'admin-ajax.php' ) );
@@ -309,8 +310,14 @@ class Admin {
 		// Start the event stream.
 		header( 'Content-Type: text/event-stream' );
 
-		// phpcs:ignore WordPress.Security.NonceVerification
 		$this->id = isset( $_REQUEST['id'] ) && is_numeric( $_REQUEST['id'] ) ? (int) $_REQUEST['id'] : 0;
+
+		// Verify nonce for the import.
+		if ( ! $this->id || ! check_ajax_referer( sprintf( 'module.import:%d', $this->id ), false, false ) ) {
+			// Tell the browser to stop reconnecting.
+			status_header( 204 );
+			exit;
+		}
 
 		if ( ! $this->id ) {
 			// Tell the browser to stop reconnecting.
