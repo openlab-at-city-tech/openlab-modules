@@ -1,6 +1,6 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
-    "apiVersion": 2,
+    "apiVersion": 3,
     "name": "openlab-modules/module-navigation",
     "title": "Module TOC",
     "category": "openlab-modules",
