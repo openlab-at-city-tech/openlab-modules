@@ -51,7 +51,6 @@ jobs:
                     --exclude='.gitignore' \
                     --exclude='.eslintrc' \
                     --exclude='node_modules' \
-                    --exclude='composer.json' \
                     --exclude='composer.lock' \
                     --exclude='package.json' \
                     --exclude='package-lock.json' \
