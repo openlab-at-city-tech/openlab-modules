@@ -88,8 +88,7 @@ class CloneModule extends WP_REST_Controller {
 
 		switch_to_blog( $destination_site_id );
 
-		// @todo This should reference the cap for the post type.
-		if ( ! current_user_can( 'edit_posts' ) ) {
+		if ( ! current_user_can( 'create_openlab_modules' ) ) {
 			$error = new WP_Error( 'rest_forbidden', __( 'You do not have permission to create a module on this site.', 'openlab-module-builder' ), [ 'status' => 403 ] );
 		}
 

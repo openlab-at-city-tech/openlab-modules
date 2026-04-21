@@ -49,4 +49,20 @@
         </properties>
     </rule>
 
+    <rule ref="WordPress.WP.Capabilities">
+        <properties>
+            <property name="custom_capabilities" type="array">
+                <element value="create_openlab_modules"/>
+                <element value="edit_openlab_modules"/>
+                <element value="edit_others_openlab_modules"/>
+                <element value="publish_openlab_modules"/>
+                <element value="delete_openlab_modules"/>
+                <element value="delete_others_openlab_modules"/>
+                <element value="delete_published_openlab_modules"/>
+                <element value="read_private_openlab_modules"/>
+                <element value="edit_published_openlab_modules"/>
+            </property>
+        </properties>
+    </rule>
+
 </ruleset>

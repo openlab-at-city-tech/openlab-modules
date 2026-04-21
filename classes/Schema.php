@@ -61,6 +61,8 @@ class Schema {
 		add_action( 'init', [ $this, 'register_metas' ], 16 );
 		add_action( 'init', [ $this, 'maybe_flush_rewrite_rules' ], 1000 );
 
+		add_filter( 'user_has_cap', [ $this, 'filter_user_has_cap' ] );
+
 		add_action( 'rest_api_init', [ $this, 'register_rest_fields' ] );
 
 		// Save actions.
@@ -142,6 +144,8 @@ class Schema {
 				'query_var'         => true,
 				'menu_position'     => 10,
 				'menu_icon'         => 'dashicons-excerpt-view',
+				'capability_type'   => [ 'openlab_module', 'openlab_modules' ],
+				'map_meta_cap'      => true,
 				'show_in_rest'      => true,
 				'rest_base'         => 'openlab_module',
 				'template'          => [
@@ -747,6 +751,52 @@ class Schema {
 		$post_types[] = self::get_module_post_type();
 
 		return $post_types;
+	}
+
+	/**
+	 * Grants module-specific capabilities in real time based on standard post caps.
+	 *
+	 * Maps the built-in post type primitive caps to their openlab_module equivalents,
+	 * so that any role or user with standard editing rights inherits the corresponding
+	 * module caps without requiring database-stored grants.
+	 *
+	 * @param bool[] $allcaps All caps assigned to the user.
+	 * @return bool[]
+	 */
+	public function filter_user_has_cap( array $allcaps ): array {
+		$map = [
+			'edit_posts'          => [
+				'create_openlab_modules',
+				'edit_openlab_modules',
+				'edit_published_openlab_modules',
+			],
+			'edit_others_posts'   => [
+				'edit_others_openlab_modules',
+				'edit_private_openlab_modules',
+				'read_private_openlab_modules',
+			],
+			'publish_posts'       => [
+				'publish_openlab_modules',
+			],
+			'delete_posts'        => [
+				'delete_openlab_modules',
+				'delete_published_openlab_modules',
+			],
+			'delete_others_posts' => [
+				'delete_others_openlab_modules',
+				'delete_private_openlab_modules',
+			],
+		];
+
+		foreach ( $map as $source_cap => $module_caps ) {
+			if ( ! empty( $allcaps[ $source_cap ] ) ) {
+				foreach ( $module_caps as $cap ) {
+					$allcaps[ $cap ] = true;
+				}
+			}
+		}
+
+		return $allcaps;
 	}
 
 	/**
