@@ -44,6 +44,8 @@ class Editor {
 
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_assets' ] );
 
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_frontend_styles' ] );
+
 		add_action( 'save_post', [ $this, 'link_to_module_on_post_creation' ] );
 
 		add_filter( 'use_block_editor_for_post', [ $this, 'use_block_editor_for_module' ], 200, 2 );
@@ -183,6 +185,28 @@ class Editor {
 			[],
 			$blocks_asset_file['version']
 		);
+
+		wp_add_inline_style( 'openlab-module-builder-dashboard', $this->get_custom_css() );
+	}
+
+	/**
+	 * Enqueues inline styles on the frontend.
+	 *
+	 * @return void
+	 */
+	public function enqueue_frontend_styles() {
+		wp_register_style( 'openlab-module-builder-frontend', false ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+		wp_enqueue_style( 'openlab-module-builder-frontend' );
+		wp_add_inline_style( 'openlab-module-builder-frontend', $this->get_custom_css() );
+	}
+
+	/**
+	 * Gets the custom CSS for font size and attribution classes.
+	 *
+	 * @return string
+	 */
+	private function get_custom_css() {
+		return '.has-14-px-font-size { font-size: 14px; } .openlab-module-attribution-prefix { font-weight: 700; }';
 	}
 
 	/**
@@ -284,36 +308,6 @@ class Editor {
 		// Remove existing support before adding it again with our additions.
 		remove_theme_support( 'editor-font-sizes' );
 		add_theme_support( 'editor-font-sizes', $existing_font_sizes );
-
-		// Add custom CSS for classes that won't be edited by users.
-		add_action(
-			'wp_head',
-			function () {
-				echo '<style>
-					.has-14-px-font-size {
-						font-size: 14px;
-					}
-					.openlab-module-attribution-prefix {
-						font-weight: 700;
-					}
-				</style>';
-			}
-		);
-
-		// Add the same styles to the editor.
-		add_action(
-			'admin_head',
-			function () {
-				echo '<style>
-					.has-14-px-font-size {
-						font-size: 14px;
-					}
-					.openlab-module-attribution-prefix {
-						font-weight: 700;
-					}
-				</style>';
-			}
-		);
 	}
 
 	/**
