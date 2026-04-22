@@ -30,13 +30,6 @@ class Decompressor {
 	protected $archive = '';
 
 	/**
-	 * Archive directory.
-	 *
-	 * @var string
-	 */
-	protected $archive_path = '';
-
-	/**
 	 * Extract directory.
 	 *
 	 * @var string
@@ -57,11 +50,8 @@ class Decompressor {
 		}
 
 		if ( $this->archive ) {
-			$archive_realpath = realpath( $this->archive );
-			if ( $archive_realpath ) {
-				$this->archive_path = pathinfo( $archive_realpath, PATHINFO_DIRNAME );
-				$this->extract_path = $this->archive_path . '/extract';
-			}
+			$upload_dir         = wp_upload_dir();
+			$this->extract_path = $upload_dir['basedir'] . '/openlab-module-builder/extract-' . $this->id;
 		}
 	}
 
@@ -78,6 +68,13 @@ class Decompressor {
 			return new WP_Error(
 				'ol.importer.archive',
 				'Unable to extract export file.'
+			);
+		}
+
+		if ( ! wp_mkdir_p( $this->extract_path ) ) {
+			return new WP_Error(
+				'ol.importer.extract_dir',
+				'Unable to create extract directory.'
 			);
 		}
 
