@@ -356,66 +356,6 @@ class Exporter {
 	}
 
 	/**
-	 * Gets a wordpress.org download URI for a plugin file.
-	 *
-	 * @param string $plugin_file The plugin file path.
-	 * @return string
-	 */
-	protected function get_plugin_uri( $plugin_file ) {
-		$pf_parts    = explode( '/', $plugin_file );
-		$plugin_slug = $pf_parts[0];
-
-		return $this->get_download_uri( $plugin_slug, 'plugins' );
-	}
-
-	/**
-	 * Gets a wordpress.org download URI for a theme.
-	 *
-	 * @param string $theme The theme slug.
-	 * @return string
-	 */
-	protected function get_theme_uri( $theme ) {
-		return $this->get_download_uri( $theme, 'themes' );
-	}
-
-	/**
-	 * Gets a wordpress.org download URI for a theme or plugin.
-	 *
-	 * @param string $slug The slug of the plugin or theme.
-	 * @param string $type 'plugins' or 'themes'.
-	 * @return string
-	 */
-	protected function get_download_uri( $slug, $type ) {
-		$cached = get_transient( 'download_uri_' . $slug );
-		if ( $cached && is_string( $cached ) ) {
-			return $cached;
-		}
-
-		if ( ! in_array( $type, [ 'plugins', 'themes' ], true ) ) {
-			return '';
-		}
-
-		$response = wp_remote_post(
-			"http://api.wordpress.org/$type/info/1.0/$slug.xml",
-			[
-				'body' => [
-					'action' => 'plugins' === $type ? 'plugin_information' : 'theme_information',
-				],
-			]
-		);
-
-		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
-			$link = '';
-		} else {
-			$link = "https://wordpress.org/$type/$slug";
-		}
-
-		set_transient( 'download_uri_' . $slug, $link, DAY_IN_SECONDS );
-
-		return $link;
-	}
-
-	/**
 	 * Create export WXP.
 	 *
 	 * @return \WP_Error|bool
