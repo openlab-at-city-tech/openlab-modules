@@ -542,12 +542,12 @@ class Frontend {
 					'innerBlocks'  => array(),
 					'innerHTML'    => sprintf(
 						'<p class="has-14-px-font-size" style="margin:0;padding:0">%s</p>',
-						$attribution_text
+						wp_kses_post( $attribution_text )
 					),
 					'innerContent' => array(
 						sprintf(
 							'<p class="has-14-px-font-size" style="margin:0;padding:0">%s</p>',
-							$attribution_text
+							wp_kses_post( $attribution_text )
 						),
 					),
 				);
