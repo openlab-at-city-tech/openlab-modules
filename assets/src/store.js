@@ -119,7 +119,7 @@ const resolvers = {
 	*getModulePageIds( moduleId ) {
 		const path = '/wp/v2/openlab_module/' + moduleId
 		const moduleObject = yield actions.fetchFromAPI( path )
-		const modulePageIdsRaw = moduleObject?.meta?.module_page_ids || ''
+		const modulePageIdsRaw = moduleObject?.meta?.openlab_modules_module_page_ids || ''
 		const modulePageIds = modulePageIdsRaw ? JSON.parse( modulePageIdsRaw ) : []
 		return actions.setModulePageIds( moduleId, modulePageIds )
 	},

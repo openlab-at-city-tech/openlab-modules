@@ -88,7 +88,7 @@ class Admin {
 				return;
 			}
 
-			update_post_meta( $this->id, 'extract_path', $extract_path );
+			update_post_meta( $this->id, 'openlab_modules_extract_path', $extract_path );
 		} elseif ( static::STEP_IMPORT === $step ) {
 			$import_id = filter_input( INPUT_POST, 'import_id', FILTER_VALIDATE_INT );
 
@@ -331,7 +331,7 @@ class Admin {
 		wp_ob_end_flush_all();
 		flush();
 
-		$extract_path = get_post_meta( $this->id, 'extract_path', true );
+		$extract_path = get_post_meta( $this->id, 'openlab_modules_extract_path', true );
 		if ( ! is_string( $extract_path ) ) {
 			// Tell the browser to stop reconnecting.
 			status_header( 204 );
@@ -375,7 +375,7 @@ class Admin {
 	 * @return Importer|\WP_Error
 	 */
 	protected function get_importer( $archive_id ) {
-		$extract_path = get_post_meta( $archive_id, 'extract_path', true );
+		$extract_path = get_post_meta( $archive_id, 'openlab_modules_extract_path', true );
 		if ( ! is_string( $extract_path ) ) {
 			return new WP_Error( 'openlab-module-builder-import', __( 'Invalid archive ID.', 'openlab-module-builder' ) );
 		}

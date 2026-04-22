@@ -236,7 +236,7 @@ class Schema {
 	public function register_metas() {
 		register_meta(
 			'post',
-			'module_description',
+			'openlab_modules_module_description',
 			[
 				'object_subtype' => self::get_module_post_type(),
 				'type'           => 'string',
@@ -249,7 +249,7 @@ class Schema {
 
 		register_meta(
 			'post',
-			'module_acknowledgements',
+			'openlab_modules_module_acknowledgements',
 			[
 				'object_subtype' => self::get_module_post_type(),
 				'type'           => 'string',
@@ -262,7 +262,7 @@ class Schema {
 
 		register_meta(
 			'post',
-			'module_page_ids',
+			'openlab_modules_module_page_ids',
 			[
 				'object_subtype' => self::get_module_post_type(),
 				'type'           => 'string',
@@ -275,7 +275,7 @@ class Schema {
 
 		register_meta(
 			'post',
-			'link_to_module',
+			'openlab_modules_link_to_module',
 			[
 				// @todo This should be dynamic in PHP and also in JS.
 				'object_subtype' => 'page',
@@ -351,7 +351,7 @@ class Schema {
 						return;
 					}
 
-					update_post_meta( $data_object->ID, 'module_nav_title', $value );
+					update_post_meta( $data_object->ID, 'openlab_modules_module_nav_title', $value );
 				},
 				'schema'          => null,
 			]
@@ -376,7 +376,7 @@ class Schema {
 					}
 
 					$to_save = ! empty( $value ) ? '1' : '0';
-					update_post_meta( $data_object->ID, 'enable_sharing', $to_save );
+					update_post_meta( $data_object->ID, 'openlab_modules_enable_sharing', $to_save );
 				},
 			]
 		);
@@ -399,7 +399,7 @@ class Schema {
 						return;
 					}
 
-					update_post_meta( $data_object->ID, 'author_name', $value );
+					update_post_meta( $data_object->ID, 'openlab_modules_author_name', $value );
 				},
 			]
 		);
@@ -467,7 +467,7 @@ class Schema {
 						return;
 					}
 
-					update_post_meta( $data_object->ID, 'completion_message_body_format', $value );
+					update_post_meta( $data_object->ID, 'openlab_modules_completion_message_body_format', $value );
 				},
 			]
 		);
@@ -493,7 +493,7 @@ class Schema {
 					$sanitized = array_map( 'trim', explode( ',', $value ) );
 					$string    = implode( ',', $sanitized );
 
-					update_post_meta( $data_object->ID, 'completion_message_cc', $string );
+					update_post_meta( $data_object->ID, 'openlab_modules_completion_message_cc', $string );
 				},
 			]
 		);
@@ -516,7 +516,7 @@ class Schema {
 						return;
 					}
 
-					update_post_meta( $data_object->ID, 'completion_message_subject', $value );
+					update_post_meta( $data_object->ID, 'openlab_modules_completion_message_subject', $value );
 				},
 			]
 		);
@@ -534,7 +534,7 @@ class Schema {
 					return Module::get_page_completion_popup_text( $data_object['id'] );
 				},
 				'update_callback' => function ( $value, $data_object ) {
-					update_post_meta( $data_object->ID, 'completion_popup_text', $value );
+					update_post_meta( $data_object->ID, 'openlab_modules_completion_popup_text', $value );
 				},
 			]
 		);
@@ -548,7 +548,7 @@ class Schema {
 				},
 				'update_callback' => function ( $value, $data_object ) {
 					$value = ! empty( $value ) ? '1' : '0';
-					update_post_meta( $data_object->ID, 'include_popup_text_in_completion_email', $value );
+					update_post_meta( $data_object->ID, 'openlab_modules_include_popup_text_in_completion_email', $value );
 				},
 			]
 		);
@@ -562,7 +562,7 @@ class Schema {
 				},
 				'update_callback' => function ( $value, $data_object ) {
 					$value = ! empty( $value ) ? '1' : '0';
-					update_post_meta( $data_object->ID, 'send_completion_email', $value );
+					update_post_meta( $data_object->ID, 'openlab_modules_send_completion_email', $value );
 				},
 			]
 		);
@@ -576,7 +576,7 @@ class Schema {
 				},
 				'update_callback' => function ( $value, $data_object ) {
 					$value = ! empty( $value ) ? '1' : '0';
-					update_post_meta( $data_object->ID, 'show_completion_popup', $value );
+					update_post_meta( $data_object->ID, 'openlab_modules_show_completion_popup', $value );
 				},
 			]
 		);
@@ -606,7 +606,7 @@ class Schema {
 	 * @return void
 	 */
 	public function validate_module_pages( $meta_id, $module_id, $meta_key ) {
-		if ( 'module_page_ids' !== $meta_key ) {
+		if ( 'openlab_modules_module_page_ids' !== $meta_key ) {
 			return;
 		}
 
@@ -817,10 +817,10 @@ class Schema {
 		}
 
 		$keys = [
-			'module_description',
-			'module_acknowledgements',
-			'module_page_ids',
-			'link_to_module',
+			'openlab_modules_module_description',
+			'openlab_modules_module_acknowledgements',
+			'openlab_modules_module_page_ids',
+			'openlab_modules_link_to_module',
 		];
 
 		if ( in_array( $meta_key, $keys, true ) ) {

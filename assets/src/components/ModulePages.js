@@ -26,7 +26,7 @@ export default function EditModule( {} ) {
 	const [ createInProgress, setCreateInProgress ] = useState( false )
 
 	const modulePageIdsRaw = useSelect(
-		( select ) => select( 'core/editor' ).getEditedPostAttribute( 'meta' ).module_page_ids,
+		( select ) => select( 'core/editor' ).getEditedPostAttribute( 'meta' ).openlab_modules_module_page_ids,
 		[]
 	);
 
@@ -95,7 +95,7 @@ export default function EditModule( {} ) {
 			sortedIds.push( option.id )
 		}
 
-		editPostMeta( { module_page_ids: JSON.stringify( sortedIds ) } )
+		editPostMeta( { openlab_modules_module_page_ids: JSON.stringify( sortedIds ) } )
 
 		// We mirror the page order in our own store to ensure accuracy of navigation block.
 		dispatch( 'openlab-module-builder' ).setModulePageIds( postId, sortedIds )
@@ -142,7 +142,7 @@ console.log( JSON.stringify( postData, null, 2 ) )
 	const addPage = ( newPage ) => {
 		const newModulePageIds = [ ...modulePageIds, newPage.id ]
 
-		editPostMeta( { module_page_ids: JSON.stringify( newModulePageIds ) } )
+		editPostMeta( { openlab_modules_module_page_ids: JSON.stringify( newModulePageIds ) } )
 
 		// We mirror the page order in our own store to ensure accuracy of navigation block.
 		dispatch( 'openlab-module-builder' ).setModulePageIds( postId, newModulePageIds )

@@ -92,7 +92,7 @@ const moduleProblemCompletionBus = {
 	 */
 	async sendCompleteStatus( nonce, postId ) {
 		const { ajaxUrl } = openlabModules;
-		const endpointUrl = `${ajaxUrl}?action=mark_module_section_complete`;
+		const endpointUrl = `${ajaxUrl}?action=openlab_modules_mark_module_section_complete`;
 
 		const body = new URLSearchParams();
 		body.append( 'nonce', nonce );

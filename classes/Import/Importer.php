@@ -2315,9 +2315,9 @@ class Importer {
 			}
 		}
 
-		// Next, map module page IDs. Saving 'module_page_ids' will trigger Schema's navigation insertion.
+		// Next, map module page IDs. Saving 'openlab_modules_module_page_ids' will trigger Schema's navigation insertion.
 		foreach ( $mapping as $old_post_id => $new_post_id ) {
-			$module_page_ids_raw = get_post_meta( $new_post_id, 'module_page_ids', true );
+			$module_page_ids_raw = get_post_meta( $new_post_id, 'openlab_modules_module_page_ids', true );
 			if ( $module_page_ids_raw && is_string( $module_page_ids_raw ) ) {
 				$module_page_ids = json_decode( $module_page_ids_raw, true );
 
@@ -2331,7 +2331,7 @@ class Importer {
 						}
 					}
 
-					update_post_meta( $new_post_id, 'module_page_ids', wp_json_encode( $new_module_page_ids ) );
+					update_post_meta( $new_post_id, 'openlab_modules_module_page_ids', wp_json_encode( $new_module_page_ids ) );
 				}
 			}
 		}
@@ -2365,10 +2365,10 @@ class Importer {
 
 		foreach ( $post_map as $old_post_id => $new_post_id ) {
 			// Update post_meta: 'term_id' → new term ID.
-			$old_term_id_raw = get_post_meta( $new_post_id, 'term_id', true );
+			$old_term_id_raw = get_post_meta( $new_post_id, 'openlab_modules_term_id', true );
 			$old_term_id     = is_numeric( $old_term_id_raw ) ? (int) $old_term_id_raw : 0;
 			if ( $old_term_id && isset( $term_map[ $old_term_id ] ) ) {
-				update_post_meta( $new_post_id, 'term_id', $term_map[ $old_term_id ] );
+				update_post_meta( $new_post_id, 'openlab_modules_term_id', $term_map[ $old_term_id ] );
 			}
 		}
 

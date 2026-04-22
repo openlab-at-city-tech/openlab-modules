@@ -271,7 +271,7 @@ export default function Edit({ attributes, isSelected, setAttributes }) {
 												title={module.title.rendered}
 												link={module.link}
 												authorName={showModuleAuthor ? module.authorName : null}
-												description={showModuleDescription ? module.meta.module_description : null}
+												description={showModuleDescription ? module.meta.openlab_modules_module_description : null}
 												image={showModuleImage ? module.featuredImage : null}
 											/>
 										)
@@ -289,7 +289,7 @@ export default function Edit({ attributes, isSelected, setAttributes }) {
 										title={module.title.rendered}
 										link={module.link}
 										authorName={showModuleAuthor ? module.authorName : null}
-										description={showModuleDescription ? module.meta.module_description : null}
+										description={showModuleDescription ? module.meta.openlab_modules_module_description : null}
 										image={showModuleImage ? module.featuredImage : null}
 									/>
 								)) }

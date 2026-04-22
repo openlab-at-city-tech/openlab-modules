@@ -47,7 +47,7 @@ class Frontend {
 		add_filter( 'the_content', [ __CLASS__, 'maybe_migrate_attribution_blocks' ], 5 );
 		add_filter( 'the_content', [ __CLASS__, 'append_pagination' ], 15 );
 
-		add_action( 'wp_ajax_mark_module_section_complete', [ __CLASS__, 'ajax_mark_module_section_complete' ] );
+		add_action( 'wp_ajax_openlab_modules_mark_module_section_complete', [ __CLASS__, 'ajax_mark_module_section_complete' ] );
 
 		add_action( 'pre_get_posts', [ __CLASS__, 'fix_custom_post_type_front_page_in_customizer' ] );
 	}

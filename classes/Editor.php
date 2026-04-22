@@ -216,7 +216,7 @@ class Editor {
 	 * @return void
 	 */
 	public function link_to_module_on_post_creation( $post_id ) {
-		$link_to_module = get_post_meta( $post_id, 'link_to_module', true );
+		$link_to_module = get_post_meta( $post_id, 'openlab_modules_link_to_module', true );
 		if ( ! $link_to_module || ! is_numeric( $link_to_module ) ) {
 			return;
 		}
@@ -227,7 +227,7 @@ class Editor {
 		}
 
 		if ( $module->link_page_to_module( $post_id ) ) {
-			delete_post_meta( $post_id, 'link_to_module' );
+			delete_post_meta( $post_id, 'openlab_modules_link_to_module' );
 		}
 	}
 

@@ -33,7 +33,7 @@ registerBlockType( 'openlab-modules/module-acknowledgements', {
 		const initialParagraphContent = useMemo( () => {
 			const meta = select( 'core/editor' ).getEditedPostAttribute( 'meta' ) || {};
 			const attributionData = select( 'core/editor' ).getEditedPostAttribute( 'attributionData' ) || {};
-			const lines = [ meta.module_acknowledgements, attributionData.text ].filter( Boolean );
+			const lines = [ meta.openlab_modules_module_acknowledgements, attributionData.text ].filter( Boolean );
 			return lines.join( '<br />' );
 		}, [] );
 

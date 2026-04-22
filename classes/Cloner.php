@@ -65,7 +65,7 @@ class Cloner {
 		}
 
 		$attribution_data = $module_data->get_attribution();
-		update_post_meta( $module_id, 'module_attribution', $attribution_data );
+		update_post_meta( $module_id, 'openlab_modules_module_attribution', $attribution_data );
 
 		$module = Module::get_instance( $module_id );
 		if ( ! $module ) {

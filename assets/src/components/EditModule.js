@@ -27,9 +27,9 @@ export default function EditModule() {
 	} = useSelect( ( select ) => {
 		return {
 			isSharingEnabled: select( 'core/editor' ).getEditedPostAttribute( 'enableSharing' ),
-			moduleAcknowledgements: select( 'core/editor' ).getEditedPostAttribute( 'meta' ).module_acknowledgements,
+			moduleAcknowledgements: select( 'core/editor' ).getEditedPostAttribute( 'meta' ).openlab_modules_module_acknowledgements,
 			moduleAuthorName: select( 'core/editor' ).getEditedPostAttribute( 'authorName' ),
-			moduleDescription: select( 'core/editor' ).getEditedPostAttribute( 'meta' ).module_description,
+			moduleDescription: select( 'core/editor' ).getEditedPostAttribute( 'meta' ).openlab_modules_module_description,
 			moduleNavTitle: select( 'core/editor' ).getEditedPostAttribute( 'moduleNavTitle' ),
 			postId: select( 'core/editor' ).getCurrentPostId(),
 			postStatus: select( 'core/editor' ).getEditedPostAttribute( 'status' ),
@@ -111,7 +111,7 @@ export default function EditModule() {
 			<PanelRow>
 				<TextareaControl
 					label={ __( 'Description', 'openlab-module-builder' ) }
-					onChange={ ( newDescription ) => editPostMeta( { module_description: newDescription } ) }
+					onChange={ ( newDescription ) => editPostMeta( { openlab_modules_module_description: newDescription } ) }
 					value={ moduleDescription }
 				/>
 			</PanelRow>
@@ -131,7 +131,7 @@ export default function EditModule() {
 				<TextareaControl
 					help={ __( 'Acknowledgements appear in a block at the bottom of the module home.', 'openlab-module-builder' ) }
 					label={ __( 'Acknowledgements', 'openlab-module-builder' ) }
-					onChange={ ( newAcknowledgements ) => editPostMeta( { module_acknowledgements: newAcknowledgements } ) }
+					onChange={ ( newAcknowledgements ) => editPostMeta( { openlab_modules_module_acknowledgements: newAcknowledgements } ) }
 					value={ moduleAcknowledgements }
 				/>
 			</PanelRow>

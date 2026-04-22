@@ -40,7 +40,7 @@ export default function PageModules() {
 		// We send as postmeta and handle on the server, to work around restrictive caps.
 		if ( isNewPostWithLinkToModule ) {
 			editPost( {
-				meta: { 'link_to_module': moduleToLink.id }
+				meta: { 'openlab_modules_link_to_module': moduleToLink.id }
 			} )
 		}
 	}, [editPost, isNewPostWithLinkToModule, moduleToLink]);

@@ -415,9 +415,9 @@ export default function Edit( {
 						{ sprintf( __( 'MODULE: %s', 'openlab-module-builder' ), selectedModuleTitle() ) }
 					</p>
 
-					{ showModuleDescription && selectedModuleObject && selectedModuleObject.meta.module_description && (
+					{ showModuleDescription && selectedModuleObject && selectedModuleObject.meta.openlab_modules_module_description && (
 						<p className="openlab-modules-module-description">
-							{ he.decode( selectedModuleObject.meta.module_description ) }
+							{ he.decode( selectedModuleObject.meta.openlab_modules_module_description ) }
 						</p>
 					) }
 

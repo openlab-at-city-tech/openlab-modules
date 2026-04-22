@@ -61,7 +61,7 @@ class Module {
 	 */
 	public function get_page_ids( $type = 'all' ) {
 		// Stored as JSON for better manipulation in Block Editor.
-		$module_page_ids_raw = get_post_meta( $this->id, 'module_page_ids', true );
+		$module_page_ids_raw = get_post_meta( $this->id, 'openlab_modules_module_page_ids', true );
 		if ( ! is_string( $module_page_ids_raw ) ) {
 			$module_page_ids_raw = '[]';
 		}
@@ -104,7 +104,7 @@ class Module {
 		$page_ids   = $this->get_page_ids();
 		$page_ids[] = $page_id;
 
-		$updated = update_post_meta( $this->id, 'module_page_ids', wp_json_encode( $page_ids ) );
+		$updated = update_post_meta( $this->id, 'openlab_modules_module_page_ids', wp_json_encode( $page_ids ) );
 
 		return (bool) $updated;
 	}
@@ -125,7 +125,7 @@ class Module {
 			}
 		);
 
-		$updated = update_post_meta( $this->id, 'module_page_ids', wp_json_encode( $page_ids ) );
+		$updated = update_post_meta( $this->id, 'openlab_modules_module_page_ids', wp_json_encode( $page_ids ) );
 
 		return (bool) $updated;
 	}
@@ -161,7 +161,7 @@ class Module {
 	 * @return string
 	 */
 	public static function get_page_completion_popup_text( $page_id ) {
-		$page_popup_text = get_post_meta( $page_id, 'completion_popup_text', true );
+		$page_popup_text = get_post_meta( $page_id, 'openlab_modules_completion_popup_text', true );
 		if ( $page_popup_text && is_string( $page_popup_text ) ) {
 			return $page_popup_text;
 		}
@@ -188,7 +188,7 @@ class Module {
 	 * @return bool
 	 */
 	public static function get_page_show_completion_popup( $page_id ) {
-		$saved = get_post_meta( $page_id, 'show_completion_popup', true );
+		$saved = get_post_meta( $page_id, 'openlab_modules_show_completion_popup', true );
 
 		// If not set, default to true.
 		if ( '' === $saved ) {
@@ -205,7 +205,7 @@ class Module {
 	 * @return bool
 	 */
 	public static function get_page_send_completion_email( $page_id ) {
-		$saved = get_post_meta( $page_id, 'send_completion_email', true );
+		$saved = get_post_meta( $page_id, 'openlab_modules_send_completion_email', true );
 
 		// If not set, default to true.
 		if ( '' === $saved ) {
@@ -222,7 +222,7 @@ class Module {
 	 * @return bool
 	 */
 	public static function get_page_include_popup_text_in_completion_email( $page_id ) {
-		$saved = get_post_meta( $page_id, 'include_popup_text_in_completion_email', true );
+		$saved = get_post_meta( $page_id, 'openlab_modules_include_popup_text_in_completion_email', true );
 
 		// If not set, default to false.
 		if ( '' === $saved ) {
@@ -308,7 +308,7 @@ class Module {
 			return '';
 		}
 
-		$nav_title = get_post_meta( $post->ID, 'module_nav_title', true );
+		$nav_title = get_post_meta( $post->ID, 'openlab_modules_module_nav_title', true );
 		if ( ! is_string( $nav_title ) ) {
 			$nav_title = '';
 		}
@@ -332,7 +332,7 @@ class Module {
 			return '';
 		}
 
-		$description = get_post_meta( $post->ID, 'module_description', true );
+		$description = get_post_meta( $post->ID, 'openlab_modules_module_description', true );
 
 		if ( ! is_string( $description ) ) {
 			$description = '';
@@ -345,7 +345,7 @@ class Module {
 	 * Gets the "raw" attribution data for the module.
 	 *
 	 * We call it "raw" because it's the data that corresponds to the current
-	 * module. What's stored in the 'module_attribution' post meta may refer
+	 * module. What's stored in the 'openlab_modules_module_attribution' post meta may refer
 	 * to the source module.
 	 *
 	 * @return array{user_id: int, post_id: int, site_id: int, user_url: string, user_name: string, post_url: string, post_title: string, text: string}
@@ -409,7 +409,7 @@ class Module {
 			return $default;
 		}
 
-		$attribution = get_post_meta( $post->ID, 'module_attribution', true );
+		$attribution = get_post_meta( $post->ID, 'openlab_modules_module_attribution', true );
 
 		if ( ! is_array( $attribution ) ) {
 			return $default;
@@ -459,7 +459,7 @@ class Module {
 			return '';
 		}
 
-		$saved = get_post_meta( $this->id, 'author_name', true );
+		$saved = get_post_meta( $this->id, 'openlab_modules_author_name', true );
 		if ( $saved && is_string( $saved ) ) {
 			return $saved;
 		}
@@ -509,7 +509,7 @@ class Module {
 	 * @return string[]
 	 */
 	public function get_completion_message_cc_list() {
-		$completion_message_cc = get_post_meta( $this->id, 'completion_message_cc', true );
+		$completion_message_cc = get_post_meta( $this->id, 'openlab_modules_completion_message_cc', true );
 
 		if ( ! is_string( $completion_message_cc ) ) {
 			$completion_message_cc = '';
@@ -524,7 +524,7 @@ class Module {
 	 * @return string
 	 */
 	public function get_completion_message_subject() {
-		$subject = get_post_meta( $this->id, 'completion_message_subject', true );
+		$subject = get_post_meta( $this->id, 'openlab_modules_completion_message_subject', true );
 
 		if ( ! is_string( $subject ) ) {
 			$subject = '';
@@ -539,7 +539,7 @@ class Module {
 	 * @return string
 	 */
 	public function get_completion_message_body_format() {
-		$body_format = get_post_meta( $this->id, 'completion_message_body_format', true );
+		$body_format = get_post_meta( $this->id, 'openlab_modules_completion_message_body_format', true );
 
 		if ( ! is_string( $body_format ) ) {
 			$body_format = '';
@@ -602,7 +602,7 @@ Well done!',
 	 * @return string
 	 */
 	public function get_completion_popup_text() {
-		$popup_text = get_post_meta( $this->id, 'completion_popup_text', true );
+		$popup_text = get_post_meta( $this->id, 'openlab_modules_completion_popup_text', true );
 
 		if ( ! is_string( $popup_text ) ) {
 			$popup_text = '';
@@ -617,7 +617,7 @@ Well done!',
 	 * @return bool
 	 */
 	public function is_sharing_enabled() {
-		$saved = get_post_meta( $this->id, 'enable_sharing', true );
+		$saved = get_post_meta( $this->id, 'openlab_modules_enable_sharing', true );
 
 		if ( '' === $saved && function_exists( 'openlab_group_can_be_cloned' ) && function_exists( 'openlab_get_group_id_by_blog_id' ) ) {
 			$group_id = openlab_get_group_id_by_blog_id( get_current_blog_id() );
