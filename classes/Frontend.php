@@ -222,7 +222,7 @@ class Frontend {
 			$prev_el = sprintf(
 				'<div class="module-pagination-link"><a href="%s">%s</a></div><div class="module-pagination-title">%s</div>',
 				esc_url( $links['prev']['url'] ),
-				__( '← Previous', 'openlab-module-builder' ),
+				esc_html__( '← Previous', 'openlab-module-builder' ),
 				esc_html( $links['prev']['title'] )
 			);
 		}
@@ -232,7 +232,7 @@ class Frontend {
 			$next_el = sprintf(
 				'<div class="module-pagination-link"><a href="%s">%s</a></div><div class="module-pagination-title">%s</div>',
 				esc_url( $links['next']['url'] ),
-				__( 'Next →', 'openlab-module-builder' ),
+				esc_html__( 'Next →', 'openlab-module-builder' ),
 				esc_html( $links['next']['title'] )
 			);
 		}
