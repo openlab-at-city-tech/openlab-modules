@@ -58,6 +58,8 @@ jobs:
                     --exclude='phpstan.neon' \
                     --exclude='webpack.config.js' \
                     --exclude='dist' \
+                    --exclude='vendor/bin/***' \
+                    --exclude='vendor/league/html-to-markdown/bin/***' \
                     ./ dist/openlab-module-builder/
 
       - name: Create ZIP file
