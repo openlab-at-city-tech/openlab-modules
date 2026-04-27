@@ -2038,8 +2038,8 @@ class Importer {
 						return $matches[0];
 					}
 
-					$old_module_id = (int) $data['moduleId'];
-					$new_module_id = $mapping[ $old_module_id ] ?? null;
+					$old_module_id = is_numeric( $data['moduleId'] ) ? (int) $data['moduleId'] : null;
+					$new_module_id = $old_module_id && isset( $mapping[ $old_module_id ] ) ? $mapping[ $old_module_id ] : null;
 
 					if ( ! $new_module_id ) {
 						return $matches[0];
