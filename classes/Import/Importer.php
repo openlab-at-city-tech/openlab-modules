@@ -1608,104 +1608,42 @@ class Importer {
 			return false;
 		}
 
-		// Have we already handled this user?
-		$original_id   = isset( $data['ID'] ) ? $data['ID'] : 0;
-		$original_slug = $data['user_login'];
+		$original_id   = isset( $data['ID'] ) ? (int) $data['ID'] : 0;
+		$original_slug = isset( $data['user_login'] ) ? sanitize_user( $data['user_login'], true ) : '';
+		$target_user   = (int) $this->options['default_author'];
 
-		if ( isset( $this->mapping['user'][ $original_id ] ) ) {
-			$existing = $this->mapping['user'][ $original_id ];
-
-			// Note the slug mapping if we need to too.
-			if ( ! isset( $this->mapping['user_slug'][ $original_slug ] ) ) {
-				$this->mapping['user_slug'][ $original_slug ] = $existing;
-			}
-
-			return false;
+		if ( ! $target_user ) {
+			$target_user = get_current_user_id();
 		}
 
-		if ( isset( $this->mapping['user_slug'][ $original_slug ] ) ) {
-			$existing = $this->mapping['user_slug'][ $original_slug ];
-
-			// Ensure we note the mapping too.
-			$this->mapping['user'][ $original_id ] = $existing;
-
-			return false;
-		}
-
-		// Allow overriding the user's slug.
-		$login = $original_slug;
-		if ( isset( $this->user_slug_override[ $login ] ) ) {
-			$login = $this->user_slug_override[ $login ];
-		}
-
-		$userdata = array(
-			'user_login' => sanitize_user( $login, true ),
-			'user_pass'  => wp_generate_password(),
-		);
-
-		$allowed = array(
-			'user_email'   => true,
-			'display_name' => true,
-			'first_name'   => true,
-			'last_name'    => true,
-		);
-		foreach ( $data as $key => $value ) {
-			if ( ! isset( $allowed[ $key ] ) ) {
-				continue;
-			}
-
-			$userdata[ $key ] = $data[ $key ];
-		}
-
-		$user_id = wp_insert_user( wp_slash( $userdata ) );
-		if ( is_wp_error( $user_id ) ) {
-			$this->logger->error(
-				sprintf(
-					// translators: %s is the user login.
-					__( 'Failed to import user "%s"', 'openlab-module-builder' ),
-					$userdata['user_login']
-				)
-			);
-			$this->logger->debug( $user_id->get_error_message() );
-
-			/**
-			 * User processing failed.
-			 *
-			 * @param WP_Error $user_id Error object.
-			 * @param array $userdata Raw data imported for the user.
-			 */
-			do_action( 'wxr_importer.process_failed.user', $user_id, $userdata );
+		if ( ! $target_user ) {
+			$this->logger->warning( __( 'Skipping imported author mapping because no target user is available.', 'openlab-module-builder' ) );
 			return false;
 		}
 
 		if ( $original_id ) {
-			$this->mapping['user'][ $original_id ] = $user_id;
+			$this->mapping['user'][ $original_id ] = $target_user;
 		}
-		$this->mapping['user_slug'][ $original_slug ] = $user_id;
+
+		if ( $original_slug ) {
+			$this->mapping['user_slug'][ $original_slug ] = $target_user;
+		}
 
 		$this->logger->info(
 			sprintf(
-				// translators: %s is the user login.
-				__( 'Imported user "%s"', 'openlab-module-builder' ),
-				$userdata['user_login']
+				// translators: %s is the imported user login.
+				__( 'Mapped imported author "%s" to the importing user.', 'openlab-module-builder' ),
+				$original_slug
 			)
 		);
 		$this->logger->debug(
 			sprintf(
-				// Translators: %1$d is the original user ID, %2$d is the new user ID.
+				// translators: %1$d is the original user ID, %2$d is the mapped user ID.
 				__( 'User %1$d remapped to %2$d', 'openlab-module-builder' ),
 				$original_id,
-				$user_id
+				$target_user
 			)
 		);
-
-		/**
-		 * User processing completed.
-		 *
-		 * @param int $user_id New user ID.
-		 * @param array $userdata Raw data imported for the user.
-		 */
-		do_action( 'wxr_importer.processed.user', $user_id, $userdata );
 
 		return true;
 	}

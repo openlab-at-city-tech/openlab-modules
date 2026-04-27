@@ -327,9 +327,6 @@ class Admin {
 			exit;
 		}
 
-		// Skip processing author data.
-		add_filter( 'wxr_importer.pre_process.user', '__return_null' );
-
 		$importer = $this->get_importer( $this->id );
 		if ( is_wp_error( $importer ) ) {
 			$this->display_error( $importer );
