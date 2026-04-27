@@ -85,7 +85,7 @@ class Admin {
 			'openlab-module-builder-export',
 			sprintf(
 				'var openlabModulesExport = %s;',
-				wp_json_encode( $script_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES )
+				wp_json_encode( $script_data )
 			),
 			'before'
 		);

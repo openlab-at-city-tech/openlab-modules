@@ -116,7 +116,14 @@ class Admin {
 						esc_html( get_the_title( $module_id ) )
 					);
 				}
-				echo implode( ', ', $module_links ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				echo wp_kses(
+					implode( ', ', $module_links ),
+					[
+						'a' => [
+							'href' => [],
+						],
+					]
+				);
 			}
 		}
 	}
@@ -185,8 +192,7 @@ class Admin {
 			$post = get_post( $post_id );
 			if ( $post ) {
 				if ( function_exists( 'bp_core_get_userlink' ) ) {
-					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					echo bp_core_get_userlink( $post->post_author );
+					echo wp_kses_post( bp_core_get_userlink( $post->post_author ) );
 				} else {
 					$author_id = (int) $post->post_author;
 					$author    = get_userdata( $author_id );

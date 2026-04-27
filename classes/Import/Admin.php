@@ -317,8 +317,7 @@ class Admin {
 		header( 'Content-Type: text/event-stream' );
 
 		// 2KB padding for IE
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo ':' . str_repeat( ' ', 2048 ) . "\n\n";
+		echo esc_html( ':' . str_repeat( ' ', 2048 ) ) . "\n\n";
 
 		// Time to run the import!
 		// Ensure we're not buffered.
@@ -399,8 +398,7 @@ class Admin {
 		echo 'data: ' . wp_json_encode( $data ) . "\n\n";
 
 		// Extra padding.
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo ':' . str_repeat( ' ', 2048 ) . "\n\n";
+		echo esc_html( ':' . str_repeat( ' ', 2048 ) ) . "\n\n";
 
 		flush();
 	}

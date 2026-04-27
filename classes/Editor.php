@@ -14,6 +14,11 @@ defined( 'ABSPATH' ) || exit;
  */
 class Editor {
 	/**
+	 * Inline CSS shared by editor and frontend contexts.
+	 */
+	const CUSTOM_CSS = '.has-14-px-font-size { font-size: 14px; } .openlab-module-attribution-prefix { font-weight: 700; }';
+
+	/**
 	 * Private constructor.
 	 *
 	 * @return void
@@ -186,7 +191,7 @@ class Editor {
 			$blocks_asset_file['version']
 		);
 
-		wp_add_inline_style( 'openlab-module-builder-dashboard', $this->get_custom_css() );
+		wp_add_inline_style( 'openlab-module-builder-dashboard', self::CUSTOM_CSS );
 	}
 
 	/**
@@ -197,16 +202,7 @@ class Editor {
 	public function enqueue_frontend_styles() {
 		wp_register_style( 'openlab-module-builder-frontend', false ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 		wp_enqueue_style( 'openlab-module-builder-frontend' );
-		wp_add_inline_style( 'openlab-module-builder-frontend', $this->get_custom_css() );
-	}
-
-	/**
-	 * Gets the custom CSS for font size and attribution classes.
-	 *
-	 * @return string
-	 */
-	private function get_custom_css() {
-		return '.has-14-px-font-size { font-size: 14px; } .openlab-module-attribution-prefix { font-weight: 700; }';
+		wp_add_inline_style( 'openlab-module-builder-frontend', self::CUSTOM_CSS );
 	}
 
 	/**
