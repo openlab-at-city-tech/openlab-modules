@@ -2029,16 +2029,36 @@ class Importer {
 
 			// Block attribute for module-navigation can be found with string manipulation - no block parsing required.
 			$new_post_content = preg_replace_callback(
-				'#<!-- wp:openlab-modules/module-navigation\s+\{"moduleId":\s*"?(\d+)"?\}\s*/-->#',
+				'/<!-- wp:openlab-modules\/module-navigation\s+({.*?})\s*\/?-->/',
 				function ( $matches ) use ( $mapping ) {
-					$old_module_id = (int) $matches[1];
+					$original_json = $matches[1];
+					$data          = json_decode( $original_json, true );
+
+					if ( ! is_array( $data ) || ! array_key_exists( 'moduleId', $data ) ) {
+						return $matches[0];
+					}
+
+					$old_module_id = (int) $data['moduleId'];
 					$new_module_id = $mapping[ $old_module_id ] ?? null;
 
 					if ( ! $new_module_id ) {
 						return $matches[0];
 					}
 
-					return sprintf( '<!-- wp:openlab-modules/module-navigation {"moduleId":"%s"} /-->', $new_module_id );
+					$data['moduleId'] = (int) $new_module_id;
+					$new_json         = wp_json_encode( $data );
+
+					if ( false === $new_json ) {
+						return $matches[0];
+					}
+
+					$is_self_closing = preg_match( '/\/-->$/', $matches[0] );
+
+					return sprintf(
+						'<!-- wp:openlab-modules/module-navigation %s%s-->',
+						$new_json,
+						$is_self_closing ? ' /' : ''
+					);
 				},
 				$post->post_content
 			);
