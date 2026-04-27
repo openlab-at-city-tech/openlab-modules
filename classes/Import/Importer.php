@@ -9,8 +9,6 @@
  * @package openlab-module-builder
  */
 
-// We intentionally reuse hook names used by the WordPress Importer plugin.
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 namespace OpenLab\Modules\Import;
 
 use WP_Error;
@@ -290,7 +288,6 @@ class Importer {
 	 * @return mixed|WP_Error Array of authors on success, error otherwise.
 	 */
 	public function import( $file ) {
-		add_filter( 'import_post_meta_key', array( $this, 'is_valid_meta_key' ) );
 		add_filter( 'http_request_timeout', array( &$this, 'bump_request_timeout' ) );
 
 		$result = $this->import_start( $file );
@@ -376,7 +373,7 @@ class Importer {
 
 					if ( $node ) {
 						$parsed = $this->parse_author_node( $node );
-						$status = $this->process_author( $parsed['data'], $parsed['meta'] );
+						$status = $this->process_author( $parsed['data'] );
 					}
 
 					// Handled everything in this node, move on to the next.
@@ -483,14 +480,6 @@ class Importer {
 		if ( $this->options['prefill_existing_terms'] ) {
 			$this->prefill_existing_terms();
 		}
-
-		/**
-		 * Begin the import.
-		 *
-		 * Fires before the import process has begun. If you need to suspend
-		 * caching or heavy processing on hooks, do so here.
-		 */
-		do_action( 'import_start' );
 	}
 
 	/**
@@ -508,14 +497,6 @@ class Importer {
 
 		wp_defer_term_counting( false );
 		wp_defer_comment_counting( false );
-
-		/**
-		 * Complete the import.
-		 *
-		 * Fires after the import process has finished. If you need to update
-		 * your cache or re-enable processing, do so here.
-		 */
-		do_action( 'import_end' );
 	}
 
 	/**
@@ -701,19 +682,6 @@ class Importer {
 	 * @return bool|void
 	 */
 	protected function process_post( $data, $meta, $comments, $terms ) {
-		/**
-		 * Pre-process post data.
-		 *
-		 * @param array $data Post data. (Return empty to skip.)
-		 * @param array $meta Meta data.
-		 * @param array $comments Comments on the post.
-		 * @param array $terms Terms on the post.
-		 */
-		$data = apply_filters( 'wxr_importer.pre_process.post', $data, $meta, $comments, $terms );
-		if ( empty( $data ) ) {
-			return false;
-		}
-
 		$original_id = isset( $data['post_id'] ) ? (int) $data['post_id'] : 0;
 
 		$parent_id = isset( $data['post_parent'] ) ? (int) $data['post_parent'] : 0;
@@ -748,13 +716,6 @@ class Importer {
 					$data['post_title']
 				)
 			);
-
-			/**
-			 * Post processing already imported.
-			 *
-			 * @param array $data Raw data imported for the post.
-			 */
-			do_action( 'wxr_importer.process_already_imported.post', $data );
 
 			// Even though this post already exists, new comments might need importing.
 			$this->process_comments( $comments, $original_id, $data, (bool) $post_exists );
@@ -826,8 +787,6 @@ class Importer {
 			$postdata[ $key ] = $data[ $key ];
 		}
 
-		$postdata = apply_filters( 'wp_import_post_data_processed', $postdata, $data );
-
 		if ( 'attachment' === $postdata['post_type'] ) {
 			if ( ! $this->options['fetch_attachments'] ) {
 				$this->logger->notice(
@@ -837,20 +796,12 @@ class Importer {
 						$data['post_title']
 					)
 				);
-				/**
-				 * Post processing skipped.
-				 *
-				 * @param array $data Raw data imported for the post.
-				 * @param array $meta Raw meta data, already processed by {@see process_post_meta}.
-				 */
-				do_action( 'wxr_importer.process_skipped.post', $data, $meta );
 				return false;
 			}
 			$remote_url = ! empty( $data['attachment_url'] ) ? $data['attachment_url'] : $data['guid'];
 			$post_id    = $this->process_attachment( $postdata, $meta, $remote_url );
 		} else {
 			$post_id = wp_insert_post( $postdata, true );
-			do_action( 'wp_import_insert_post', $post_id, $original_id, $postdata, $data );
 		}
 
 		if ( is_wp_error( $post_id ) ) {
@@ -864,16 +815,6 @@ class Importer {
 			);
 			$this->logger->debug( $post_id->get_error_message() );
 
-			/**
-			 * Post processing failed.
-			 *
-			 * @param WP_Error $post_id Error object.
-			 * @param array $data Raw data imported for the post.
-			 * @param array $meta Raw meta data, already processed by {@see process_post_meta}.
-			 * @param array $comments Raw comment data, already processed by {@see process_comments}.
-			 * @param array $terms Raw term data, already processed.
-			 */
-			do_action( 'wxr_importer.process_failed.post', $post_id, $data, $meta, $comments, $terms );
 			return false;
 		}
 
@@ -910,8 +851,6 @@ class Importer {
 		);
 
 		// Handle the terms too.
-		$terms = apply_filters( 'wp_import_post_terms', $terms, $post_id, $data );
-
 		if ( ! empty( $terms ) ) {
 			$term_ids = array();
 			foreach ( $terms as $term ) {
@@ -930,24 +869,12 @@ class Importer {
 			}
 
 			foreach ( $term_ids as $tax => $ids ) {
-				$tt_ids = wp_set_post_terms( $post_id, $ids, $tax );
-				do_action( 'wp_import_set_post_terms', $tt_ids, $ids, $tax, $post_id, $data );
+				wp_set_post_terms( $post_id, $ids, $tax );
 			}
 		}
 
 		$this->process_comments( $comments, $post_id, $data );
-		$this->process_post_meta( $meta, $post_id, $data );
-
-		/**
-		 * Post processing completed.
-		 *
-		 * @param int $post_id New post ID.
-		 * @param array $data Raw data imported for the post.
-		 * @param array $meta Raw meta data, already processed by {@see process_post_meta}.
-		 * @param array $comments Raw comment data, already processed by {@see process_comments}.
-		 * @param array $terms Raw term data, already processed.
-		 */
-		do_action( 'wxr_importer.processed.post', $post_id, $data, $meta, $comments, $terms );
+		$this->process_post_meta( $meta, $post_id );
 
 		return true;
 	}
@@ -1192,28 +1119,20 @@ class Importer {
 	 *
 	 * @param array $meta    List of meta data arrays.
 	 * @param int   $post_id Post to associate with.
-	 * @param array $post    Post data.
 	 * @return bool True on success, false otherwise.
 	 */
-	protected function process_post_meta( $meta, $post_id, $post ) {
+	protected function process_post_meta( $meta, $post_id ) {
 		if ( empty( $meta ) ) {
 			return true;
 		}
 
 		foreach ( $meta as $meta_item ) {
-			/**
-			 * Pre-process post meta data.
-			 *
-			 * @param array $meta_item Meta data. (Return empty to skip.)
-			 * @param int $post_id Post the meta is attached to.
-			 */
-			$meta_item = apply_filters( 'wxr_importer.pre_process.post_meta', $meta_item, $post_id );
-			if ( empty( $meta_item ) ) {
-				return false;
-			}
-
-			$key   = apply_filters( 'import_post_meta_key', $meta_item['key'], $post_id, $post );
+			$key   = $this->is_valid_meta_key( $meta_item['key'] );
 			$value = false;
+
+			if ( ! is_string( $key ) ) {
+				continue;
+			}
 
 			if ( '_edit_last' === $key ) {
 				$value = intval( $meta_item['value'] );
@@ -1225,19 +1144,16 @@ class Importer {
 				$value = $this->mapping['user'][ $value ];
 			}
 
-			if ( $key ) {
-				// Export gets meta straight from the DB so could have a serialized string.
-				if ( ! $value ) {
-					$value = maybe_unserialize( $meta_item['value'] );
-				}
+			// Export gets meta straight from the DB so could have a serialized string.
+			if ( ! $value ) {
+				$value = maybe_unserialize( $meta_item['value'] );
+			}
 
-				add_post_meta( $post_id, $key, $value );
-				do_action( 'import_post_meta', $post_id, $key, $value );
+			add_post_meta( $post_id, $key, $value );
 
-				// If the post has a featured image, take note of this in case of remap.
-				if ( '_thumbnail_id' === $key && is_numeric( $value ) ) {
-					$this->featured_images[ $post_id ] = (int) $value;
-				}
+			// If the post has a featured image, take note of this in case of remap.
+			if ( '_thumbnail_id' === $key && is_numeric( $value ) ) {
+				$this->featured_images[ $post_id ] = (int) $value;
 			}
 		}
 
@@ -1336,7 +1252,6 @@ class Importer {
 	 */
 	protected function process_comments( $comments, $post_id, $post, $post_exists = false ) {
 
-		$comments = apply_filters( 'wp_import_post_comments', $comments, $post_id, $post );
 		if ( empty( $comments ) ) {
 			return 0;
 		}
@@ -1347,23 +1262,6 @@ class Importer {
 		usort( $comments, array( $this, 'sort_comments_by_id' ) );
 
 		foreach ( $comments as $key => $comment ) {
-			/**
-			 * Pre-process comment data
-			 *
-			 * @param array $comment Comment data. (Return empty to skip.)
-			 * @param int $post_id Post the comment is attached to.
-			 */
-			$comment = apply_filters( 'wxr_importer.pre_process.comment', $comment, $post_id );
-			if ( empty( $comment ) ) {
-				$error = new WP_Error(
-					'wxr_importer.comment.cannot_import',
-					__( 'Cannot import comment', 'openlab-module-builder' ),
-					$comment
-				);
-
-				return $error;
-			}
-
 			$original_id = isset( $comment['comment_id'] ) ? (int) $comment['comment_id'] : 0;
 			$parent_id   = isset( $comment['comment_parent'] ) ? (int) $comment['comment_parent'] : 0;
 			$author_id   = isset( $comment['comment_user_id'] ) ? (int) $comment['comment_user_id'] : 0;
@@ -1373,13 +1271,6 @@ class Importer {
 			if ( $post_exists ) {
 				$existing = $this->comment_exists( $comment );
 				if ( $existing ) {
-
-					/**
-					 * Comment processing already imported.
-					 *
-					 * @param array $comment Raw data imported for the comment.
-					 */
-					do_action( 'wxr_importer.process_already_imported.comment', $comment );
 
 					$this->mapping['comment'][ $original_id ] = $existing;
 					continue;
@@ -1450,31 +1341,11 @@ class Importer {
 			}
 			$this->mark_comment_exists( $comment, $comment_id );
 
-			/**
-			 * Comment has been imported.
-			 *
-			 * @param int $comment_id New comment ID
-			 * @param array $comment Comment inserted (`comment_id` item refers to the original ID)
-			 * @param int $post_id Post parent of the comment
-			 * @param array $post Post data
-			 */
-			do_action( 'wp_import_insert_comment', $comment_id, $comment, $post_id, $post );
-
 			// Process the meta items.
 			foreach ( $meta as $meta_item ) {
 				$value = maybe_unserialize( $meta_item['value'] );
 				add_comment_meta( $comment_id, wp_slash( $meta_item['key'] ), wp_slash( $value ) );
 			}
-
-			/**
-			 * Post processing completed.
-			 *
-			 * @param int   $comment_id New post ID.
-			 * @param array $comment    Raw data imported for the comment.
-			 * @param array $meta       Raw meta data, already processed by process_post_meta.
-			 * @param int   $post_id    Parent post ID.
-			 */
-			do_action( 'wxr_importer.processed.comment', $comment_id, $comment, $meta, $post_id );
 
 			++$num_comments;
 		}
@@ -1593,21 +1464,9 @@ class Importer {
 	 * Process author data.
 	 *
 	 * @param array $data Data from the author node.
-	 * @param array $meta Meta data from the author node.
 	 * @return bool
 	 */
-	protected function process_author( $data, $meta ) {
-		/**
-		 * Pre-process user data.
-		 *
-		 * @param array $data User data. (Return empty to skip.)
-		 * @param array $meta Meta data.
-		 */
-		$data = apply_filters( 'wxr_importer.pre_process.user', $data, $meta );
-		if ( empty( $data ) ) {
-			return false;
-		}
-
+	protected function process_author( $data ) {
 		$original_id   = isset( $data['ID'] ) ? (int) $data['ID'] : 0;
 		$original_slug = isset( $data['user_login'] ) ? sanitize_user( $data['user_login'], true ) : '';
 		$target_user   = (int) $this->options['default_author'];
@@ -1740,30 +1599,12 @@ class Importer {
 	 * @return bool
 	 */
 	protected function process_term( $data, $meta ) {
-		/**
-		 * Pre-process term data.
-		 *
-		 * @param array $data Term data. (Return empty to skip.)
-		 * @param array $meta Meta data.
-		 */
-		$data = apply_filters( 'wxr_importer.pre_process.term', $data, $meta );
-		if ( empty( $data ) ) {
-			return false;
-		}
-
 		$original_id = isset( $data['id'] ) ? (int) $data['id'] : 0;
 		$parent_id   = isset( $data['parent'] ) ? (int) $data['parent'] : 0;
 
 		$mapping_key = sha1( $data['taxonomy'] . ':' . $data['slug'] );
 		$existing    = $this->term_exists( $data );
 		if ( $existing ) {
-			/**
-			 * Term processing already imported.
-			 *
-			 * @param array $data Raw data imported for the term.
-			 */
-			do_action( 'wxr_importer.process_already_imported.term', $data );
-
 			$this->mapping['term'][ $mapping_key ]    = $existing;
 			$this->mapping['term_id'][ $original_id ] = $existing;
 			return false;
@@ -1799,16 +1640,6 @@ class Importer {
 				)
 			);
 			$this->logger->debug( $result->get_error_message() );
-			do_action( 'wp_import_insert_term_failed', $result, $data );
-
-			/**
-			 * Term processing failed.
-			 *
-			 * @param WP_Error $result Error object.
-			 * @param array $data Raw data imported for the term.
-			 * @param array $meta Meta data supplied for the term.
-			 */
-			do_action( 'wxr_importer.process_failed.term', $result, $data, $meta );
 			return false;
 		}
 
@@ -1842,16 +1673,6 @@ class Importer {
 				$term_id
 			)
 		);
-
-		do_action( 'wp_import_insert_term', $term_id, $data );
-
-		/**
-		 * Term processing completed.
-		 *
-		 * @param int $term_id New term ID.
-		 * @param array $data Raw data imported for the term.
-		 */
-		do_action( 'wxr_importer.processed.term', $term_id, $data );
 
 		return true;
 	}
@@ -2462,12 +2283,12 @@ class Importer {
 
 	/**
 	 * Decide what the maximum file size for downloaded attachments is.
-	 * Default is 0 (unlimited), can be filtered via import_attachment_size_limit
+	 * Default is 0 (unlimited).
 	 *
 	 * @return int Maximum attachment file size to import
 	 */
 	protected function max_attachment_size() {
-		return apply_filters( 'import_attachment_size_limit', 0 );
+		return 0;
 	}
 
 	/**
