@@ -292,14 +292,6 @@ class Admin {
 	 * @return void
 	 */
 	public function stream_import() {
-		// Turn off PHP output compression.
-		// phpcs:disable
-		$previous = error_reporting( error_reporting() ^ E_WARNING );
-		ini_set( 'output_buffering', 'off' );
-		ini_set( 'zlib.output_compression', false );
-		error_reporting( $previous );
-		// phpcs:enable
-
 		if ( $GLOBALS['is_nginx'] ) {
 			// Setting this header instructs Nginx to disable fastcgi_buffering
 			// and disable gzip for this request.
@@ -324,9 +316,6 @@ class Admin {
 		echo ':' . str_repeat( ' ', 2048 ) . "\n\n";
 
 		// Time to run the import!
-		// phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged
-		set_time_limit( 0 );
-
 		// Ensure we're not buffered.
 		wp_ob_end_flush_all();
 		flush();
