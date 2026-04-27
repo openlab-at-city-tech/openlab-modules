@@ -19,6 +19,20 @@ OpenLab Module Builder allows you to create, organize, and display modular conte
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Begin creating modules from the WordPress admin.
 
+== Development ==
+
+The public source repository for this plugin is available at https://github.com/openlab-at-city-tech/openlab-module-builder
+
+The files in `build/` are generated production assets. Their human-readable JavaScript and CSS sources are included in this plugin under `assets/src/`.
+
+Bundled JavaScript dependencies are declared in `package.json` and `package-lock.json`. PHP dependencies are declared in `composer.json`.
+
+To build the production assets from source:
+
+1. Run `npm install`
+2. Run `composer install`
+3. Run `npm run build`
+
 == Frequently Asked Questions ==
 
 = How do I create a module? =
