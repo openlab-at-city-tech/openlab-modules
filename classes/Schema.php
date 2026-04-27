@@ -654,6 +654,10 @@ class Schema {
 			}
 
 			$page_content = get_post_field( 'post_content', $page_id );
+			if ( preg_match( '/<!-- wp:openlab-modules\/module-navigation\b/', $page_content ) ) {
+				update_post_meta( $page_id, 'openlab_modules_inserted_navigation_' . $module_id, '1' );
+				continue;
+			}
 
 			wp_update_post(
 				[

@@ -2086,18 +2086,28 @@ class Importer {
 
 		// First, loop through and change the inserted_navigation keys to avoid dupes.
 		foreach ( $mapping as $old_post_id => $new_post_id ) {
-			$post_module_ids = Module::get_module_ids_of_page( $new_post_id );
-			foreach ( $post_module_ids as $new_post_module_id ) {
-				$old_post_module_id = array_search( $new_post_module_id, $mapping, true );
-				if ( $old_post_module_id ) {
-					$old_meta_key = 'openlab_modules_inserted_navigation_' . (string) $old_post_module_id;
-					$new_meta_key = 'openlab_modules_inserted_navigation_' . (string) $new_post_module_id;
+			$post_meta = get_post_meta( $new_post_id );
+			if ( ! is_array( $post_meta ) ) {
+				continue;
+			}
 
-					$old_meta_value = get_post_meta( $new_post_id, $old_meta_key, true );
-					if ( $old_meta_value ) {
-						delete_post_meta( $new_post_id, $old_meta_key );
-						update_post_meta( $new_post_id, $new_meta_key, '1' );
-					}
+			foreach ( array_keys( $post_meta ) as $meta_key ) {
+				if ( ! preg_match( '/^openlab_modules_inserted_navigation_(\d+)$/', $meta_key, $matches ) ) {
+					continue;
+				}
+
+				$old_module_id = (int) $matches[1];
+				$new_module_id = $mapping[ $old_module_id ] ?? null;
+
+				if ( ! $new_module_id ) {
+					continue;
+				}
+
+				$new_meta_key   = 'openlab_modules_inserted_navigation_' . (string) $new_module_id;
+				$old_meta_value = get_post_meta( $new_post_id, $meta_key, true );
+				if ( $old_meta_value ) {
+					delete_post_meta( $new_post_id, $meta_key );
+					update_post_meta( $new_post_id, $new_meta_key, '1' );
 				}
 			}
 		}
