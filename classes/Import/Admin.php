@@ -292,6 +292,20 @@ class Admin {
 	 * @return void
 	 */
 	public function stream_import() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			status_header( 403 );
+			exit;
+		}
+
+		$this->id = isset( $_REQUEST['id'] ) && is_numeric( $_REQUEST['id'] ) ? (int) $_REQUEST['id'] : 0;
+		if ( ! $this->id ) {
+			// Tell the browser to stop reconnecting.
+			status_header( 204 );
+			exit;
+		}
+
+		check_ajax_referer( sprintf( 'module.import:%d', $this->id ) );
+
 		if ( $GLOBALS['is_nginx'] ) {
 			// Setting this header instructs Nginx to disable fastcgi_buffering
 			// and disable gzip for this request.
@@ -301,15 +315,6 @@ class Admin {
 
 		// Start the event stream.
 		header( 'Content-Type: text/event-stream' );
-
-		$this->id = isset( $_REQUEST['id'] ) && is_numeric( $_REQUEST['id'] ) ? (int) $_REQUEST['id'] : 0;
-
-		// Verify nonce for the import.
-		if ( ! $this->id || ! check_ajax_referer( sprintf( 'module.import:%d', $this->id ), false, false ) ) {
-			// Tell the browser to stop reconnecting.
-			status_header( 204 );
-			exit;
-		}
 
 		// 2KB padding for IE
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

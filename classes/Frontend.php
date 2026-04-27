@@ -260,11 +260,7 @@ class Frontend {
 	 * @return void
 	 */
 	public static function ajax_mark_module_section_complete() {
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$nonce = isset( $_POST['nonce'] ) ? wp_unslash( $_POST['nonce'] ) : '';
-		if ( ! $nonce || ! is_string( $nonce ) || ! wp_verify_nonce( sanitize_text_field( $nonce ), 'openlab-module-builder' ) ) {
-			wp_send_json_error( [ 'message' => __( 'Invalid nonce.', 'openlab-module-builder' ) ] );
-		}
+		check_ajax_referer( 'openlab-module-builder', 'nonce' );
 
 		if ( ! isset( $_POST['postId'] ) ) {
 			wp_send_json_error( [ 'message' => __( 'No post ID available', 'openlab-module-builder' ) ] );
@@ -273,6 +269,10 @@ class Frontend {
 		$post_id = is_numeric( $_POST['postId'] ) ? intval( $_POST['postId'] ) : 0;
 		if ( ! $post_id ) {
 			wp_send_json_error( [ 'message' => __( 'Invalid post ID.', 'openlab-module-builder' ) ] );
+		}
+
+		if ( ! current_user_can( 'read_post', $post_id ) ) {
+			wp_send_json_error( [ 'message' => __( 'You are not allowed to access this content.', 'openlab-module-builder' ) ] );
 		}
 
 		$post = get_post( $post_id );
