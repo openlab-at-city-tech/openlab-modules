@@ -1959,7 +1959,12 @@ class Importer {
 		global $wpdb;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
-		$found = $wpdb->get_results( "SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = 'import_id'" );
+		$found = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = %s",
+				'import_id'
+			)
+		);
 
 		$mapping = [];
 		foreach ( $found as $item ) {
@@ -1988,10 +1993,13 @@ class Importer {
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 		$found = $wpdb->get_results(
-			"SELECT tm.term_id, tm.meta_value
-			 FROM {$wpdb->termmeta} tm
-			 INNER JOIN {$wpdb->term_taxonomy} tt ON tm.term_id = tt.term_id
-			 WHERE tm.meta_key = 'import_id'"
+			$wpdb->prepare(
+				"SELECT tm.term_id, tm.meta_value
+				 FROM {$wpdb->termmeta} tm
+				 INNER JOIN {$wpdb->term_taxonomy} tt ON tm.term_id = tt.term_id
+				 WHERE tm.meta_key = %s",
+				'import_id'
+			)
 		);
 
 		$mapping = [];

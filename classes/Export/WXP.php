@@ -187,6 +187,9 @@ class WXP {
 		global $wpdb;
 
 		$item_ids = $this->get_item_ids();
+		if ( empty( $item_ids ) ) {
+			return false;
+		}
 
 		$authors = [];
 
@@ -197,11 +200,8 @@ class WXP {
 		$results = $wpdb->get_results(
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 			$wpdb->prepare(
-				sprintf(
-					"SELECT DISTINCT post_author FROM $wpdb->posts WHERE post_status != 'auto-draft' AND ID IN (%s)",
-					implode( ',', array_fill( 0, count( $item_ids ), '%d' ) )
-				),
-				...$item_ids
+				"SELECT DISTINCT post_author FROM {$wpdb->posts} WHERE post_status != 'auto-draft' AND ID IN (" . implode( ',', array_fill( 0, count( $item_ids ), '%d' ) ) . ')',
+				$item_ids
 			)
 		);
 
@@ -393,10 +393,16 @@ class WXP {
 		// Fetch 20 posts at a time rather than loading the entire table into memory.
 		// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( $next_posts = array_splice( $post_ids, 0, 20 ) ) {
-			$where = 'WHERE ID IN (' . join( ',', $next_posts ) . ')';
+			$next_posts = array_map( 'intval', $next_posts );
 
-			// phpcs:ignore
-			$posts = $wpdb->get_results( "SELECT * FROM {$wpdb->posts} $where" );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			$posts = $wpdb->get_results(
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+				$wpdb->prepare(
+					"SELECT * FROM {$wpdb->posts} WHERE ID IN (" . implode( ',', array_fill( 0, count( $next_posts ), '%d' ) ) . ')',
+					$next_posts
+				)
+			);
 
 			$xml = '';
 			foreach ( $posts as $post ) {
