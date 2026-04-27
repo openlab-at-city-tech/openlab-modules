@@ -586,21 +586,13 @@ class Exporter {
 	 * @return string
 	 */
 	protected function normalize_path( $file ) {
-		$abs_path = realpath( ABSPATH );
-		if ( ! $abs_path ) {
-			return $file;
+		$file                = wp_normalize_path( $file );
+		$uploads_dir_basedir = trailingslashit( wp_normalize_path( $this->uploads_dir_basedir ) );
+
+		if ( 0 === strpos( $file, $uploads_dir_basedir ) ) {
+			return 'files/' . ltrim( substr( $file, strlen( $uploads_dir_basedir ) ), '/' );
 		}
 
-		$abs_path = trailingslashit( str_replace( '\\', '/', $abs_path ) );
-
-		$file = str_replace( [ '\\', $abs_path ], '/', $file );
-
-		// Remove double slashes.
-		$normalized_file = preg_replace( '#//+#', '/', $file );
-		if ( $normalized_file ) {
-			$file = $normalized_file;
-		}
-
-		return $file;
+		return ltrim( $file, '/' );
 	}
 }
