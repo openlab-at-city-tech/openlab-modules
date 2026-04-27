@@ -200,8 +200,15 @@ class Editor {
 	 * @return void
 	 */
 	public function enqueue_frontend_styles() {
-		wp_register_style( 'openlab-module-builder-frontend', false ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
-		wp_enqueue_style( 'openlab-module-builder-frontend' );
+		$blocks_asset_file = self::get_blocks_asset_file();
+
+		wp_register_style(
+			'openlab-module-builder-frontend',
+			OPENLAB_MODULE_BUILDER_PLUGIN_URL . '/build/frontend.css',
+			[],
+			$blocks_asset_file['version']
+		);
+
 		wp_add_inline_style( 'openlab-module-builder-frontend', self::CUSTOM_CSS );
 	}
 
