@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       OpenLab Module Builder
  * Description:       A plugin to manage and display OpenLab Modules.
- * Version:           1.0.0-alpha-20260409-2
+ * Version:           1.0.0
  * Requires at least: 5.4
  * Requires PHP:      7.3
  * Author:            OpenLab at City Tech
@@ -25,7 +25,7 @@ const ROOT_FILE = __FILE__;
 require ROOT_DIR . '/constants.php';
 require ROOT_DIR . '/vendor/autoload.php';
 
-const VERSION = '1.0.0-alpha-20260409-2';
+const VERSION = '1.0.0';
 
 register_activation_hook(
 	__FILE__,
