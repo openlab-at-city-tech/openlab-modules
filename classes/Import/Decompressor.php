@@ -72,6 +72,7 @@ class Decompressor {
 		$this->get_filesystem();
 
 		if ( ! function_exists( 'unzip_file' ) ) {
+			// @phpstan-ignore requireOnce.fileNotFound
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
 
