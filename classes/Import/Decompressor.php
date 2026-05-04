@@ -8,7 +8,6 @@
 namespace OpenLab\Modules\Import;
 
 use WP_Error;
-use ZipArchive;
 
 /**
  * Decompressor class.
@@ -62,15 +61,6 @@ class Decompressor {
 	 * @return WP_Error|string
 	 */
 	public function extract() {
-		$zip = new ZipArchive();
-
-		if ( ! $zip->open( $this->archive ) ) {
-			return new WP_Error(
-				'ol.importer.archive',
-				'Unable to extract export file.'
-			);
-		}
-
 		if ( ! wp_mkdir_p( $this->extract_path ) ) {
 			return new WP_Error(
 				'ol.importer.extract_dir',
@@ -78,11 +68,20 @@ class Decompressor {
 			);
 		}
 
-		// Extract File.
-		$extracted = $zip->extractTo( $this->extract_path );
-		$zip->close();
+		// Ensure WP_Filesystem is initialised before calling unzip_file().
+		$this->get_filesystem();
 
-		// Delete non-permitted files.
+		if ( ! function_exists( 'unzip_file' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+
+		// WP's unzip_file() handles validation and extraction.
+		$extracted = unzip_file( $this->archive, $this->extract_path );
+		if ( is_wp_error( $extracted ) ) {
+			return $extracted;
+		}
+
+		// Delete non-permitted files as an additional defence-in-depth on top of `unzip_file()`.
 		$this->sanitize_extracted_files();
 
 		return $this->extract_path;
