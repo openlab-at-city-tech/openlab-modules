@@ -1,4 +1,4 @@
-/* global wwpe, openlabModules, openlabModulesStrings */
+/* global wwpe */
 
 import './webwork-problem-embed.scss';
 
