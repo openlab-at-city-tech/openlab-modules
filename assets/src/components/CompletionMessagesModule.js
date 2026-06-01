@@ -41,8 +41,6 @@ export default function CompletionMessagesModule( {} ) {
 	const [ bodyFormatDirty, setBodyFormatDirty ] = useState( false )
 	const [ generatedBodyFormat, setGeneratedBodyFormat ] = useState( '' )
 
-	const [ popupTextDirty, setPopupTextDirty ] = useState( false )
-
 	useEffect( () => {
 		if ( ! subjectDirty && ! completionMessageSubject && postTitle ) {
 			setGeneratedSubject(
@@ -65,8 +63,6 @@ export default function CompletionMessagesModule( {} ) {
 	if ( ! postType || 'openlab_module' !== postType ) {
 		return null
 	}
-
-	const defaultPopupText = __( 'You have completed the activities on this page. You will receive an email confirming your completion.', 'openlab-module-builder' )
 
 	return (
 		<>
@@ -124,9 +120,8 @@ export default function CompletionMessagesModule( {} ) {
 
 				<TextareaControl
 					label={ __( 'Default popup text', 'openlab-module-builder' ) }
-					value={ popupTextDirty || completionPopupText ? completionPopupText : defaultPopupText }
+					value={ completionPopupText }
 					onChange={ ( value ) => {
-						setPopupTextDirty( true )
 						editPost( { completionPopupText: value } )
 					} }
 					placeholder={ __( 'Enter popup text', 'openlab-module-builder' ) }

@@ -604,8 +604,8 @@ Well done!',
 	public function get_completion_popup_text() {
 		$popup_text = get_post_meta( $this->id, 'openlab_modules_completion_popup_text', true );
 
-		if ( ! is_string( $popup_text ) ) {
-			$popup_text = '';
+		if ( ! $popup_text || ! is_string( $popup_text ) ) {
+			$popup_text = __( 'You have completed the activities on this page. You will receive an email confirming your completion.', 'openlab-module-builder' );
 		}
 
 		return $popup_text;
