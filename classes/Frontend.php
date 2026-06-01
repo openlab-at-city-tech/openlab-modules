@@ -271,7 +271,7 @@ class Frontend {
 			wp_send_json_error( [ 'message' => __( 'Invalid post ID.', 'openlab-module-builder' ) ] );
 		}
 
-		if ( ! current_user_can( 'read_post', $post_id ) ) {
+		if ( ! is_post_publicly_viewable( $post_id ) ) {
 			wp_send_json_error( [ 'message' => __( 'You are not allowed to access this content.', 'openlab-module-builder' ) ] );
 		}
 
