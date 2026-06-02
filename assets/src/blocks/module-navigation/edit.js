@@ -357,7 +357,7 @@ export default function Edit( {
 		wp.data.dispatch( 'core/edit-post' ).openGeneralSidebar( 'edit-post/document' )
 
 		setTimeout( () => {
-			const addPagePanel = document.querySelector( '.openlab-modules-add-page-to-module' )
+			const addPagePanel = document.querySelector( '.openlab-module-builder-add-page-to-module' )
 			if (addPagePanel) {
 					wp.data.dispatch( 'core/block-editor' ).clearSelectedBlock();
 					addPagePanel.classList.add('highlight');
