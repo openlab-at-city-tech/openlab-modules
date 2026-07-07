@@ -32,18 +32,18 @@ class ModuleData {
 	 * }
 	 */
 	protected $data = [
-		'id'             => 0,
-		'title'          => '',
-		'content'        => '',
-		'description'    => '',
-		'nav_title'      => '',
-		'slug'           => '',
-		'url'            => '',
-		'enable_sharing' => false,
-		'pages'          => [],
-		'attachments'    => [],
+		'id'              => 0,
+		'title'           => '',
+		'content'         => '',
+		'description'     => '',
+		'nav_title'       => '',
+		'slug'            => '',
+		'url'             => '',
+		'enable_sharing'  => false,
+		'pages'           => [],
+		'attachments'     => [],
 		'featured_images' => [],
-		'attribution'    => [
+		'attribution'     => [
 			'user_id' => 0,
 			'post_id' => 0,
 			'site_id' => 0,

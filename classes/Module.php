@@ -680,9 +680,9 @@ Well done!',
 			);
 		}
 
-		$attachment_ids = [];
+		$attachment_ids  = [];
 		$featured_images = [];
-		$all_item_ids   = array_merge( $page_ids, [ $this->id ] );
+		$all_item_ids    = array_merge( $page_ids, [ $this->id ] );
 		foreach ( $all_item_ids as $item_id ) {
 			// First, get those items that are attached to the post.
 			$item_attachment_ids = get_posts(
