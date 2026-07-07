@@ -401,7 +401,8 @@ class Exporter {
 	/**
 	 * Gets a list of IDs belonging to attachments that should be included in the export.
 	 *
-	 * We loop through the content of all module and pages and look for image URLs.
+	 * We loop through the content of all module and pages and look for image URLs,
+	 * and also include any featured-image attachments referenced via _thumbnail_id.
 	 *
 	 * @return array<int>
 	 */
@@ -416,6 +417,11 @@ class Exporter {
 			$post = get_post( $post_id );
 			if ( ! $post ) {
 				continue;
+			}
+
+			$featured_image_id = get_post_thumbnail_id( $post_id );
+			if ( $featured_image_id ) {
+				$attachment_ids[] = $featured_image_id;
 			}
 
 			preg_match_all(
