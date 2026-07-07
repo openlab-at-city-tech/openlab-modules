@@ -27,6 +27,7 @@ class ModuleData {
 	 *     enable_sharing: bool,
 	 *     pages: array<array{id: int, title: string, slug: string, url: string, status: string, content: string}>,
 	 *     attachments: array<array{id: int, url: string, path: string, alt: string, title: string, content: string, excerpt: string, item_id: int}>,
+	 *     featured_images: array<int, int>,
 	 *     attribution: array{user_id: int, post_id: int, site_id: int, text: string}
 	 * }
 	 */
@@ -41,6 +42,7 @@ class ModuleData {
 		'enable_sharing' => false,
 		'pages'          => [],
 		'attachments'    => [],
+		'featured_images' => [],
 		'attribution'    => [
 			'user_id' => 0,
 			'post_id' => 0,
@@ -237,6 +239,25 @@ class ModuleData {
 	 */
 	public function get_attachments() {
 		return $this->data['attachments'];
+	}
+
+	/**
+	 * Set featured image associations.
+	 *
+	 * @param array<int, int> $featured_images Source item IDs mapped to source attachment IDs.
+	 * @return void
+	 */
+	public function set_featured_images( $featured_images ) {
+		$this->data['featured_images'] = $featured_images;
+	}
+
+	/**
+	 * Get featured image associations.
+	 *
+	 * @return array<int, int>
+	 */
+	public function get_featured_images() {
+		return $this->data['featured_images'];
 	}
 
 	/**

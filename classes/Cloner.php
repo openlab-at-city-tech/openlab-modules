@@ -159,6 +159,14 @@ class Cloner {
 			}
 		}
 
+		foreach ( $module_data->get_featured_images() as $source_item_id => $source_attachment_id ) {
+			if ( ! isset( $id_map[ $source_item_id ], $id_map[ $source_attachment_id ] ) ) {
+				continue;
+			}
+
+			set_post_thumbnail( $id_map[ $source_item_id ], $id_map[ $source_attachment_id ] );
+		}
+
 		// Update URLs and IDs in the module and pages content.
 		$module_post_content = self::swap_urls_and_ids_in_content( $module_post->post_content, $url_map, $id_map );
 		$module_post_content = self::swap_module_navigation_module_ids( $module_post_content, $module_data->get_module_id(), $module_id );

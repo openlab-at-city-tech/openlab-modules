@@ -681,6 +681,7 @@ Well done!',
 		}
 
 		$attachment_ids = [];
+		$featured_images = [];
 		$all_item_ids   = array_merge( $page_ids, [ $this->id ] );
 		foreach ( $all_item_ids as $item_id ) {
 			// First, get those items that are attached to the post.
@@ -692,6 +693,15 @@ Well done!',
 					'fields'         => 'ids',
 				]
 			);
+
+			$featured_image_id = get_post_thumbnail_id( $item_id );
+			if ( $featured_image_id ) {
+				$featured_images[ $item_id ] = $featured_image_id;
+
+				if ( ! in_array( $featured_image_id, $item_attachment_ids, true ) ) {
+					$item_attachment_ids[] = $featured_image_id;
+				}
+			}
 
 			// Next, parse post_content for attachment URLs, which may not have the current post as parent.
 			$post = get_post( $item_id );
@@ -750,6 +760,7 @@ Well done!',
 			}
 		}
 
+		$module_data->set_featured_images( $featured_images );
 		$module_data->set_attribution( $this->get_raw_attribution_data() );
 
 		return $module_data;
