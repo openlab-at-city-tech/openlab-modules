@@ -1,0 +1,41 @@
+<?php return array(
+    'root' => array(
+        'name' => 'openlab-at-city-tech/openlab-module-builder',
+        'pretty_version' => '1.0.x-dev',
+        'version' => '1.0.9999999.9999999-dev',
+        'reference' => '1c315639f071a12923aa9fcb6f7c4ef018946edb',
+        'type' => 'project',
+        'install_path' => __DIR__ . '/../../',
+        'aliases' => array(),
+        'dev' => false,
+    ),
+    'versions' => array(
+        'hard-g/cpt-tax' => array(
+            'pretty_version' => 'v1.0.1',
+            'version' => '1.0.1.0',
+            'reference' => 'cd87b64316ea5d563770d488845967760d098fca',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../hard-g/cpt-tax',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'league/html-to-markdown' => array(
+            'pretty_version' => '5.1.1',
+            'version' => '5.1.1.0',
+            'reference' => '0b4066eede55c48f38bcee4fb8f0aa85654390fd',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../league/html-to-markdown',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'openlab-at-city-tech/openlab-module-builder' => array(
+            'pretty_version' => '1.0.x-dev',
+            'version' => '1.0.9999999.9999999-dev',
+            'reference' => '1c315639f071a12923aa9fcb6f7c4ef018946edb',
+            'type' => 'project',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+    ),
+);
