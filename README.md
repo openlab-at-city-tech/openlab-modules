@@ -1,8 +1,10 @@
 # OpenLab Module Builder
 
-OpenLab Module Builder is a WordPress plugin that allows you to organize WP content into "modules", which are reusable and clonable collections of sequenced content. An integrated completion system allows notifications to be sent when a module is "completed" - all embedded WeBWorK items are successfully filled out, etc.
+OpenLab Module Builder allows you to create, organize, and display modular content on your WordPress site.
 
-This plugin was developed for the (City Tech OpenLab)[https://openlab.citytech.cuny.edu/].
+This plugin was developed for the (City Tech OpenLab)[https://openlab.citytech.cuny.edu/] and is maintained by the OpenLab team.
+
+See [readme.txt] for more background and information about the plugin's functionality.
 
 ## Development
 
@@ -17,3 +19,8 @@ To build the production assets from source:
 1. `npm install`
 2. `composer install`
 3. `npm run build`
+
+## Contributing
+
+Contributions to the project are welcome. Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information on how to contribute.
+
