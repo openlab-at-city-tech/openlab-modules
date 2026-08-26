@@ -1,5 +1,5 @@
 === OpenLab Module Builder ===
-Contributors: boonebgorges
+Contributors: citytechopenlab, boonebgorges
 Requires at least: 5.4
 Tested up to: 7.1
 Requires PHP: 7.3
@@ -76,7 +76,7 @@ Please use the support forum to get help with the OpenLab Module Builder plugin 
 
 = How can I contribute? =
 
-The plugin's codebase is maintained in an open GitHub repo: https://github.com/openlab-at-city-tech/openlab-module-builder/. See the repo for more information about contributing.
+The plugin's codebase is maintained in an open GitHub repo: [https://github.com/openlab-at-city-tech/openlab-module-builder/](https://github.com/openlab-at-city-tech/openlab-module-builder/). See the repo for more information about contributing.
 
 == Changelog ==
 
