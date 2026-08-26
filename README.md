@@ -2,7 +2,7 @@
 
 OpenLab Module Builder allows you to create, organize, and display modular content on your WordPress site.
 
-This plugin was developed for the (City Tech OpenLab)[https://openlab.citytech.cuny.edu/] and is maintained by the OpenLab team.
+This plugin was developed for the [City Tech OpenLab](https://openlab.citytech.cuny.edu/) and is maintained by the OpenLab team.
 
 See [readme.txt] for more background and information about the plugin's functionality.
 
