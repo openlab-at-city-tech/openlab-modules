@@ -78,14 +78,6 @@ Please use the support forum to get help with the OpenLab Module Builder plugin 
 
 The plugin's codebase is maintained in an open GitHub repo: https://github.com/openlab-at-city-tech/openlab-module-builder/. See the repo for more information about contributing.
 
-== Screenshots ==
-
-Use one of the Connect the DOTS modules? Including:
-
-Module Home
-Module page with embedded H5P
-Editing a module
-
 == Changelog ==
 
 = 1.0.0 =
