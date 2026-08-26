@@ -74,6 +74,10 @@ Visit our [plugin site](https://openlab.citytech.cuny.edu/openlab-module-builder
 
 Please use the support forum to get help with the OpenLab Module Builder plugin and offer feedback or suggestions.
 
+= How can I contribute? =
+
+The plugin's codebase is maintained in an open GitHub repo: https://github.com/openlab-at-city-tech/openlab-module-builder/. See the repo for more information about contributing.
+
 == Screenshots ==
 
 Use one of the Connect the DOTS modules? Including:
